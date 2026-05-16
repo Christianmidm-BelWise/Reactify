@@ -776,6 +776,79 @@
     .btn-new-convo:hover { background: #15803d; }
     .btn-new-convo svg { width: 16px; height: 16px; }
 
+    /* Conversation Summary */
+    .conv-summary {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .conv-summary-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .conv-summary-title svg {
+      width: 14px;
+      height: 14px;
+      color: var(--purple);
+    }
+
+    .conv-summary-text {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 0.625rem 0.75rem;
+      border-left: 3px solid var(--purple);
+    }
+
+    /* Gespreksstatus Badges */
+    .gespreksstatus-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .gespreksstatus-badge .gs-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .gespreksstatus-badge.gs-ai-actief {
+      background: var(--green-light);
+      color: var(--green);
+    }
+    .gespreksstatus-badge.gs-ai-actief .gs-dot { background: var(--green); }
+
+    .gespreksstatus-badge.gs-menselijke-overname {
+      background: var(--orange-light);
+      color: var(--orange-dark);
+    }
+    .gespreksstatus-badge.gs-menselijke-overname .gs-dot { background: var(--orange); }
+
+    .gespreksstatus-badge.gs-afgesloten {
+      background: var(--gray-100);
+      color: var(--gray-500);
+    }
+    .gespreksstatus-badge.gs-afgesloten .gs-dot { background: var(--gray-400); }
+
+    .conv-item .conv-status-row {
+      margin-top: 0.25rem;
+    }
+
     /* Mobile */
     .mobile-sidebar-toggle {
       display: none;
@@ -942,10 +1015,7 @@
               </div>
               <div class="conv-preview">Ik wil graag een afspraak maken...</div>
               <div class="conv-meta">
-                <span class="conv-badge online">
-                  <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;"></span>
-                  Online
-                </span>
+                <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
               </div>
             </div>
           </div>
@@ -957,6 +1027,9 @@
                 <span class="conv-time">13:15</span>
               </div>
               <div class="conv-preview">Bedankt voor de snelle reactie!</div>
+              <div class="conv-meta">
+                <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
+              </div>
             </div>
           </div>
           <div class="conv-item">
@@ -967,6 +1040,9 @@
                 <span class="conv-time">Gisteren</span>
               </div>
               <div class="conv-preview">Kan ik de meer info die oferten?</div>
+              <div class="conv-meta">
+                <span class="gespreksstatus-badge gs-menselijke-overname"><span class="gs-dot"></span>Overname nodig</span>
+              </div>
             </div>
           </div>
           <div class="conv-item">
@@ -978,10 +1054,7 @@
               </div>
               <div class="conv-preview">Ik heb nog enkele bemerkingen...</div>
               <div class="conv-meta">
-                <span class="conv-badge online">
-                  <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;"></span>
-                  Gelezen
-                </span>
+                <span class="gespreksstatus-badge gs-afgesloten"><span class="gs-dot"></span>Afgesloten</span>
               </div>
             </div>
           </div>
@@ -993,6 +1066,9 @@
                 <span class="conv-time">2 dagen</span>
               </div>
               <div class="conv-preview">Prima, het was vergeten!</div>
+              <div class="conv-meta">
+                <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
+              </div>
             </div>
           </div>
           <div class="conv-item">
@@ -1003,6 +1079,9 @@
                 <span class="conv-time">3 dagen</span>
               </div>
               <div class="conv-preview">Bedankt voor de hulp!</div>
+              <div class="conv-meta">
+                <span class="gespreksstatus-badge gs-afgesloten"><span class="gs-dot"></span>Afgesloten</span>
+              </div>
             </div>
           </div>
           <div class="conv-item">
@@ -1013,6 +1092,9 @@
                 <span class="conv-time">1 week</span>
               </div>
               <div class="conv-preview">Ik heb de afspraak bevestigd...</div>
+              <div class="conv-meta">
+                <span class="gespreksstatus-badge gs-menselijke-overname"><span class="gs-dot"></span>Overname nodig</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1030,6 +1112,7 @@
             <div class="chat-header-details">
               <span class="chat-header-badge">e-mail</span>
               <span>+32 476 12 34 56</span>
+              <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
             </div>
           </div>
         </div>
@@ -1107,10 +1190,10 @@
           </div>
         </div>
         <div class="profile-section">
-          <div class="profile-section-title">AI status</div>
-          <div class="profile-status-row">
-            <span class="profile-status-label">AI status</span>
-            <span class="status-badge-small active">Actief</span>
+          <div class="profile-section-title">Gespreksstatus</div>
+          <div class="profile-status-row" id="profileGespreksstatus">
+            <span class="profile-status-label">Status</span>
+            <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
           </div>
           <div class="progress-row">
             <div class="progress-header">
@@ -1130,6 +1213,13 @@
               <div class="progress-fill green" style="width: 82%;"></div>
             </div>
           </div>
+        </div>
+        <div class="conv-summary" id="profileSummary">
+          <div class="conv-summary-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+            Samenvatting
+          </div>
+          <div class="conv-summary-text">Klant wil een afspraak inplannen voor een software-installatie. Er is een telefonisch adviesgesprek voorgesteld voor dinsdag om 10:00. Klant heeft bevestigd.</div>
         </div>
         <div class="profile-activity">
           <div class="profile-section-title">Recente activiteit</div>
@@ -1188,6 +1278,8 @@
         badge: 'e-mail',
         selfPct: 60,
         answerPct: 82,
+        gespreksstatus: 'ai_actief',
+        samenvatting: 'Klant wil een afspraak inplannen voor een software-installatie. Er is een telefonisch adviesgesprek voorgesteld voor dinsdag om 10:00. Klant heeft bevestigd.',
         messages: [
           { type: 'date', text: 'Vandaag' },
           { type: 'incoming', text: 'Hallo, ik wil graag een afspraak maken voor een installatie van onze nieuwe software. Wanneer zou dit kunnen?', time: '09:12' },
@@ -1209,6 +1301,8 @@
         badge: 'sms',
         selfPct: 45,
         answerPct: 90,
+        gespreksstatus: 'ai_actief',
+        samenvatting: 'Klant heeft een offerte ontvangen en wil een extra module toevoegen. Er wordt een aangepaste offerte opgestuurd.',
         messages: [
           { type: 'date', text: 'Vandaag' },
           { type: 'incoming', text: 'Hallo, ik heb jullie offerte ontvangen. Kan ik die nog aanpassen?', time: '12:30' },
@@ -1230,6 +1324,8 @@
         badge: 'chat',
         selfPct: 75,
         answerPct: 68,
+        gespreksstatus: 'menselijke_overname',
+        samenvatting: 'VIP-klant vraagt gedetailleerde informatie over het Premium pakket. Details zijn per e-mail verstuurd. Wacht op reactie van klant.',
         messages: [
           { type: 'date', text: 'Gisteren' },
           { type: 'incoming', text: 'Kan ik meer informatie krijgen over de verschillende offertes?', time: '15:30' },
@@ -1251,6 +1347,8 @@
         badge: 'e-mail',
         selfPct: 50,
         answerPct: 77,
+        gespreksstatus: 'afgesloten',
+        samenvatting: 'Klant had bemerkingen over het contract, specifiek over leveringsvoorwaarden. Levertermijn van 5 werkdagen is verduidelijkt. Klant is tevreden.',
         messages: [
           { type: 'date', text: 'Gisteren' },
           { type: 'incoming', text: 'Ik heb nog enkele bemerkingen over het contract.', time: '10:00' },
@@ -1272,6 +1370,8 @@
         badge: 'sms',
         selfPct: 30,
         answerPct: 55,
+        gespreksstatus: 'ai_actief',
+        samenvatting: 'Klant wil een afspraak inplannen. Woensdag om 11:00 is voorgesteld en akkoord bevonden.',
         messages: [
           { type: 'date', text: '2 dagen geleden' },
           { type: 'incoming', text: 'Hallo, ik was het bijna vergeten maar we moeten nog een afspraak plannen.', time: '14:00' },
@@ -1293,6 +1393,8 @@
         badge: 'chat',
         selfPct: 80,
         answerPct: 92,
+        gespreksstatus: 'afgesloten',
+        samenvatting: 'Klant is geholpen met het instellen van het systeem. Alles werkt goed, klant is zeer tevreden.',
         messages: [
           { type: 'date', text: '3 dagen geleden' },
           { type: 'incoming', text: 'Bedankt voor de hulp bij het instellen van het systeem!', time: '09:00' },
@@ -1312,6 +1414,8 @@
         badge: 'e-mail',
         selfPct: 25,
         answerPct: 40,
+        gespreksstatus: 'menselijke_overname',
+        samenvatting: 'Klant heeft een afspraak bevestigd voor volgende week. Geen verdere vragen, alles is duidelijk.',
         messages: [
           { type: 'date', text: '1 week geleden' },
           { type: 'incoming', text: 'Ik heb de afspraak bevestigd voor volgende week.', time: '11:00' },
@@ -1323,6 +1427,12 @@
 
     var convKeys = ['sophie', 'tom', 'marc', 'laura', 'dory', 'julia', 'pieter'];
     var activeConv = 'sophie';
+
+    var gespreksstatusMap = {
+      'ai_actief': { label: 'AI actief', css: 'gs-ai-actief' },
+      'menselijke_overname': { label: 'Menselijke overname nodig', css: 'gs-menselijke-overname' },
+      'afgesloten': { label: 'Afgesloten gesprek', css: 'gs-afgesloten' }
+    };
 
     function switchConversation(key) {
       activeConv = key;
@@ -1337,6 +1447,7 @@
       });
 
       var chatHeader = document.querySelector('.chat-header');
+      var gs = gespreksstatusMap[c.gespreksstatus] || gespreksstatusMap['ai_actief'];
       chatHeader.innerHTML =
         '<div class="chat-header-avatar" style="background:' + c.color + ';">' + c.initials + '</div>' +
         '<div class="chat-header-info">' +
@@ -1344,6 +1455,7 @@
           '<div class="chat-header-details">' +
             '<span class="chat-header-badge">' + c.badge + '</span>' +
             '<span>' + c.phone + '</span>' +
+            '<span class="gespreksstatus-badge ' + gs.css + '"><span class="gs-dot"></span>' + gs.label + '</span>' +
           '</div>' +
         '</div>';
 
@@ -1381,6 +1493,17 @@
         if (values[0]) values[0].textContent = c.selfPct + '%';
         if (fills[1]) fills[1].style.width = c.answerPct + '%';
         if (values[1]) values[1].textContent = c.answerPct + '%';
+
+        var gsRow = document.getElementById('profileGespreksstatus');
+        if (gsRow) {
+          var gsInfo = gespreksstatusMap[c.gespreksstatus] || gespreksstatusMap['ai_actief'];
+          gsRow.innerHTML = '<span class="profile-status-label">Status</span><span class="gespreksstatus-badge ' + gsInfo.css + '"><span class="gs-dot"></span>' + gsInfo.label + '</span>';
+        }
+
+        var summarySection = document.getElementById('profileSummary');
+        if (summarySection) {
+          summarySection.querySelector('.conv-summary-text').textContent = c.samenvatting;
+        }
       }
     }
 

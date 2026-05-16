@@ -617,6 +617,229 @@
 
     .client-table tbody tr { cursor: pointer; }
 
+    /* Edit Sidebar */
+    .edit-sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 999;
+    }
+    .edit-sidebar-overlay.open { display: block; }
+
+    .edit-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 420px;
+      max-width: 95vw;
+      height: 100vh;
+      background: var(--white);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .edit-sidebar.open { transform: translateX(0); }
+
+    .edit-sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--gray-100);
+      flex-shrink: 0;
+    }
+
+    .edit-sidebar-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .edit-sidebar-close {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; border-radius: 8px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
+    }
+    .edit-sidebar-close:hover { background: var(--gray-200); color: var(--gray-900); }
+
+    .edit-sidebar-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .edit-sidebar-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--gray-100);
+      flex-shrink: 0;
+    }
+
+    .photo-upload-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .photo-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .photo-preview-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      border-radius: 50%;
+    }
+
+    .photo-preview:hover .photo-preview-overlay { opacity: 1; }
+
+    .photo-preview-overlay svg {
+      width: 24px;
+      height: 24px;
+      color: var(--white);
+    }
+
+    .photo-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: var(--white);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .photo-upload-btn:hover { border-color: var(--gray-300); background: var(--gray-50); }
+    .photo-upload-btn svg { width: 14px; height: 14px; }
+
+    .edit-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .edit-section-title:first-child { margin-top: 0; }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .tag-remove {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--purple);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 0;
+      transition: all 0.15s ease;
+    }
+    .tag-remove:hover { background: var(--purple); color: var(--white); }
+
+    .tag-input-row {
+      display: flex;
+      gap: 0.375rem;
+    }
+
+    .tag-input-row input {
+      flex: 1;
+      padding: 0.375rem 0.625rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      outline: none;
+    }
+    .tag-input-row input:focus { border-color: var(--purple); }
+    .tag-input-row input::placeholder { color: var(--gray-400); }
+
+    .tag-add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.375rem 0.625rem;
+      border: 1px solid var(--purple);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--purple);
+      background: var(--white);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .tag-add-btn:hover { background: var(--purple); color: var(--white); }
+
     /* Mobile */
     .mobile-sidebar-toggle {
       display: none;
@@ -990,7 +1213,87 @@
     </div>
   </main>
 
-  <!-- Add/Edit Client Modal -->
+  <!-- Edit Sidebar -->
+  <div class="edit-sidebar-overlay" id="editSidebarOverlay"></div>
+  <div class="edit-sidebar" id="editSidebar">
+    <div class="edit-sidebar-header">
+      <h2 id="editSidebarTitle">Nieuwe Klant</h2>
+      <button class="edit-sidebar-close" id="editSidebarClose">&times;</button>
+    </div>
+    <div class="edit-sidebar-body">
+      <div class="photo-upload-area">
+        <div class="photo-preview" id="photoPreview" style="background: var(--purple);">
+          <span id="photoInitials">?</span>
+          <div class="photo-preview-overlay">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <button class="photo-upload-btn" id="photoUploadBtn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+          Foto wijzigen
+        </button>
+        <input type="file" id="photoFileInput" accept="image/*" style="display:none;">
+      </div>
+
+      <div class="edit-section-title">Persoonsgegevens</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Voornaam</label>
+          <input type="text" id="sidebarFirstName" placeholder="Voornaam">
+        </div>
+        <div class="form-group">
+          <label>Achternaam</label>
+          <input type="text" id="sidebarLastName" placeholder="Achternaam">
+        </div>
+      </div>
+
+      <div class="edit-section-title">Contactgegevens</div>
+      <div class="form-group">
+        <label>E-mailadres</label>
+        <input type="email" id="sidebarEmail" placeholder="naam@voorbeeld.be">
+      </div>
+      <div class="form-group">
+        <label>Telefoonnummer</label>
+        <input type="tel" id="sidebarPhone" placeholder="+32 4XX XX XX XX">
+      </div>
+      <div class="form-group">
+        <label>Adres</label>
+        <input type="text" id="sidebarAddress" placeholder="Straat, Postcode Stad">
+      </div>
+
+      <div class="edit-section-title">Klantinstellingen</div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="sidebarStatus">
+          <option value="active">Actief</option>
+          <option value="vip">VIP</option>
+          <option value="new">Nieuw</option>
+          <option value="inactive">Inactief</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="sidebarType">
+          <option value="Particulier">Particulier</option>
+          <option value="Zakelijk">Zakelijk</option>
+          <option value="VIP">VIP</option>
+        </select>
+      </div>
+
+      <div class="edit-section-title">Tags</div>
+      <div class="tags-container" id="tagsContainer"></div>
+      <div class="tag-input-row">
+        <input type="text" id="tagInput" placeholder="Nieuwe tag toevoegen...">
+        <button class="tag-add-btn" id="tagAddBtn">+ Toevoegen</button>
+      </div>
+    </div>
+    <div class="edit-sidebar-footer">
+      <button class="btn-cancel" id="sidebarCancelBtn">Annuleren</button>
+      <button class="btn-save" id="sidebarSaveBtn">Opslaan</button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Client Modal - kept for backwards compat but hidden -->
   <div class="modal-overlay" id="clientModal">
     <div class="modal">
       <div class="modal-header">
@@ -1076,12 +1379,12 @@
     }
 
     var clients = [
-      { id: 1, firstName: 'Tom', lastName: 'Peeters', email: 'tom.peeters@email.be', phone: '+32 476 12 34 56', status: 'active', activity: 'Vandaag, 14:32', color: 'var(--purple)' },
-      { id: 2, firstName: 'Sophie', lastName: 'Baert', email: 'sophie.baert@email.be', phone: '+32 489 65 43 21', status: 'active', activity: 'Vandaag, 10:15', color: 'var(--orange)' },
-      { id: 3, firstName: 'Marc', lastName: 'Kerkhofs', email: 'marc.kerkhofs@email.be', phone: '+32 471 98 76 54', status: 'vip', activity: 'Gisteren, 16:45', color: '#16a34a' },
-      { id: 4, firstName: 'Laura', lastName: 'Bosmans', email: 'laura.bosmans@email.be', phone: '+32 468 11 22 33', status: 'active', activity: 'Gisteren, 11:20', color: '#2563eb' },
-      { id: 5, firstName: 'Dory', lastName: 'Vermeulen', email: 'dory.vermeulen@email.be', phone: '+32 479 44 55 66', status: 'inactive', activity: '3 dagen geleden', color: 'var(--purple-medium)' },
-      { id: 6, firstName: 'Pieter', lastName: 'Maessen', email: 'pieter.maessen@email.be', phone: '+32 495 77 88 99', status: 'new', activity: '1 week geleden', color: '#dc2626' }
+      { id: 1, firstName: 'Tom', lastName: 'Peeters', email: 'tom.peeters@email.be', phone: '+32 476 12 34 56', status: 'active', activity: 'Vandaag, 14:32', color: 'var(--purple)', address: 'Kerkstraat 45, 3000 Leuven', type: 'Zakelijk', tags: ['Klant', 'Offerte verstuurd'], photo: '' },
+      { id: 2, firstName: 'Sophie', lastName: 'Baert', email: 'sophie.baert@email.be', phone: '+32 489 65 43 21', status: 'active', activity: 'Vandaag, 10:15', color: 'var(--orange)', address: 'Kapellensteenstraat 23, 2000 Antwerpen', type: 'Particulier', tags: ['Klant', 'Afspraak gepland'], photo: '' },
+      { id: 3, firstName: 'Marc', lastName: 'Kerkhofs', email: 'marc.kerkhofs@email.be', phone: '+32 471 98 76 54', status: 'vip', activity: 'Gisteren, 16:45', color: '#16a34a', address: 'Dorpsplein 12, 3500 Hasselt', type: 'VIP', tags: ['VIP', 'Premium pakket'], photo: '' },
+      { id: 4, firstName: 'Laura', lastName: 'Bosmans', email: 'laura.bosmans@email.be', phone: '+32 468 11 22 33', status: 'active', activity: 'Gisteren, 11:20', color: '#2563eb', address: 'Stationsstraat 8, 2800 Mechelen', type: 'Particulier', tags: ['Klant'], photo: '' },
+      { id: 5, firstName: 'Dory', lastName: 'Vermeulen', email: 'dory.vermeulen@email.be', phone: '+32 479 44 55 66', status: 'inactive', activity: '3 dagen geleden', color: 'var(--purple-medium)', address: 'Hoogstraat 34, 9000 Gent', type: 'Zakelijk', tags: ['Inactief', 'Follow-up nodig'], photo: '' },
+      { id: 6, firstName: 'Pieter', lastName: 'Maessen', email: 'pieter.maessen@email.be', phone: '+32 495 77 88 99', status: 'new', activity: '1 week geleden', color: '#dc2626', address: 'Industrieweg 78, 2000 Antwerpen', type: 'Zakelijk', tags: ['Nieuw', 'Lead'], photo: '' }
     ];
 
     var nextId = 7;
@@ -1109,8 +1412,23 @@
         var st = statusMap[c.status] || statusMap.active;
         var tr = document.createElement('tr');
         tr.setAttribute('data-id', c.id);
+        var avatarHtml;
+        if (c.photo) {
+          avatarHtml = '<img src="' + c.photo + '" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">';
+        } else {
+          avatarHtml = '<div class="table-avatar" style="background:' + c.color + ';">' + getInitials(c.firstName, c.lastName) + '</div>';
+        }
+        var tagsHtml = '';
+        if (c.tags && c.tags.length) {
+          tagsHtml = '<div style="display:flex;gap:0.25rem;flex-wrap:wrap;margin-top:0.125rem;">';
+          c.tags.slice(0, 2).forEach(function(t) {
+            tagsHtml += '<span style="font-size:0.6rem;padding:0.1rem 0.35rem;border-radius:4px;background:var(--purple-light);color:var(--purple);font-weight:500;">' + t + '</span>';
+          });
+          if (c.tags.length > 2) tagsHtml += '<span style="font-size:0.6rem;color:var(--gray-400);">+' + (c.tags.length - 2) + '</span>';
+          tagsHtml += '</div>';
+        }
         tr.innerHTML =
-          '<td><div class="table-client"><div class="table-avatar" style="background:' + c.color + ';">' + getInitials(c.firstName, c.lastName) + '</div><div class="table-client-info"><div class="table-client-name">' + c.firstName + ' ' + c.lastName + '</div><div class="table-client-email">' + c.email + '</div></div></div></td>' +
+          '<td><div class="table-client">' + avatarHtml + '<div class="table-client-info"><div class="table-client-name">' + c.firstName + ' ' + c.lastName + '</div><div class="table-client-email">' + c.email + '</div>' + tagsHtml + '</div></div></td>' +
           '<td class="table-phone">' + c.phone + '</td>' +
           '<td class="table-activity">' + c.activity + '</td>' +
           '<td><span class="status-badge ' + st.css + '"><span class="dot"></span>' + st.label + '</span></td>' +
@@ -1159,40 +1477,106 @@
     }
 
     function openAddModal() {
-      editingId = null;
-      document.getElementById('clientModalTitle').textContent = 'Nieuwe Klant';
-      document.getElementById('clientFirstName').value = '';
-      document.getElementById('clientLastName').value = '';
-      document.getElementById('clientEmail').value = '';
-      document.getElementById('clientPhone').value = '';
-      document.getElementById('clientStatus').value = 'new';
-      document.getElementById('clientModal').classList.add('open');
+      openEditSidebar(null);
     }
 
     function openEditModal(id) {
-      var c = findClient(id);
-      if (!c) return;
-      editingId = id;
-      document.getElementById('clientModalTitle').textContent = 'Klant Bewerken';
-      document.getElementById('clientFirstName').value = c.firstName;
-      document.getElementById('clientLastName').value = c.lastName;
-      document.getElementById('clientEmail').value = c.email;
-      document.getElementById('clientPhone').value = c.phone;
-      document.getElementById('clientStatus').value = c.status;
-      document.getElementById('clientModal').classList.add('open');
+      openEditSidebar(id);
     }
 
-    function closeClientModal() {
-      document.getElementById('clientModal').classList.remove('open');
+    var currentTags = [];
+    var currentPhoto = '';
+
+    function openEditSidebar(id) {
+      var sidebar = document.getElementById('editSidebar');
+      var overlay = document.getElementById('editSidebarOverlay');
+      if (id) {
+        var c = findClient(id);
+        if (!c) return;
+        editingId = id;
+        document.getElementById('editSidebarTitle').textContent = 'Klant Bewerken';
+        document.getElementById('sidebarFirstName').value = c.firstName;
+        document.getElementById('sidebarLastName').value = c.lastName;
+        document.getElementById('sidebarEmail').value = c.email;
+        document.getElementById('sidebarPhone').value = c.phone;
+        document.getElementById('sidebarAddress').value = c.address || '';
+        document.getElementById('sidebarStatus').value = c.status;
+        document.getElementById('sidebarType').value = c.type || 'Particulier';
+        currentTags = (c.tags || []).slice();
+        currentPhoto = c.photo || '';
+        updatePhotoPreview(c.color, getInitials(c.firstName, c.lastName));
+      } else {
+        editingId = null;
+        document.getElementById('editSidebarTitle').textContent = 'Nieuwe Klant';
+        document.getElementById('sidebarFirstName').value = '';
+        document.getElementById('sidebarLastName').value = '';
+        document.getElementById('sidebarEmail').value = '';
+        document.getElementById('sidebarPhone').value = '';
+        document.getElementById('sidebarAddress').value = '';
+        document.getElementById('sidebarStatus').value = 'new';
+        document.getElementById('sidebarType').value = 'Particulier';
+        currentTags = [];
+        currentPhoto = '';
+        updatePhotoPreview(colors[clients.length % colors.length], '?');
+      }
+      renderTags();
+      sidebar.classList.add('open');
+      overlay.classList.add('open');
+    }
+
+    function closeEditSidebar() {
+      document.getElementById('editSidebar').classList.remove('open');
+      document.getElementById('editSidebarOverlay').classList.remove('open');
       editingId = null;
     }
 
-    function saveClient() {
-      var first = document.getElementById('clientFirstName').value.trim();
-      var last = document.getElementById('clientLastName').value.trim();
-      var email = document.getElementById('clientEmail').value.trim();
-      var phone = document.getElementById('clientPhone').value.trim();
-      var status = document.getElementById('clientStatus').value;
+    function updatePhotoPreview(bgColor, initials) {
+      var preview = document.getElementById('photoPreview');
+      var initialsEl = document.getElementById('photoInitials');
+      if (currentPhoto) {
+        preview.style.background = 'transparent';
+        initialsEl.innerHTML = '<img src="' + currentPhoto + '" alt="Foto">';
+      } else {
+        preview.style.background = bgColor;
+        initialsEl.textContent = initials;
+      }
+    }
+
+    function renderTags() {
+      var container = document.getElementById('tagsContainer');
+      container.innerHTML = '';
+      currentTags.forEach(function(tag, idx) {
+        var el = document.createElement('span');
+        el.className = 'tag';
+        el.innerHTML = tag + '<button class="tag-remove" data-idx="' + idx + '">&times;</button>';
+        container.appendChild(el);
+      });
+      container.querySelectorAll('.tag-remove').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          currentTags.splice(parseInt(this.getAttribute('data-idx')), 1);
+          renderTags();
+        });
+      });
+    }
+
+    function addTag() {
+      var input = document.getElementById('tagInput');
+      var val = input.value.trim();
+      if (val && currentTags.indexOf(val) === -1) {
+        currentTags.push(val);
+        renderTags();
+        input.value = '';
+      }
+    }
+
+    function saveFromSidebar() {
+      var first = document.getElementById('sidebarFirstName').value.trim();
+      var last = document.getElementById('sidebarLastName').value.trim();
+      var email = document.getElementById('sidebarEmail').value.trim();
+      var phone = document.getElementById('sidebarPhone').value.trim();
+      var address = document.getElementById('sidebarAddress').value.trim();
+      var status = document.getElementById('sidebarStatus').value;
+      var type = document.getElementById('sidebarType').value;
       if (!first || !last) return;
       if (editingId) {
         var c = findClient(editingId);
@@ -1201,7 +1585,11 @@
           c.lastName = last;
           c.email = email || c.email;
           c.phone = phone || c.phone;
+          c.address = address;
           c.status = status;
+          c.type = type;
+          c.tags = currentTags.slice();
+          c.photo = currentPhoto;
         }
       } else {
         clients.push({
@@ -1210,13 +1598,26 @@
           lastName: last,
           email: email || first.toLowerCase() + '.' + last.toLowerCase() + '@email.be',
           phone: phone || '+32 4XX XX XX XX',
+          address: address,
           status: status,
+          type: type,
           activity: 'Zojuist',
-          color: colors[clients.length % colors.length]
+          color: colors[clients.length % colors.length],
+          tags: currentTags.slice(),
+          photo: currentPhoto
         });
       }
-      closeClientModal();
+      closeEditSidebar();
       renderTable();
+    }
+
+    function closeClientModal() {
+      document.getElementById('clientModal').classList.remove('open');
+      editingId = null;
+    }
+
+    function saveClient() {
+      saveFromSidebar();
     }
 
     function openViewModal(id) {
@@ -1224,16 +1625,29 @@
       if (!c) return;
       viewingId = id;
       var st = statusMap[c.status] || statusMap.active;
+      var tagsHtml = '';
+      if (c.tags && c.tags.length) {
+        tagsHtml = '<div class="detail-row"><span class="detail-label">Tags</span><span class="detail-value">';
+        c.tags.forEach(function(t) { tagsHtml += '<span class="tag" style="margin-left:0.25rem;">' + t + '</span>'; });
+        tagsHtml += '</span></div>';
+      }
+      var photoHtml = '';
+      if (c.photo) {
+        photoHtml = '<div style="text-align:center;margin-bottom:1.25rem;"><img src="' + c.photo + '" alt="Foto" style="width:64px;height:64px;border-radius:50%;object-fit:cover;"></div>';
+      } else {
+        photoHtml = '<div style="text-align:center;margin-bottom:1.25rem;"><div style="width:64px;height:64px;border-radius:50%;background:' + c.color + ';display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;color:#fff;">' + getInitials(c.firstName, c.lastName) + '</div></div>';
+      }
       document.getElementById('viewModalTitle').textContent = c.firstName + ' ' + c.lastName;
       document.getElementById('viewModalBody').innerHTML =
-        '<div style="text-align:center;margin-bottom:1.25rem;">' +
-          '<div style="width:64px;height:64px;border-radius:50%;background:' + c.color + ';display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;color:#fff;">' + getInitials(c.firstName, c.lastName) + '</div>' +
-        '</div>' +
+        photoHtml +
         '<div class="detail-row"><span class="detail-label">Naam</span><span class="detail-value">' + c.firstName + ' ' + c.lastName + '</span></div>' +
         '<div class="detail-row"><span class="detail-label">E-mail</span><span class="detail-value">' + c.email + '</span></div>' +
         '<div class="detail-row"><span class="detail-label">Telefoon</span><span class="detail-value">' + c.phone + '</span></div>' +
+        '<div class="detail-row"><span class="detail-label">Adres</span><span class="detail-value">' + (c.address || '-') + '</span></div>' +
+        '<div class="detail-row"><span class="detail-label">Type</span><span class="detail-value">' + (c.type || '-') + '</span></div>' +
         '<div class="detail-row"><span class="detail-label">Status</span><span class="detail-value"><span class="status-badge ' + st.css + '"><span class="dot"></span>' + st.label + '</span></span></div>' +
-        '<div class="detail-row"><span class="detail-label">Laatste activiteit</span><span class="detail-value">' + c.activity + '</span></div>';
+        '<div class="detail-row"><span class="detail-label">Laatste activiteit</span><span class="detail-value">' + c.activity + '</span></div>' +
+        tagsHtml;
       document.getElementById('viewModal').classList.add('open');
     }
 
@@ -1268,6 +1682,39 @@
     document.getElementById('clientModalClose').addEventListener('click', closeClientModal);
     document.getElementById('clientModalCancel').addEventListener('click', closeClientModal);
     document.getElementById('clientModalSave').addEventListener('click', saveClient);
+
+    // Sidebar events
+    document.getElementById('editSidebarClose').addEventListener('click', closeEditSidebar);
+    document.getElementById('sidebarCancelBtn').addEventListener('click', closeEditSidebar);
+    document.getElementById('sidebarSaveBtn').addEventListener('click', saveFromSidebar);
+    document.getElementById('editSidebarOverlay').addEventListener('click', closeEditSidebar);
+
+    // Photo upload
+    document.getElementById('photoUploadBtn').addEventListener('click', function() {
+      document.getElementById('photoFileInput').click();
+    });
+    document.getElementById('photoPreview').addEventListener('click', function() {
+      document.getElementById('photoFileInput').click();
+    });
+    document.getElementById('photoFileInput').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        currentPhoto = ev.target.result;
+        var preview = document.getElementById('photoPreview');
+        var initialsEl = document.getElementById('photoInitials');
+        preview.style.background = 'transparent';
+        initialsEl.innerHTML = '<img src="' + currentPhoto + '" alt="Foto">';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Tags
+    document.getElementById('tagAddBtn').addEventListener('click', addTag);
+    document.getElementById('tagInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+    });
 
     document.getElementById('viewModalClose').addEventListener('click', closeViewModal);
     document.getElementById('viewModalCloseBtn').addEventListener('click', closeViewModal);
