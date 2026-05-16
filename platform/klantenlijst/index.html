@@ -471,6 +471,152 @@
       cursor: pointer;
     }
 
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 16px;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .modal-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; border-radius: 8px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+    .modal-close:hover { background: var(--gray-200); color: var(--gray-900); }
+
+    .modal-body { padding: 1.5rem; }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 0.375rem;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus { border-color: var(--purple); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .btn-cancel {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--white);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .btn-cancel:hover { background: var(--gray-50); border-color: var(--gray-300); }
+
+    .btn-save {
+      padding: 0.5rem 1.25rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--purple);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .btn-save:hover { background: var(--purple-dark); }
+
+    .btn-delete-confirm {
+      padding: 0.5rem 1.25rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--red);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+    .btn-delete-confirm:hover { background: #b91c1c; }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--gray-50);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { font-size: 0.8rem; color: var(--gray-500); font-weight: 500; }
+    .detail-value { font-size: 0.85rem; color: var(--gray-800); font-weight: 500; }
+
+    .client-table tbody tr { cursor: pointer; }
+
     /* Mobile */
     .mobile-sidebar-toggle {
       display: none;
@@ -514,11 +660,7 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <svg viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="8" fill="#7B52AB"/>
-        <path d="M8 12c2-4 6-5 8-4s4 4 2 7-6 4-8 3 0-5 2-6c2-1.5 5 0 4 3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
-      </svg>
-      <span>Reactify</span>
+      <img src="/logo.png" alt="Reactify" style="height: 28px; width: auto; filter: brightness(1.8);">
     </div>
 
     <nav class="sidebar-nav">
@@ -848,6 +990,82 @@
     </div>
   </main>
 
+  <!-- Add/Edit Client Modal -->
+  <div class="modal-overlay" id="clientModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="clientModalTitle">Nieuwe Klant</h2>
+        <button class="modal-close" id="clientModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Voornaam</label>
+            <input type="text" id="clientFirstName" placeholder="Voornaam">
+          </div>
+          <div class="form-group">
+            <label>Achternaam</label>
+            <input type="text" id="clientLastName" placeholder="Achternaam">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>E-mailadres</label>
+          <input type="email" id="clientEmail" placeholder="naam@voorbeeld.be">
+        </div>
+        <div class="form-group">
+          <label>Telefoonnummer</label>
+          <input type="tel" id="clientPhone" placeholder="+32 4XX XX XX XX">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="clientStatus">
+            <option value="active">Actief</option>
+            <option value="vip">VIP</option>
+            <option value="new">Nieuw</option>
+            <option value="inactive">Inactief</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="clientModalCancel">Annuleren</button>
+        <button class="btn-save" id="clientModalSave">Opslaan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Client Modal -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="viewModalTitle">Klant Details</h2>
+        <button class="modal-close" id="viewModalClose">&times;</button>
+      </div>
+      <div class="modal-body" id="viewModalBody">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="viewModalCloseBtn">Sluiten</button>
+        <button class="btn-save" id="viewModalEditBtn">Bewerken</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Klant Verwijderen</h2>
+        <button class="modal-close" id="deleteModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--gray-700);" id="deleteModalText">Weet je zeker dat je deze klant wilt verwijderen?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="deleteModalCancel">Annuleren</button>
+        <button class="btn-delete-confirm" id="deleteModalConfirm">Verwijderen</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const toggle = document.getElementById('sidebarToggle');
     const sidebar = document.getElementById('sidebar');
@@ -856,6 +1074,230 @@
         sidebar.classList.toggle('open');
       });
     }
+
+    var clients = [
+      { id: 1, firstName: 'Tom', lastName: 'Peeters', email: 'tom.peeters@email.be', phone: '+32 476 12 34 56', status: 'active', activity: 'Vandaag, 14:32', color: 'var(--purple)' },
+      { id: 2, firstName: 'Sophie', lastName: 'Baert', email: 'sophie.baert@email.be', phone: '+32 489 65 43 21', status: 'active', activity: 'Vandaag, 10:15', color: 'var(--orange)' },
+      { id: 3, firstName: 'Marc', lastName: 'Kerkhofs', email: 'marc.kerkhofs@email.be', phone: '+32 471 98 76 54', status: 'vip', activity: 'Gisteren, 16:45', color: '#16a34a' },
+      { id: 4, firstName: 'Laura', lastName: 'Bosmans', email: 'laura.bosmans@email.be', phone: '+32 468 11 22 33', status: 'active', activity: 'Gisteren, 11:20', color: '#2563eb' },
+      { id: 5, firstName: 'Dory', lastName: 'Vermeulen', email: 'dory.vermeulen@email.be', phone: '+32 479 44 55 66', status: 'inactive', activity: '3 dagen geleden', color: 'var(--purple-medium)' },
+      { id: 6, firstName: 'Pieter', lastName: 'Maessen', email: 'pieter.maessen@email.be', phone: '+32 495 77 88 99', status: 'new', activity: '1 week geleden', color: '#dc2626' }
+    ];
+
+    var nextId = 7;
+    var editingId = null;
+    var viewingId = null;
+    var deletingId = null;
+
+    var statusMap = {
+      active: { label: 'Actief', css: 'active' },
+      vip: { label: 'VIP', css: 'vip' },
+      inactive: { label: 'Inactief', css: 'inactive' },
+      'new': { label: 'Nieuw', css: 'new' }
+    };
+
+    var colors = ['var(--purple)', 'var(--orange)', '#16a34a', '#2563eb', 'var(--purple-medium)', '#dc2626', '#0891b2', '#7c3aed'];
+
+    function getInitials(first, last) {
+      return (first.charAt(0) + last.charAt(0)).toUpperCase();
+    }
+
+    function renderTable() {
+      var tbody = document.querySelector('.client-table tbody');
+      tbody.innerHTML = '';
+      clients.forEach(function(c) {
+        var st = statusMap[c.status] || statusMap.active;
+        var tr = document.createElement('tr');
+        tr.setAttribute('data-id', c.id);
+        tr.innerHTML =
+          '<td><div class="table-client"><div class="table-avatar" style="background:' + c.color + ';">' + getInitials(c.firstName, c.lastName) + '</div><div class="table-client-info"><div class="table-client-name">' + c.firstName + ' ' + c.lastName + '</div><div class="table-client-email">' + c.email + '</div></div></div></td>' +
+          '<td class="table-phone">' + c.phone + '</td>' +
+          '<td class="table-activity">' + c.activity + '</td>' +
+          '<td><span class="status-badge ' + st.css + '"><span class="dot"></span>' + st.label + '</span></td>' +
+          '<td><div class="action-btns">' +
+            '<button class="action-btn btn-view" title="Bekijken" data-id="' + c.id + '"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg></button>' +
+            '<button class="action-btn btn-edit" title="Bewerken" data-id="' + c.id + '"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg></button>' +
+            '<button class="action-btn btn-del" title="Verwijderen" data-id="' + c.id + '"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></button>' +
+          '</div></td>';
+        tbody.appendChild(tr);
+      });
+      document.querySelector('.pagination-info').textContent = clients.length + ' van ' + clients.length + ' klanten';
+      bindTableEvents();
+    }
+
+    function bindTableEvents() {
+      document.querySelectorAll('.btn-view').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openViewModal(parseInt(this.getAttribute('data-id')));
+        });
+      });
+      document.querySelectorAll('.btn-edit').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openEditModal(parseInt(this.getAttribute('data-id')));
+        });
+      });
+      document.querySelectorAll('.btn-del').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openDeleteModal(parseInt(this.getAttribute('data-id')));
+        });
+      });
+      document.querySelectorAll('.client-table tbody tr').forEach(function(tr) {
+        tr.addEventListener('click', function() {
+          openEditModal(parseInt(this.getAttribute('data-id')));
+        });
+      });
+    }
+
+    function findClient(id) {
+      for (var i = 0; i < clients.length; i++) {
+        if (clients[i].id === id) return clients[i];
+      }
+      return null;
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('clientModalTitle').textContent = 'Nieuwe Klant';
+      document.getElementById('clientFirstName').value = '';
+      document.getElementById('clientLastName').value = '';
+      document.getElementById('clientEmail').value = '';
+      document.getElementById('clientPhone').value = '';
+      document.getElementById('clientStatus').value = 'new';
+      document.getElementById('clientModal').classList.add('open');
+    }
+
+    function openEditModal(id) {
+      var c = findClient(id);
+      if (!c) return;
+      editingId = id;
+      document.getElementById('clientModalTitle').textContent = 'Klant Bewerken';
+      document.getElementById('clientFirstName').value = c.firstName;
+      document.getElementById('clientLastName').value = c.lastName;
+      document.getElementById('clientEmail').value = c.email;
+      document.getElementById('clientPhone').value = c.phone;
+      document.getElementById('clientStatus').value = c.status;
+      document.getElementById('clientModal').classList.add('open');
+    }
+
+    function closeClientModal() {
+      document.getElementById('clientModal').classList.remove('open');
+      editingId = null;
+    }
+
+    function saveClient() {
+      var first = document.getElementById('clientFirstName').value.trim();
+      var last = document.getElementById('clientLastName').value.trim();
+      var email = document.getElementById('clientEmail').value.trim();
+      var phone = document.getElementById('clientPhone').value.trim();
+      var status = document.getElementById('clientStatus').value;
+      if (!first || !last) return;
+      if (editingId) {
+        var c = findClient(editingId);
+        if (c) {
+          c.firstName = first;
+          c.lastName = last;
+          c.email = email || c.email;
+          c.phone = phone || c.phone;
+          c.status = status;
+        }
+      } else {
+        clients.push({
+          id: nextId++,
+          firstName: first,
+          lastName: last,
+          email: email || first.toLowerCase() + '.' + last.toLowerCase() + '@email.be',
+          phone: phone || '+32 4XX XX XX XX',
+          status: status,
+          activity: 'Zojuist',
+          color: colors[clients.length % colors.length]
+        });
+      }
+      closeClientModal();
+      renderTable();
+    }
+
+    function openViewModal(id) {
+      var c = findClient(id);
+      if (!c) return;
+      viewingId = id;
+      var st = statusMap[c.status] || statusMap.active;
+      document.getElementById('viewModalTitle').textContent = c.firstName + ' ' + c.lastName;
+      document.getElementById('viewModalBody').innerHTML =
+        '<div style="text-align:center;margin-bottom:1.25rem;">' +
+          '<div style="width:64px;height:64px;border-radius:50%;background:' + c.color + ';display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;color:#fff;">' + getInitials(c.firstName, c.lastName) + '</div>' +
+        '</div>' +
+        '<div class="detail-row"><span class="detail-label">Naam</span><span class="detail-value">' + c.firstName + ' ' + c.lastName + '</span></div>' +
+        '<div class="detail-row"><span class="detail-label">E-mail</span><span class="detail-value">' + c.email + '</span></div>' +
+        '<div class="detail-row"><span class="detail-label">Telefoon</span><span class="detail-value">' + c.phone + '</span></div>' +
+        '<div class="detail-row"><span class="detail-label">Status</span><span class="detail-value"><span class="status-badge ' + st.css + '"><span class="dot"></span>' + st.label + '</span></span></div>' +
+        '<div class="detail-row"><span class="detail-label">Laatste activiteit</span><span class="detail-value">' + c.activity + '</span></div>';
+      document.getElementById('viewModal').classList.add('open');
+    }
+
+    function closeViewModal() {
+      document.getElementById('viewModal').classList.remove('open');
+      viewingId = null;
+    }
+
+    function openDeleteModal(id) {
+      var c = findClient(id);
+      if (!c) return;
+      deletingId = id;
+      document.getElementById('deleteModalText').textContent = 'Weet je zeker dat je ' + c.firstName + ' ' + c.lastName + ' wilt verwijderen?';
+      document.getElementById('deleteModal').classList.add('open');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('open');
+      deletingId = null;
+    }
+
+    function confirmDelete() {
+      if (deletingId) {
+        clients = clients.filter(function(c) { return c.id !== deletingId; });
+        closeDeleteModal();
+        renderTable();
+      }
+    }
+
+    // Bind modal events
+    document.querySelector('.btn-new-client').addEventListener('click', openAddModal);
+    document.getElementById('clientModalClose').addEventListener('click', closeClientModal);
+    document.getElementById('clientModalCancel').addEventListener('click', closeClientModal);
+    document.getElementById('clientModalSave').addEventListener('click', saveClient);
+
+    document.getElementById('viewModalClose').addEventListener('click', closeViewModal);
+    document.getElementById('viewModalCloseBtn').addEventListener('click', closeViewModal);
+    document.getElementById('viewModalEditBtn').addEventListener('click', function() {
+      closeViewModal();
+      if (viewingId) openEditModal(viewingId);
+    });
+
+    document.getElementById('deleteModalClose').addEventListener('click', closeDeleteModal);
+    document.getElementById('deleteModalCancel').addEventListener('click', closeDeleteModal);
+    document.getElementById('deleteModalConfirm').addEventListener('click', confirmDelete);
+
+    // Close modals on overlay click
+    ['clientModal', 'viewModal', 'deleteModal'].forEach(function(id) {
+      document.getElementById(id).addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+      });
+    });
+
+    // Search filter
+    document.querySelector('.search-box input').addEventListener('input', function() {
+      var q = this.value.toLowerCase();
+      document.querySelectorAll('.client-table tbody tr').forEach(function(tr) {
+        var text = tr.textContent.toLowerCase();
+        tr.style.display = text.indexOf(q) !== -1 ? '' : 'none';
+      });
+    });
+
+    // Initial render
+    renderTable();
   </script>
 </body>
 </html>

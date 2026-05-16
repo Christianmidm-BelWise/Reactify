@@ -821,11 +821,7 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <svg viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="8" fill="#7B52AB"/>
-        <path d="M8 12c2-4 6-5 8-4s4 4 2 7-6 4-8 3 0-5 2-6c2-1.5 5 0 4 3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
-      </svg>
-      <span>Reactify</span>
+      <img src="/logo.png" alt="Reactify" style="height: 28px; width: auto; filter: brightness(1.8);">
     </div>
 
     <nav class="sidebar-nav">
@@ -1178,6 +1174,262 @@
         sidebar.classList.toggle('open');
       });
     }
+
+    var conversations = {
+      sophie: {
+        name: 'Sophie Baert',
+        initials: 'SB',
+        color: 'var(--orange)',
+        phone: '+32 476 12 34 56',
+        email: 'sophie.baert@email.com',
+        address: 'Kapellensteenstraat 23, 2000 Antwerpen',
+        type: 'Particulier',
+        lastActivity: 'Vandaag om 10:44',
+        badge: 'e-mail',
+        selfPct: 60,
+        answerPct: 82,
+        messages: [
+          { type: 'date', text: 'Vandaag' },
+          { type: 'incoming', text: 'Hallo, ik wil graag een afspraak maken voor een installatie van onze nieuwe software. Wanneer zou dit kunnen?', time: '09:12' },
+          { type: 'incoming', text: 'Onze Sophie, u kan dit je doenemen hier in conversatie. Wanneer zou het voor u het beste uitkomen voor een telefonisch adviesgesprek?', time: '09:15' },
+          { type: 'outgoing', text: 'Top! Ik heb dinsdag 10:00 of 15:30 beschikbaar, past het beste voor jou?', time: '10:02' },
+          { type: 'incoming', text: 'Dinsdag om 10:00 is perfect. Waar vindt het gesprek plaats?', time: '10:15' },
+          { type: 'outgoing', text: 'Prima, dan plannen we je in de dinsdag om 10:00. Tot dan!', time: '10:18' }
+        ]
+      },
+      tom: {
+        name: 'Tom Peeters',
+        initials: 'TP',
+        color: 'var(--purple)',
+        phone: '+32 476 12 34 56',
+        email: 'tom.peeters@email.be',
+        address: 'Kerkstraat 45, 3000 Leuven',
+        type: 'Zakelijk',
+        lastActivity: 'Vandaag om 13:15',
+        badge: 'sms',
+        selfPct: 45,
+        answerPct: 90,
+        messages: [
+          { type: 'date', text: 'Vandaag' },
+          { type: 'incoming', text: 'Hallo, ik heb jullie offerte ontvangen. Kan ik die nog aanpassen?', time: '12:30' },
+          { type: 'outgoing', text: 'Ja natuurlijk! Wat zou je graag willen aanpassen?', time: '12:45' },
+          { type: 'incoming', text: 'Ik wil graag een extra module toevoegen aan het pakket.', time: '13:00' },
+          { type: 'outgoing', text: 'Dat kan zeker. Ik stuur je een aangepaste offerte door.', time: '13:10' },
+          { type: 'incoming', text: 'Bedankt voor de snelle reactie!', time: '13:15' }
+        ]
+      },
+      marc: {
+        name: 'Marc Kerkhofs',
+        initials: 'MK',
+        color: '#16a34a',
+        phone: '+32 471 98 76 54',
+        email: 'marc.kerkhofs@email.be',
+        address: 'Dorpsplein 12, 3500 Hasselt',
+        type: 'VIP',
+        lastActivity: 'Gisteren om 16:45',
+        badge: 'chat',
+        selfPct: 75,
+        answerPct: 68,
+        messages: [
+          { type: 'date', text: 'Gisteren' },
+          { type: 'incoming', text: 'Kan ik meer informatie krijgen over de verschillende offertes?', time: '15:30' },
+          { type: 'outgoing', text: 'Uiteraard! Welk pakket had je in gedachten?', time: '15:45' },
+          { type: 'incoming', text: 'Het Premium pakket lijkt interessant, maar ik wil de details weten.', time: '16:00' },
+          { type: 'outgoing', text: 'Ik stuur je alle details via e-mail. Check je inbox!', time: '16:30' },
+          { type: 'incoming', text: 'Top, bedankt!', time: '16:45' }
+        ]
+      },
+      laura: {
+        name: 'Laura Bosmans',
+        initials: 'LB',
+        color: '#2563eb',
+        phone: '+32 468 11 22 33',
+        email: 'laura.bosmans@email.be',
+        address: 'Stationsstraat 8, 2800 Mechelen',
+        type: 'Particulier',
+        lastActivity: 'Gisteren om 11:20',
+        badge: 'e-mail',
+        selfPct: 50,
+        answerPct: 77,
+        messages: [
+          { type: 'date', text: 'Gisteren' },
+          { type: 'incoming', text: 'Ik heb nog enkele bemerkingen over het contract.', time: '10:00' },
+          { type: 'outgoing', text: 'Geen probleem, wat zijn je opmerkingen?', time: '10:30' },
+          { type: 'incoming', text: 'De leveringsvoorwaarden zijn niet helemaal duidelijk.', time: '10:45' },
+          { type: 'outgoing', text: 'Ik verduidelijk dat graag. De levertermijn is standaard 5 werkdagen.', time: '11:00' },
+          { type: 'incoming', text: 'Dat is duidelijk, bedankt!', time: '11:20' }
+        ]
+      },
+      dory: {
+        name: 'Dory Vermeulen',
+        initials: 'DV',
+        color: 'var(--purple-medium)',
+        phone: '+32 479 44 55 66',
+        email: 'dory.vermeulen@email.be',
+        address: 'Hoogstraat 34, 9000 Gent',
+        type: 'Zakelijk',
+        lastActivity: '2 dagen geleden',
+        badge: 'sms',
+        selfPct: 30,
+        answerPct: 55,
+        messages: [
+          { type: 'date', text: '2 dagen geleden' },
+          { type: 'incoming', text: 'Hallo, ik was het bijna vergeten maar we moeten nog een afspraak plannen.', time: '14:00' },
+          { type: 'outgoing', text: 'Geen probleem! Wanneer zou het jou passen?', time: '14:15' },
+          { type: 'incoming', text: 'Volgende week dinsdag of woensdag zou goed zijn.', time: '14:30' },
+          { type: 'outgoing', text: 'Ik plan je in voor woensdag om 11:00. Past dat?', time: '14:45' },
+          { type: 'incoming', text: 'Prima, het was vergeten!', time: '15:00' }
+        ]
+      },
+      julia: {
+        name: 'Julia Maes',
+        initials: 'JM',
+        color: '#16a34a',
+        phone: '+32 488 99 88 77',
+        email: 'julia.maes@email.be',
+        address: 'Marktplein 5, 8000 Brugge',
+        type: 'Particulier',
+        lastActivity: '3 dagen geleden',
+        badge: 'chat',
+        selfPct: 80,
+        answerPct: 92,
+        messages: [
+          { type: 'date', text: '3 dagen geleden' },
+          { type: 'incoming', text: 'Bedankt voor de hulp bij het instellen van het systeem!', time: '09:00' },
+          { type: 'outgoing', text: 'Graag gedaan! Laat het weten als je nog vragen hebt.', time: '09:30' },
+          { type: 'incoming', text: 'Alles werkt nu perfect. Heel tevreden!', time: '10:00' }
+        ]
+      },
+      pieter: {
+        name: 'Pieter Klassen',
+        initials: 'PK',
+        color: '#dc2626',
+        phone: '+32 495 77 88 99',
+        email: 'pieter.klassen@email.be',
+        address: 'Industrieweg 78, 2000 Antwerpen',
+        type: 'Zakelijk',
+        lastActivity: '1 week geleden',
+        badge: 'e-mail',
+        selfPct: 25,
+        answerPct: 40,
+        messages: [
+          { type: 'date', text: '1 week geleden' },
+          { type: 'incoming', text: 'Ik heb de afspraak bevestigd voor volgende week.', time: '11:00' },
+          { type: 'outgoing', text: 'Super, we kijken ernaar uit! Heb je nog vragen vooraf?', time: '11:30' },
+          { type: 'incoming', text: 'Nee, alles is duidelijk. Tot dan!', time: '12:00' }
+        ]
+      }
+    };
+
+    var convKeys = ['sophie', 'tom', 'marc', 'laura', 'dory', 'julia', 'pieter'];
+    var activeConv = 'sophie';
+
+    function switchConversation(key) {
+      activeConv = key;
+      var c = conversations[key];
+
+      document.querySelectorAll('.conv-item').forEach(function(item, idx) {
+        if (convKeys[idx] === key) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      var chatHeader = document.querySelector('.chat-header');
+      chatHeader.innerHTML =
+        '<div class="chat-header-avatar" style="background:' + c.color + ';">' + c.initials + '</div>' +
+        '<div class="chat-header-info">' +
+          '<div class="chat-header-name">' + c.name + '</div>' +
+          '<div class="chat-header-details">' +
+            '<span class="chat-header-badge">' + c.badge + '</span>' +
+            '<span>' + c.phone + '</span>' +
+          '</div>' +
+        '</div>';
+
+      var msgContainer = document.querySelector('.chat-messages');
+      msgContainer.innerHTML = '';
+      c.messages.forEach(function(m) {
+        if (m.type === 'date') {
+          var div = document.createElement('div');
+          div.className = 'chat-date';
+          div.textContent = m.text;
+          msgContainer.appendChild(div);
+        } else {
+          var div = document.createElement('div');
+          div.className = 'chat-msg ' + m.type;
+          div.innerHTML = m.text + '<div class="chat-msg-time">' + m.time + '</div>';
+          msgContainer.appendChild(div);
+        }
+      });
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+
+      var profilePanel = document.querySelector('.profile-panel');
+      if (profilePanel) {
+        profilePanel.querySelector('.profile-avatar').style.background = c.color;
+        profilePanel.querySelector('.profile-avatar').textContent = c.initials;
+        profilePanel.querySelector('.profile-name').textContent = c.name;
+        profilePanel.querySelector('.profile-phone').textContent = c.phone;
+        profilePanel.querySelector('.profile-email').textContent = c.email;
+        var details = profilePanel.querySelectorAll('.profile-detail-value');
+        if (details[0]) details[0].textContent = c.address;
+        if (details[1]) details[1].textContent = c.type;
+        if (details[2]) details[2].textContent = c.lastActivity;
+        var fills = profilePanel.querySelectorAll('.progress-fill');
+        var values = profilePanel.querySelectorAll('.progress-value');
+        if (fills[0]) fills[0].style.width = c.selfPct + '%';
+        if (values[0]) values[0].textContent = c.selfPct + '%';
+        if (fills[1]) fills[1].style.width = c.answerPct + '%';
+        if (values[1]) values[1].textContent = c.answerPct + '%';
+      }
+    }
+
+    document.querySelectorAll('.conv-item').forEach(function(item, idx) {
+      item.addEventListener('click', function() {
+        switchConversation(convKeys[idx]);
+      });
+    });
+
+    // Tab filtering
+    document.querySelectorAll('.conv-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.conv-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        var filter = this.textContent.trim().toLowerCase();
+        document.querySelectorAll('.conv-item').forEach(function(item, idx) {
+          var key = convKeys[idx];
+          var conv = conversations[key];
+          if (filter === 'alles' || conv.badge === filter) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Send message
+    var chatInput = document.querySelector('.chat-input input');
+    var sendBtn = document.querySelector('.chat-send-btn');
+    function sendMessage() {
+      var text = chatInput.value.trim();
+      if (!text) return;
+      var c = conversations[activeConv];
+      var now = new Date();
+      var time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+      c.messages.push({ type: 'outgoing', text: text, time: time });
+      var msgContainer = document.querySelector('.chat-messages');
+      var div = document.createElement('div');
+      div.className = 'chat-msg outgoing';
+      div.innerHTML = text + '<div class="chat-msg-time">' + time + '</div>';
+      msgContainer.appendChild(div);
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+      chatInput.value = '';
+    }
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') sendMessage();
+    });
   </script>
 </body>
 </html>

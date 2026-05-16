@@ -285,6 +285,7 @@
     }
 
     .client-item:hover { background: var(--gray-50); }
+    .client-item { cursor: pointer; }
 
     .client-avatar {
       width: 36px;
@@ -313,6 +314,7 @@
     }
 
     .inbox-item:hover { background: var(--gray-50); }
+    .inbox-item { cursor: pointer; }
 
     .inbox-avatar {
       width: 36px;
@@ -409,11 +411,7 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <svg viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="8" fill="#7B52AB"/>
-        <path d="M8 12c2-4 6-5 8-4s4 4 2 7-6 4-8 3 0-5 2-6c2-1.5 5 0 4 3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
-      </svg>
-      <span>Reactify</span>
+      <img src="/logo.png" alt="Reactify" style="height: 28px; width: auto; filter: brightness(1.8);">
     </div>
 
     <nav class="sidebar-nav">
@@ -662,6 +660,18 @@
         sidebar.classList.toggle('open');
       });
     }
+
+    document.querySelectorAll('.client-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        window.location.href = '/platform/klantenlijst/';
+      });
+    });
+
+    document.querySelectorAll('.inbox-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        window.location.href = '/platform/inbox/';
+      });
+    });
   </script>
 </body>
 </html>
