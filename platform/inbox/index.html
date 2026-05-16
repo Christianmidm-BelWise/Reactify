@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reactify Platform - Beheer je klantgesprekken en berichten.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Inbox | Reactify</title>
+  <style>
+    :root {
+      --purple-dark: #3D1D72;
+      --purple: #5B2E91;
+      --purple-medium: #7B52AB;
+      --purple-light: #E8DCF5;
+      --purple-bg: #F5F0FA;
+      --orange: #F5A623;
+      --orange-dark: #E0941A;
+      --orange-light: #FFF3DC;
+      --white: #FFFFFF;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --blue: #2563eb;
+      --blue-light: #dbeafe;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    *, *:before, *:after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      line-height: 1.6;
+      background: var(--gray-50);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: var(--purple-dark);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-logo svg { width: 32px; height: 32px; flex-shrink: 0; }
+    .sidebar-logo span { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 0 8px 8px 0;
+      margin-right: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-link:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+    .sidebar-link.active { color: var(--white); background: var(--purple); }
+    .sidebar-link svg { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.8; }
+    .sidebar-link.active svg { opacity: 1; }
+    .sidebar-spacer { flex: 1; }
+
+    .sidebar-user {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .user-info { line-height: 1.3; }
+    .user-name { font-weight: 600; font-size: 0.9rem; }
+    .user-role { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      margin-left: 240px;
+      padding: 1.5rem 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .top-bar-left h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.125rem;
+    }
+
+    .top-bar-left p {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .top-search {
+      position: relative;
+    }
+
+    .top-search svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--gray-400);
+    }
+
+    .top-search input {
+      width: 240px;
+      padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .top-search input::placeholder { color: var(--gray-400); }
+    .top-search input:focus { border-color: var(--purple); }
+
+    .notification-btn {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .notification-btn:hover { border-color: var(--gray-300); color: var(--gray-700); }
+    .notification-btn svg { width: 18px; height: 18px; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.purple { background: var(--purple-light); color: var(--purple); }
+    .stat-icon.orange { background: var(--orange-light); color: var(--orange-dark); }
+    .stat-icon.green { background: var(--green-light); color: var(--green); }
+    .stat-icon.blue { background: var(--blue-light); color: var(--blue); }
+
+    .stat-info { line-height: 1.3; }
+    .stat-label { font-size: 0.75rem; color: var(--gray-600); font-weight: 500; }
+    .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--gray-900); }
+    .stat-change { font-size: 0.7rem; color: var(--green); font-weight: 500; }
+
+    /* Inbox Layout */
+    .inbox-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr 280px;
+      gap: 1.25rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .inbox-panel {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Conversation List */
+    .conv-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--gray-100);
+      padding: 0 1rem;
+    }
+
+    .conv-tab {
+      padding: 0.75rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gray-500);
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .conv-tab:hover { color: var(--gray-700); }
+    .conv-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .conv-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid var(--gray-50);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .conv-item:hover { background: var(--gray-50); }
+    .conv-item.active { background: var(--purple-bg); }
+
+    .conv-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .conv-content { flex: 1; min-width: 0; }
+
+    .conv-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.125rem;
+    }
+
+    .conv-name { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
+    .conv-time { font-size: 0.7rem; color: var(--gray-400); white-space: nowrap; flex-shrink: 0; }
+
+    .conv-preview {
+      font-size: 0.78rem;
+      color: var(--gray-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    .conv-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .conv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    .conv-badge.online { background: var(--green-light); color: var(--green); }
+
+    .conv-footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--gray-100);
+      text-align: center;
+    }
+
+    .conv-footer a {
+      font-size: 0.8rem;
+      color: var(--purple);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .conv-footer a:hover { color: var(--orange); }
+
+    /* Chat Panel */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .chat-header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 600; font-size: 0.95rem; color: var(--gray-900); }
+
+    .chat-header-details {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .chat-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .chat-date {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--gray-400);
+      font-weight: 500;
+      padding: 0.5rem 0;
+    }
+
+    .chat-msg {
+      max-width: 75%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .chat-msg.incoming {
+      background: var(--gray-100);
+      color: var(--gray-800);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-msg.outgoing {
+      background: var(--purple);
+      color: var(--white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-msg-time {
+      font-size: 0.65rem;
+      margin-top: 0.375rem;
+      opacity: 0.6;
+    }
+
+    .chat-msg.outgoing .chat-msg-time { text-align: right; }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .chat-input-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--gray-400);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input-btn:hover { background: var(--gray-100); color: var(--gray-600); }
+    .chat-input-btn svg { width: 18px; height: 18px; }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      background: var(--gray-50);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .chat-input input::placeholder { color: var(--gray-400); }
+    .chat-input input:focus { border-color: var(--purple); background: var(--white); }
+
+    .chat-send-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 8px;
+      background: var(--purple);
+      color: var(--white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-send-btn:hover { background: var(--purple-dark); }
+    .chat-send-btn svg { width: 16px; height: 16px; }
+
+    /* Client Profile Panel */
+    .profile-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-header-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-header-section h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .profile-card {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--gray-900);
+      margin-bottom: 0.125rem;
+    }
+
+    .profile-phone {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-email {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .profile-action-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .profile-action-btn:hover { border-color: var(--gray-300); color: var(--gray-700); }
+    .profile-action-btn svg { width: 16px; height: 16px; }
+
+    .profile-details {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.375rem 0;
+    }
+
+    .profile-detail-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .profile-detail-value {
+      font-size: 0.8rem;
+      color: var(--gray-800);
+      font-weight: 500;
+      text-align: right;
+      max-width: 60%;
+    }
+
+    .profile-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-status-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .status-badge-small {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    .status-badge-small.active { background: var(--green-light); color: var(--green); }
+
+    .progress-row {
+      margin-bottom: 0.625rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .progress-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .progress-value {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--gray-100);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-fill.purple { background: var(--purple); }
+    .progress-fill.green { background: var(--green); }
+
+    .profile-activity {
+      padding: 1rem 1.25rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.625rem;
+      padding: 0.375rem 0;
+    }
+
+    .activity-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.green { background: var(--green); }
+    .activity-dot.purple { background: var(--purple); }
+    .activity-dot.orange { background: var(--orange); }
+
+    .activity-text {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .activity-date {
+      font-size: 0.65rem;
+      color: var(--gray-400);
+    }
+
+    .profile-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--gray-100);
+      margin-top: auto;
+    }
+
+    .btn-new-convo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.625rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--green);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+
+    .btn-new-convo:hover { background: #15803d; }
+    .btn-new-convo svg { width: 16px; height: 16px; }
+
+    /* Mobile */
+    .mobile-sidebar-toggle {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--purple);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 1200px) {
+      .inbox-layout { grid-template-columns: 280px 1fr; }
+      .profile-panel { display: none; }
+    }
+
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .mobile-sidebar-toggle { display: inline-flex; }
+      .inbox-layout { grid-template-columns: 1fr; }
+      .conv-panel { display: none; }
+      .conv-panel.mobile-show { display: flex; }
+      .chat-panel.mobile-hide { display: none; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .top-search input { width: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#7B52AB"/>
+        <path d="M8 12c2-4 6-5 8-4s4 4 2 7-6 4-8 3 0-5 2-6c2-1.5 5 0 4 3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span>Reactify</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/platform/" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        Dashboard
+      </a>
+      <a href="/platform/klantenlijst/" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        Klanten
+      </a>
+      <a href="/platform/inbox/" class="sidebar-link active">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+        Inbox
+      </a>
+      <a href="#" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+        Agenda
+      </a>
+
+      <div class="sidebar-spacer"></div>
+
+      <a href="#" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        Instellingen
+      </a>
+      <a href="#" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+        Help
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">BD</div>
+      <div class="user-info">
+        <div class="user-name">Bob Demo</div>
+        <div class="user-role">Beheerder</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <button class="mobile-sidebar-toggle" id="sidebarToggle">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+      Menu
+    </button>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <h1>Inbox</h1>
+        <p>Beheer al je klantgesprekken op één plaats.</p>
+      </div>
+      <div class="top-bar-right">
+        <div class="top-search">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+          <input type="text" placeholder="Zoek klanten, berichten...">
+        </div>
+        <button class="notification-btn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon purple">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Open gesprekken</div>
+          <div class="stat-value">18</div>
+          <div class="stat-change">+6 sinds gisteren</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Ongelezen</div>
+          <div class="stat-value">6</div>
+          <div class="stat-change">+2 vorige week</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">% afgehandeld deze week</div>
+          <div class="stat-value">74%</div>
+          <div class="stat-change">+5% vorige week</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inbox 3-Column Layout -->
+    <div class="inbox-layout">
+
+      <!-- Left: Conversation List -->
+      <div class="inbox-panel conv-panel">
+        <div class="conv-tabs">
+          <button class="conv-tab active">Alles</button>
+          <button class="conv-tab">SMS</button>
+          <button class="conv-tab">E-mail</button>
+          <button class="conv-tab">Chat</button>
+        </div>
+        <div class="conv-list">
+          <div class="conv-item active">
+            <div class="conv-avatar" style="background: var(--orange);">SB</div>
+            <div class="conv-content">
+              <div class="conv-header">
+                <span class="conv-name">Sophie Baert</span>
+                <span class="conv-time">10:44</span>
+              </div>
+              <div class="conv-preview">Ik wil graag een afspraak maken...</div>
+              <div class="conv-meta">
+                <span class="conv-badge online">
+                  <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;"></span>
+                  Online
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-avatar" style="background: var(--purple);">TP</div>
+            <div class="conv-content">
+              <div class="conv-header">
+                <span class="conv-name">Tom Peeters</span>
+                <span class="conv-time">13:15</span>
+              </div>
+              <div class="conv-preview">Bedankt voor de snelle reactie!</div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-avatar" style="background: #16a34a;">MK</div>
+            <div class="conv-content">
+              <div class="conv-header">
+                <span class="conv-name">Marc Kerkhofs</span>
+                <span class="conv-time">Gisteren</span>
+              </div>
+              <div class="conv-preview">Kan ik de meer info die oferten?</div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-avatar" style="background: #2563eb;">LB</div>
+            <div class="conv-content">
+              <div class="conv-header">
+                <span class="conv-name">Laura Bosmans</span>
+                <span class="conv-time">Gisteren</span>
+              </div>
+              <div class="conv-preview">Ik heb nog enkele bemerkingen...</div>
+              <div class="conv-meta">
+                <span class="conv-badge online">
+                  <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;"></span>
+                  Gelezen
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-avatar" style="background: var(--purple-medium);">DV</div>
+            <div class="conv-content">
+              <div class="conv-header">
+                <span class="conv-name">Dory Vermeulen</span>
+                <span class="conv-time">2 dagen</span>
+              </div>
+              <div class="conv-preview">Prima, het was vergeten!</div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-avatar" style="background: #16a34a;">JM</div>
+            <div class="conv-content">
+              <div class="conv-header">
+                <span class="conv-name">Julia Maes</span>
+                <span class="conv-time">3 dagen</span>
+              </div>
+              <div class="conv-preview">Bedankt voor de hulp!</div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-avatar" style="background: #dc2626;">PK</div>
+            <div class="conv-content">
+              <div class="conv-header">
+                <span class="conv-name">Pieter Klassen</span>
+                <span class="conv-time">1 week</span>
+              </div>
+              <div class="conv-preview">Ik heb de afspraak bevestigd...</div>
+            </div>
+          </div>
+        </div>
+        <div class="conv-footer">
+          <a href="#">Bekijk alle gesprekken</a>
+        </div>
+      </div>
+
+      <!-- Middle: Chat View -->
+      <div class="inbox-panel chat-panel">
+        <div class="chat-header">
+          <div class="chat-header-avatar" style="background: var(--orange);">SB</div>
+          <div class="chat-header-info">
+            <div class="chat-header-name">Sophie Baert</div>
+            <div class="chat-header-details">
+              <span class="chat-header-badge">e-mail</span>
+              <span>+32 476 12 34 56</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-messages">
+          <div class="chat-date">Vandaag</div>
+          <div class="chat-msg incoming">
+            Hallo, ik wil graag een afspraak maken voor een installatie van onze nieuwe software. Wanneer zou dit kunnen?
+            <div class="chat-msg-time">09:12</div>
+          </div>
+          <div class="chat-msg incoming">
+            Onze Sophie, u kan dit je doenemen hier in conversatie. Wanneer zou het voor u het beste uitkomen voor een telefonisch adviesgesprek?
+            <div class="chat-msg-time">09:15</div>
+          </div>
+          <div class="chat-msg outgoing">
+            Top! Ik heb dinsdag 10:00 of 15:30 beschikbaar, past het beste voor jou?
+            <div class="chat-msg-time">10:02</div>
+          </div>
+          <div class="chat-msg incoming">
+            Dinsdag om 10:00 is perfect. Waar vindt het gesprek plaats?
+            <div class="chat-msg-time">10:15</div>
+          </div>
+          <div class="chat-msg outgoing">
+            Prima, dan plannen we je in de dinsdag om 10:00. Tot dan!
+            <div class="chat-msg-time">10:18</div>
+          </div>
+        </div>
+        <div class="chat-input">
+          <button class="chat-input-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/></svg>
+          </button>
+          <input type="text" placeholder="Typ een bericht...">
+          <button class="chat-input-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z" clip-rule="evenodd"/></svg>
+          </button>
+          <button class="chat-send-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Client Profile -->
+      <div class="inbox-panel profile-panel">
+        <div class="profile-header-section">
+          <h2>Klantprofiel</h2>
+        </div>
+        <div class="profile-card">
+          <div class="profile-avatar" style="background: var(--orange);">SB</div>
+          <div class="profile-name">Sophie Baert</div>
+          <div class="profile-phone">+32 476 12 34 56</div>
+          <div class="profile-email">sophie.baert@email.com</div>
+          <div class="profile-actions">
+            <button class="profile-action-btn" title="Bellen">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+            </button>
+            <button class="profile-action-btn" title="E-mail">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            </button>
+            <button class="profile-action-btn" title="Meer">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="profile-details">
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">Adres</span>
+            <span class="profile-detail-value">Kapellensteenstraat 23, 2000 Antwerpen</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">Type</span>
+            <span class="profile-detail-value">Particulier</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">Laatste activiteit</span>
+            <span class="profile-detail-value">Vandaag om 10:44</span>
+          </div>
+        </div>
+        <div class="profile-section">
+          <div class="profile-section-title">AI status</div>
+          <div class="profile-status-row">
+            <span class="profile-status-label">AI status</span>
+            <span class="status-badge-small active">Actief</span>
+          </div>
+          <div class="progress-row">
+            <div class="progress-header">
+              <span class="progress-label">Zelfstandigheid</span>
+              <span class="progress-value">60%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill purple" style="width: 60%;"></div>
+            </div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-header">
+              <span class="progress-label">Gemiddeld antw. gesl.</span>
+              <span class="progress-value">82%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill green" style="width: 82%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-activity">
+          <div class="profile-section-title">Recente activiteit</div>
+          <div class="activity-item">
+            <div class="activity-dot green"></div>
+            <div>
+              <div class="activity-text">In Krantenlijst toegevoegd</div>
+              <div class="activity-date">Vandaag, 10:44</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot purple"></div>
+            <div>
+              <div class="activity-text">Klantprofiel bijgewerkt</div>
+              <div class="activity-date">Gisteren, 14:30</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot orange"></div>
+            <div>
+              <div class="activity-text">Afspraak ingepland</div>
+              <div class="activity-date">Vorige week</div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-footer">
+          <button class="btn-new-convo">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+            Nieuw gesprek zoek
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const toggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    if (toggle && sidebar) {
+      toggle.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+      });
+    }
+  </script>
+</body>
+</html>
