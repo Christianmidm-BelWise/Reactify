@@ -899,6 +899,18 @@
     .toast{position:fixed;right:1rem;bottom:1rem;background:var(--gray-900);color:#fff;padding:.75rem 1rem;border-radius:10px;z-index:2000;font-size:.85rem;box-shadow:0 12px 30px rgba(0,0,0,.2);display:none;}
     .toast.show{display:block;}
     @media(max-width:768px){.form-grid{grid-template-columns:1fr}.modal-actions,.modal-footer{flex-wrap:wrap}.modal-actions button,.modal-footer button{flex:1}}
+
+    .client-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.35);z-index:998}.client-drawer-overlay.open{display:block}
+    .client-drawer{position:fixed;top:0;right:0;width:460px;max-width:95vw;height:100vh;background:var(--white);box-shadow:-8px 0 30px rgba(0,0,0,.14);z-index:999;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column}.client-drawer.open{transform:translateX(0)}
+    .client-drawer-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}.client-drawer-header h2{font-size:1.1rem;color:var(--gray-900)}
+    .client-drawer-close{width:34px;height:34px;border:0;border-radius:8px;background:var(--gray-100);font-size:1.25rem;color:var(--gray-600);cursor:pointer}.client-drawer-close:hover{background:var(--gray-200);color:var(--gray-900)}
+    .client-drawer-body{padding:1.5rem;overflow-y:auto;flex:1}.client-drawer-footer{padding:1rem 1.5rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end;gap:.75rem}
+    .drawer-photo{display:flex;flex-direction:column;align-items:center;padding-bottom:1.25rem;margin-bottom:1.25rem;border-bottom:1px solid var(--gray-100)}
+    .drawer-avatar{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;font-weight:800;overflow:hidden;margin-bottom:.75rem}.drawer-avatar img{width:100%;height:100%;object-fit:cover}
+    .drawer-photo-btn{border:1px solid var(--gray-200);border-radius:8px;background:#fff;padding:.45rem .75rem;font-size:.78rem;color:var(--gray-700);font-weight:600;cursor:pointer}.drawer-photo-btn:hover{background:var(--gray-50)}
+    .drawer-section-title{font-size:.78rem;font-weight:800;color:var(--gray-900);margin:1.15rem 0 .7rem}.drawer-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.drawer-input{margin-bottom:.9rem}.drawer-input label{display:block;font-size:.78rem;font-weight:700;color:var(--gray-700);margin-bottom:.35rem}.drawer-input input,.drawer-input select,.drawer-input textarea{width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;outline:none}.drawer-input input:focus,.drawer-input select:focus,.drawer-input textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.12)}
+    @media(max-width:520px){.drawer-row{grid-template-columns:1fr}.client-drawer-footer{flex-wrap:wrap}.client-drawer-footer button{flex:1}}
+
 </style></head><body>
 <aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
 <a href="/platform/klantenlijst/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
@@ -946,6 +958,23 @@
     </form>
   </div>
 </div>
+
+<div class="client-drawer-overlay" id="clientDrawerOverlay" onclick="closeClientDrawer()"></div>
+<aside class="client-drawer" id="clientDrawer">
+  <div class="client-drawer-header"><h2>Klantprofiel aanpassen</h2><button class="client-drawer-close" type="button" onclick="closeClientDrawer()">×</button></div>
+  <form id="clientDrawerForm" class="client-drawer-body">
+    <input type="hidden" id="drawerClientId">
+    <div class="drawer-photo"><div class="drawer-avatar" id="drawerAvatar">?</div><button class="drawer-photo-btn" type="button" onclick="document.getElementById('drawerPhotoInput').click()">Foto wijzigen</button><input id="drawerPhotoInput" type="file" accept="image/*" style="display:none"></div>
+    <div class="drawer-section-title">Profielgegevens</div>
+    <div class="drawer-input"><label>Naam</label><input id="drawerName" required></div>
+    <div class="drawer-row"><div class="drawer-input"><label>E-mail</label><input id="drawerEmail" type="email"></div><div class="drawer-input"><label>Telefoon</label><input id="drawerPhone" type="tel"></div></div>
+    <div class="drawer-input"><label>Adres</label><input id="drawerAddress"></div>
+    <div class="drawer-row"><div class="drawer-input"><label>Status</label><select id="drawerStatus"><option value="active">Actief</option><option value="vip">VIP</option><option value="new">Nieuw</option><option value="inactive">Inactief</option></select></div><div class="drawer-input"><label>Type</label><select id="drawerType"><option>Klant</option><option>Lead</option><option>Particulier</option><option>Zakelijk</option><option>VIP</option></select></div></div>
+    <div class="drawer-section-title">Notities</div><div class="drawer-input"><label>Klantnotitie</label><textarea id="drawerNote" rows="4"></textarea></div>
+  </form>
+  <div class="client-drawer-footer"><button class="btn-cancel" type="button" onclick="closeClientDrawer()">Annuleren</button><button class="btn-save" type="button" onclick="saveClientDrawer()">Opslaan</button></div>
+</aside>
+
 <div id="rfToast" class="toast"></div><script>
 (function(){
   const STORE_KEY='reactify_platform_data_v3';
@@ -962,6 +991,7 @@
   const toast=(msg)=>{let t=byId('rfToast'); if(!t){t=document.createElement('div');t.id='rfToast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)};
   function addClient(client){const d=load(); const name=(client.name||`${client.firstName||''} ${client.lastName||''}`).trim(); const phone=(client.phone||'').trim(); const email=(client.email||'').trim().toLowerCase(); const existing=d.clients.find(c=>(email&&String(c.email||'').toLowerCase()===email)||(phone&&c.phone===phone)); if(existing){Object.assign(existing,{...client,name:name||existing.name,email:email||existing.email,phone:phone||existing.phone,updatedAt:nowISO()}); save(d); return existing;} const c={id:uid('client'), name:name||'Nieuwe contactpersoon', email, phone, status:client.status||'new', type:client.type||'Klant', address:client.address||'', note:client.note||'', source:client.source||'Manueel', createdAt:nowISO(), updatedAt:nowISO(), color:colors[d.clients.length%colors.length]}; d.clients.unshift(c); save(d); return c;}
   function deleteClient(id){const d=load(); d.clients=d.clients.filter(c=>c.id!==id); d.conversations=d.conversations.map(x=>x.clientId===id?{...x,clientId:null}:x); save(d);}
+  function updateClient(id, fields){const d=load(); const c=d.clients.find(x=>x.id===id); if(!c) return null; Object.assign(c,fields,{updatedAt:nowISO()}); save(d); return c;}
   function addConversation(client, message){const d=load(); let c=client?.id?client:addClient(client||{}); let conv=d.conversations.find(x=>x.clientId===c.id); if(!conv){conv={id:uid('conv'),clientId:c.id,status:'ai_actief',channel:'sms',messages:[],summary:'Gesprek aangemaakt via Reactify.',createdAt:nowISO(),updatedAt:nowISO()};d.conversations.unshift(conv)} if(message){conv.messages.push({id:uid('msg'),type:'incoming',text:message,time:nowISO()});conv.updatedAt=nowISO();} save(d); return conv;}
   function addAppointment(appt){const d=load(); let c=d.clients.find(x=>x.id===appt.clientId); if(!c && appt.newClient){c=addClient(appt.newClient); appt.clientId=c.id} if(!c && (appt.clientName||appt.clientEmail||appt.clientPhone)){c=addClient({name:appt.clientName,email:appt.clientEmail,phone:appt.clientPhone,source:'Afspraak'});appt.clientId=c.id} const a={id:uid('appt'),clientId:appt.clientId||c?.id||null,title:appt.title||'Klantafspraak',start:appt.start,end:appt.end||appt.start,location:appt.location||'',type:appt.type||'Reactify afspraak',status:'planned',source:appt.source||'Reactify',notes:appt.notes||'',createdAt:nowISO()}; d.appointments.push(a); if(c) addConversation(c,`Afspraak ingepland: ${a.title}`); else save(d); return a;}
   function deleteAppointment(id){const d=load();d.appointments=d.appointments.filter(a=>a.id!==id);save(d)}
@@ -970,7 +1000,7 @@
   function weekRange(){const n=new Date(); const s=new Date(n); const day=s.getDay()||7; s.setDate(s.getDate()-day+1); s.setHours(0,0,0,0); const e=new Date(s);e.setDate(s.getDate()+7);return {s,e};}
   function todayRange(){const s=new Date();s.setHours(0,0,0,0);const e=new Date(s);e.setDate(e.getDate()+1);return{s,e}}
   function matchesRange(iso,s,e){const d=new Date(iso);return d>=s&&d<e}
-  window.RF={load,save,addClient,deleteClient,addConversation,addAppointment,deleteAppointment,clientName,formatDateTime,weekRange,todayRange,matchesRange,esc,initials,toast,colors,uid,nowISO};
+  window.RF={load,save,addClient,updateClient,deleteClient,addConversation,addAppointment,deleteAppointment,clientName,formatDateTime,weekRange,todayRange,matchesRange,esc,initials,toast,colors,uid,nowISO};
 })();
 
 
@@ -993,10 +1023,26 @@
 
 let clientFilter='';
 function statusLabel(s){return s==='active'?'Actief':s==='vip'?'VIP':s==='inactive'?'Inactief':'Nieuw'}
-function renderClients(){const d=RF.load(); const now=new Date(); const monthStart=new Date(now.getFullYear(),now.getMonth(),1); statTotalClients.textContent=d.clients.length; statNewMonth.textContent=d.clients.filter(c=>new Date(c.createdAt)>=monthStart).length; statActiveConvs.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statPlannedAppts.textContent=d.appointments.length; const q=clientFilter.toLowerCase(); const rows=d.clients.filter(c=>[c.name,c.email,c.phone].join(' ').toLowerCase().includes(q)); clientTableBody.innerHTML=rows.map(c=>`<tr><td><div class="table-client"><div class="table-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="table-client-info"><div class="table-client-name">${RF.esc(c.name)}</div><div class="table-client-email">${RF.esc(c.email||'Geen e-mail')}</div></div></div></td><td class="table-phone">${RF.esc(c.phone||'Geen telefoon')}</td><td class="table-activity">${RF.formatDateTime(c.updatedAt||c.createdAt)}</td><td><span class="status-badge ${c.status||'new'}"><span class="dot"></span>${statusLabel(c.status)}</span></td><td><div class="action-btns"><button class="btn-small" onclick="openInbox('${c.id}')">Inbox</button><button class="btn-small btn-purple" onclick="RFUI.openAppointmentModal('${c.id}','Via klant')">Afspraak</button><button class="btn-small btn-danger-small" onclick="removeClient('${c.id}')">Verwijder</button></div></td></tr>`).join('')||`<tr><td colspan="5"><div class="empty-state"><strong>Geen klanten gevonden</strong>Maak een nieuwe klant aan of pas je zoekopdracht aan.</div></td></tr>`; paginationInfo.textContent=`${rows.length} van ${d.clients.length} klanten`;}
+function renderClients(){const d=RF.load(); const now=new Date(); const monthStart=new Date(now.getFullYear(),now.getMonth(),1); statTotalClients.textContent=d.clients.length; statNewMonth.textContent=d.clients.filter(c=>new Date(c.createdAt)>=monthStart).length; statActiveConvs.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statPlannedAppts.textContent=d.appointments.length; const q=clientFilter.toLowerCase(); const rows=d.clients.filter(c=>[c.name,c.email,c.phone].join(' ').toLowerCase().includes(q)); clientTableBody.innerHTML=rows.map(c=>`<tr onclick="openClientDrawer('${c.id}')"><td><div class="table-client"><div class="table-avatar" style="background:${c.color||'var(--purple)'}">${c.photo?`<img src="${c.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:RF.initials(c.name)}</div><div class="table-client-info"><div class="table-client-name">${RF.esc(c.name)}</div><div class="table-client-email">${RF.esc(c.email||'Geen e-mail')}</div></div></div></td><td class="table-phone">${RF.esc(c.phone||'Geen telefoon')}</td><td class="table-activity">${RF.formatDateTime(c.updatedAt||c.createdAt)}</td><td><span class="status-badge ${c.status||'new'}"><span class="dot"></span>${statusLabel(c.status)}</span></td><td><div class="action-btns" onclick="event.stopPropagation()"><button class="btn-small" onclick="openInbox('${c.id}')">Inbox</button><button class="btn-small" onclick="openClientDrawer('${c.id}')">Aanpassen</button><button class="btn-small btn-danger-small" onclick="removeClient('${c.id}')">Verwijder</button></div></td></tr>`).join('')||`<tr><td colspan="5"><div class="empty-state"><strong>Geen klanten gevonden</strong>Maak een nieuwe klant aan of pas je zoekopdracht aan.</div></td></tr>`; paginationInfo.textContent=`${rows.length} van ${d.clients.length} klanten`;}
 function removeClient(id){if(confirm('Deze klant verwijderen?')){RF.deleteClient(id);renderClients();RF.toast('Klant verwijderd')}}
 function openInbox(id){RF.addConversation(RF.load().clients.find(c=>c.id===id)); location.href='/platform/inbox/?client='+id}
 function exportClients(){const d=RF.load(); const csv=['Naam,E-mail,Telefoon,Status'].concat(d.clients.map(c=>`"${c.name||''}","${c.email||''}","${c.phone||''}","${c.status||''}"`)).join('\n'); const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='reactify-klanten.csv';a.click();}
 clientSearch?.addEventListener('input',e=>{clientFilter=e.target.value;renderClients()}); RFUI.initSharedForms(renderClients); renderClients();
+
+
+let drawerPhotoData='';
+function openClientDrawer(id){
+  const c=RF.load().clients.find(x=>x.id===id); if(!c)return;
+  drawerClientId.value=c.id; drawerName.value=c.name||''; drawerEmail.value=c.email||''; drawerPhone.value=c.phone||''; drawerAddress.value=c.address||''; drawerStatus.value=c.status||'new'; drawerType.value=c.type||'Klant'; drawerNote.value=c.note||''; drawerPhotoData=c.photo||'';
+  renderDrawerAvatar(c);
+  clientDrawer.classList.add('open'); clientDrawerOverlay.classList.add('open');
+}
+function closeClientDrawer(){clientDrawer.classList.remove('open'); clientDrawerOverlay.classList.remove('open')}
+function renderDrawerAvatar(c){const av=document.getElementById('drawerAvatar'); if(drawerPhotoData){av.innerHTML=`<img src="${drawerPhotoData}">`;av.style.background=c.color||'var(--purple)'}else{av.textContent=RF.initials(c.name||drawerName.value);av.style.background=c.color||'var(--purple)'}}
+drawerPhotoInput?.addEventListener('change',function(){const file=this.files?.[0]; if(!file)return; const r=new FileReader(); r.onload=e=>{drawerPhotoData=e.target.result; renderDrawerAvatar({name:drawerName.value,color:'var(--purple)'})}; r.readAsDataURL(file)});
+function saveClientDrawer(){
+  const id=drawerClientId.value; RF.updateClient(id,{name:drawerName.value,email:drawerEmail.value,phone:drawerPhone.value,address:drawerAddress.value,status:drawerStatus.value,type:drawerType.value,note:drawerNote.value,photo:drawerPhotoData}); closeClientDrawer(); RF.toast('Klant aangepast'); renderClients();
+}
+window.openClientDrawer=openClientDrawer; window.closeClientDrawer=closeClientDrawer; window.saveClientDrawer=saveClientDrawer;
 
 const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script></body></html>
