@@ -1,15 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Reactify Platform - Beheer je klantgesprekken en berichten.">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <title>Inbox | Reactify</title>
-  <style>
+<html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Reactify Platform"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Inbox | Reactify</title><style>
     :root {
       --purple-dark: #3D1D72;
       --purple: #5B2E91;
@@ -887,672 +877,137 @@
       .stats-grid { grid-template-columns: 1fr; }
       .top-search input { width: 160px; }
     }
-  </style>
-</head>
-<body>
+  
 
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <img src="/logo.png" alt="Reactify" style="height: 28px; width: auto; filter: brightness(1.8);">
-    </div>
+    .empty-state{padding:1.25rem;text-align:center;color:var(--gray-500);font-size:.85rem;}
+    .empty-state strong{display:block;color:var(--gray-900);font-size:.95rem;margin-bottom:.25rem;}
+    .btn-small{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.38rem .7rem;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-700);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:none;font-family:var(--font-sans);transition:.2s;}
+    .btn-small:hover{background:var(--gray-50);border-color:var(--gray-300);}
+    .btn-purple{background:var(--purple);color:var(--white);border-color:var(--purple);}
+    .btn-purple:hover{background:var(--purple-dark);color:var(--white);}
+    .btn-orange{background:var(--orange);color:var(--white);border-color:var(--orange);}
+    .btn-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+    .modal-overlay,.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+    .modal-overlay.open,.modal-backdrop.open{display:flex;}
+    .modal{background:var(--white);border-radius:16px;width:min(560px,95vw);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.16);}
+    .modal.wide{width:min(760px,95vw);}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-100);}
+    .modal-header h2,.modal-title{font-size:1.05rem;font-weight:800;color:var(--gray-900);}
+    .modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:var(--gray-100);color:var(--gray-600);cursor:pointer;font-size:1.1rem;}
+    .modal-body{padding:1.5rem;}
+    .modal-footer,.modal-actions{display:flex;justify-content:flex-end;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid var(--gray-100);}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .form-field,.form-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem;}
+    .form-field.full{grid-column:1/-1;}
+    .form-field label,.form-group label{font-size:.78rem;font-weight:700;color:var(--gray-700);}
+    .form-field input,.form-field select,.form-field textarea,.form-group input,.form-group select,.form-group textarea{width:100%;padding:.55rem .75rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.85rem;font-family:var(--font-sans);color:var(--gray-800);background:var(--white);outline:none;}
+    .form-field input:focus,.form-field select:focus,.form-field textarea:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.1);}
+    .form-help{font-size:.72rem;color:var(--gray-500);}
+    .btn-save,.btn-primary{padding:.55rem 1.1rem;border:0;border-radius:8px;font-size:.8rem;font-weight:700;color:var(--white);background:var(--purple);cursor:pointer;font-family:var(--font-sans);}
+    .btn-cancel,.btn-secondary{padding:.55rem 1rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.8rem;font-weight:600;color:var(--gray-700);background:var(--white);cursor:pointer;font-family:var(--font-sans);}
+    .btn-danger-small{background:var(--red-light);color:var(--red);border-color:var(--red-light);}
+    .hidden{display:none!important;}
+    .toast{position:fixed;right:1rem;bottom:1rem;background:var(--gray-900);color:#fff;padding:.75rem 1rem;border-radius:10px;z-index:2000;font-size:.85rem;box-shadow:0 12px 30px rgba(0,0,0,.2);display:none;}
+    .toast.show{display:block;}
+    @media(max-width:768px){.form-grid{grid-template-columns:1fr}.modal-actions,.modal-footer{flex-wrap:wrap}.modal-actions button,.modal-footer button{flex:1}}
+</style></head><body>
+<aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
+<a href="/platform/klantenlijst/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
+<a href="/platform/inbox/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>Inbox</a>
+<a href="/platform/agenda/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>Agenda</a><div class="sidebar-spacer"></div><a href="#" class="sidebar-link">Instellingen</a><a href="#" class="sidebar-link">Help</a></nav><div class="sidebar-user"><div class="user-avatar">BD</div><div class="user-info"><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div></aside>
 
-    <nav class="sidebar-nav">
-      <a href="/platform/" class="sidebar-link">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
-        Dashboard
-      </a>
-      <a href="/platform/klantenlijst/" class="sidebar-link">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
-        Klanten
-      </a>
-      <a href="/platform/inbox/" class="sidebar-link active">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
-        Inbox
-      </a>
-      <a href="/platform/agenda/" class="sidebar-link">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-        Agenda
-      </a>
+<main class="main"><button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button><div class="top-bar"><div class="top-bar-left"><h1>Inbox</h1><p>Beheer al je klantgesprekken op één plaats.</p></div><div class="top-bar-right"><div class="top-search"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg><input id="inboxSearch" type="text" placeholder="Zoek klanten, berichten..."></div><button class="notification-btn" onclick="RFUI.openClientModal()">＋</button></div></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-icon purple">💬</div><div class="stat-info"><div class="stat-label">Open gesprekken</div><div class="stat-value" id="statOpen">0</div><div class="stat-change">Live uit inbox</div></div></div><div class="stat-card"><div class="stat-icon orange">✉</div><div class="stat-info"><div class="stat-label">Ongelezen</div><div class="stat-value" id="statUnread">0</div><div class="stat-change">Te verwerken</div></div></div><div class="stat-card"><div class="stat-icon green">✓</div><div class="stat-info"><div class="stat-label">% afgehandeld deze week</div><div class="stat-value" id="statHandled">0%</div><div class="stat-change">Op basis van status</div></div></div></div>
+<div class="inbox-layout"><div class="inbox-panel conv-panel"><div class="conv-tabs"><button class="conv-tab active">Alles</button><button class="conv-tab">SMS</button><button class="conv-tab">E-mail</button><button class="conv-tab">Chat</button></div><div class="conv-list" id="conversationList"></div><div class="conv-footer"><a href="/platform/klantenlijst/">Contactpersonen beheren</a></div></div><div class="inbox-panel chat-panel"><div class="chat-header" id="chatHeader"></div><div class="chat-messages" id="chatMessages"></div><div class="chat-input"><input id="chatInput" type="text" placeholder="Typ een bericht..."><button class="chat-send-btn" onclick="sendMessage()">➤</button></div></div><div class="inbox-panel profile-panel"><div class="profile-header-section"><h2>Klantprofiel</h2></div><div id="profilePanelContent"></div></div></div></main>
 
-      <div class="sidebar-spacer"></div>
 
-      <a href="#" class="sidebar-link">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
-        Instellingen
-      </a>
-      <a href="#" class="sidebar-link">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
-        Help
-      </a>
-    </nav>
-
-    <div class="sidebar-user">
-      <div class="user-avatar">BD</div>
-      <div class="user-info">
-        <div class="user-name">Bob Demo</div>
-        <div class="user-role">Beheerder</div>
+<div class="modal-overlay" id="rfClientModal">
+  <div class="modal">
+    <div class="modal-header"><h2>Nieuwe contactpersoon</h2><button class="modal-close" type="button" onclick="RFUI.closeClientModal()">×</button></div>
+    <form id="rfClientForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Naam</label><input id="rfClientName" required placeholder="Naam klant"></div>
+        <div class="form-group"><label>E-mail</label><input id="rfClientEmail" type="email" placeholder="klant@email.be"></div>
+        <div class="form-group"><label>Telefoon</label><input id="rfClientPhone" type="tel" placeholder="+32 ..."></div>
+        <div class="form-group"><label>Notitie</label><textarea id="rfClientNote" rows="3" placeholder="Korte notitie"></textarea></div>
       </div>
-    </div>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="main">
-    <button class="mobile-sidebar-toggle" id="sidebarToggle">
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
-      Menu
-    </button>
-
-    <!-- Top Bar -->
-    <div class="top-bar">
-      <div class="top-bar-left">
-        <h1>Inbox</h1>
-        <p>Beheer al je klantgesprekken op één plaats.</p>
-      </div>
-      <div class="top-bar-right">
-        <div class="top-search">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-          <input type="text" placeholder="Zoek klanten, berichten...">
-        </div>
-        <button class="notification-btn">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon purple">
-          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
-        </div>
-        <div class="stat-info">
-          <div class="stat-label">Open gesprekken</div>
-          <div class="stat-value">18</div>
-          <div class="stat-change">+6 sinds gisteren</div>
+      <div class="modal-footer"><button type="button" class="btn-cancel" onclick="RFUI.closeClientModal()">Annuleren</button><button class="btn-save" type="submit">Opslaan</button></div>
+    </form>
+  </div>
+</div>
+<div class="modal-overlay" id="rfAppointmentModal">
+  <div class="modal wide">
+    <div class="modal-header"><h2>Klantafspraak toevoegen</h2><button class="modal-close" type="button" onclick="RFUI.closeAppointmentModal()">×</button></div>
+    <form id="rfAppointmentForm">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-field full"><label>Klant</label><select id="rfApptClient"></select><div class="form-help">Kies een bestaande klant of maak een nieuwe contactpersoon aan.</div></div>
+          <div class="form-field hidden" id="rfNewClientNameWrap"><label>Naam nieuwe klant</label><input id="rfApptNewName" placeholder="Naam klant"></div>
+          <div class="form-field hidden" id="rfNewClientEmailWrap"><label>E-mail nieuwe klant</label><input id="rfApptNewEmail" type="email" placeholder="klant@email.be"></div>
+          <div class="form-field hidden" id="rfNewClientPhoneWrap"><label>Telefoon nieuwe klant</label><input id="rfApptNewPhone" type="tel" placeholder="+32 ..."></div>
+          <div class="form-field"><label>Afspraaktype</label><input id="rfApptTitle" required placeholder="Bijv. Kennismaking"></div>
+          <div class="form-field"><label>Startdatum en tijd</label><input id="rfApptStart" type="datetime-local" required></div>
+          <div class="form-field"><label>Locatie</label><input id="rfApptLocation" placeholder="Cal.com video, telefoon of adres"></div>
+          <div class="form-field"><label>Bron</label><select id="rfApptSource"><option>Manueel opgevolgd</option><option>Via inbox</option><option>Via klant</option><option>Via Reactify AI</option></select></div>
+          <div class="form-field full"><label>Notitie</label><textarea id="rfApptNotes" rows="3" placeholder="Extra context"></textarea></div>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon orange">
-          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-        </div>
-        <div class="stat-info">
-          <div class="stat-label">Ongelezen</div>
-          <div class="stat-value">6</div>
-          <div class="stat-change">+2 vorige week</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon green">
-          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-        </div>
-        <div class="stat-info">
-          <div class="stat-label">% afgehandeld deze week</div>
-          <div class="stat-value">74%</div>
-          <div class="stat-change">+5% vorige week</div>
-        </div>
-      </div>
-    </div>
+      <div class="modal-footer"><button type="button" class="btn-cancel" onclick="RFUI.closeAppointmentModal()">Annuleren</button><button type="submit" class="btn-save">Afspraak opslaan</button></div>
+    </form>
+  </div>
+</div>
+<div id="rfToast" class="toast"></div><script>
+(function(){
+  const STORE_KEY='reactify_platform_data_v3';
+  const nowISO=()=>new Date().toISOString();
+  const uid=(prefix='id')=>prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
+  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  const initials=name=>String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?';
+  const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb','var(--purple-medium, #7B52AB)','#dc2626'];
+  const parse=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))||null}catch(e){return null}};
+  const blank=()=>({clients:[], conversations:[], appointments:[], settings:{ownerName:'Bob Demo'}});
+  const save=data=>{localStorage.setItem(STORE_KEY,JSON.stringify(data)); window.dispatchEvent(new CustomEvent('reactify:data',{detail:data}));};
+  const load=()=>{let d=parse(); if(!d){d=blank(); save(d)}; d.clients ||= []; d.conversations ||= []; d.appointments ||= []; d.settings ||= {ownerName:'Bob Demo'}; return d;};
+  const byId=id=>document.getElementById(id);
+  const toast=(msg)=>{let t=byId('rfToast'); if(!t){t=document.createElement('div');t.id='rfToast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)};
+  function addClient(client){const d=load(); const name=(client.name||`${client.firstName||''} ${client.lastName||''}`).trim(); const phone=(client.phone||'').trim(); const email=(client.email||'').trim().toLowerCase(); const existing=d.clients.find(c=>(email&&String(c.email||'').toLowerCase()===email)||(phone&&c.phone===phone)); if(existing){Object.assign(existing,{...client,name:name||existing.name,email:email||existing.email,phone:phone||existing.phone,updatedAt:nowISO()}); save(d); return existing;} const c={id:uid('client'), name:name||'Nieuwe contactpersoon', email, phone, status:client.status||'new', type:client.type||'Klant', address:client.address||'', note:client.note||'', source:client.source||'Manueel', createdAt:nowISO(), updatedAt:nowISO(), color:colors[d.clients.length%colors.length]}; d.clients.unshift(c); save(d); return c;}
+  function deleteClient(id){const d=load(); d.clients=d.clients.filter(c=>c.id!==id); d.conversations=d.conversations.map(x=>x.clientId===id?{...x,clientId:null}:x); save(d);}
+  function addConversation(client, message){const d=load(); let c=client?.id?client:addClient(client||{}); let conv=d.conversations.find(x=>x.clientId===c.id); if(!conv){conv={id:uid('conv'),clientId:c.id,status:'ai_actief',channel:'sms',messages:[],summary:'Gesprek aangemaakt via Reactify.',createdAt:nowISO(),updatedAt:nowISO()};d.conversations.unshift(conv)} if(message){conv.messages.push({id:uid('msg'),type:'incoming',text:message,time:nowISO()});conv.updatedAt=nowISO();} save(d); return conv;}
+  function addAppointment(appt){const d=load(); let c=d.clients.find(x=>x.id===appt.clientId); if(!c && appt.newClient){c=addClient(appt.newClient); appt.clientId=c.id} if(!c && (appt.clientName||appt.clientEmail||appt.clientPhone)){c=addClient({name:appt.clientName,email:appt.clientEmail,phone:appt.clientPhone,source:'Afspraak'});appt.clientId=c.id} const a={id:uid('appt'),clientId:appt.clientId||c?.id||null,title:appt.title||'Klantafspraak',start:appt.start,end:appt.end||appt.start,location:appt.location||'',type:appt.type||'Reactify afspraak',status:'planned',source:appt.source||'Reactify',notes:appt.notes||'',createdAt:nowISO()}; d.appointments.push(a); if(c) addConversation(c,`Afspraak ingepland: ${a.title}`); else save(d); return a;}
+  function deleteAppointment(id){const d=load();d.appointments=d.appointments.filter(a=>a.id!==id);save(d)}
+  function clientName(id){const c=load().clients.find(c=>c.id===id);return c?.name||'Onbekende klant'}
+  function formatDateTime(iso){if(!iso)return ''; const d=new Date(iso); return d.toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
+  function weekRange(){const n=new Date(); const s=new Date(n); const day=s.getDay()||7; s.setDate(s.getDate()-day+1); s.setHours(0,0,0,0); const e=new Date(s);e.setDate(s.getDate()+7);return {s,e};}
+  function todayRange(){const s=new Date();s.setHours(0,0,0,0);const e=new Date(s);e.setDate(e.getDate()+1);return{s,e}}
+  function matchesRange(iso,s,e){const d=new Date(iso);return d>=s&&d<e}
+  window.RF={load,save,addClient,deleteClient,addConversation,addAppointment,deleteAppointment,clientName,formatDateTime,weekRange,todayRange,matchesRange,esc,initials,toast,colors,uid,nowISO};
+})();
 
-    <!-- Inbox 3-Column Layout -->
-    <div class="inbox-layout">
 
-      <!-- Left: Conversation List -->
-      <div class="inbox-panel conv-panel">
-        <div class="conv-tabs">
-          <button class="conv-tab active">Alles</button>
-          <button class="conv-tab">SMS</button>
-          <button class="conv-tab">E-mail</button>
-          <button class="conv-tab">Chat</button>
-        </div>
-        <div class="conv-list">
-          <div class="conv-item active">
-            <div class="conv-avatar" style="background: var(--orange);">SB</div>
-            <div class="conv-content">
-              <div class="conv-header">
-                <span class="conv-name">Sophie Baert</span>
-                <span class="conv-time">10:44</span>
-              </div>
-              <div class="conv-preview">Ik wil graag een afspraak maken...</div>
-              <div class="conv-meta">
-                <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
-              </div>
-            </div>
-          </div>
-          <div class="conv-item">
-            <div class="conv-avatar" style="background: var(--purple);">TP</div>
-            <div class="conv-content">
-              <div class="conv-header">
-                <span class="conv-name">Tom Peeters</span>
-                <span class="conv-time">13:15</span>
-              </div>
-              <div class="conv-preview">Bedankt voor de snelle reactie!</div>
-              <div class="conv-meta">
-                <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
-              </div>
-            </div>
-          </div>
-          <div class="conv-item">
-            <div class="conv-avatar" style="background: #16a34a;">MK</div>
-            <div class="conv-content">
-              <div class="conv-header">
-                <span class="conv-name">Marc Kerkhofs</span>
-                <span class="conv-time">Gisteren</span>
-              </div>
-              <div class="conv-preview">Kan ik de meer info die oferten?</div>
-              <div class="conv-meta">
-                <span class="gespreksstatus-badge gs-menselijke-overname"><span class="gs-dot"></span>Overname nodig</span>
-              </div>
-            </div>
-          </div>
-          <div class="conv-item">
-            <div class="conv-avatar" style="background: #2563eb;">LB</div>
-            <div class="conv-content">
-              <div class="conv-header">
-                <span class="conv-name">Laura Bosmans</span>
-                <span class="conv-time">Gisteren</span>
-              </div>
-              <div class="conv-preview">Ik heb nog enkele bemerkingen...</div>
-              <div class="conv-meta">
-                <span class="gespreksstatus-badge gs-afgesloten"><span class="gs-dot"></span>Afgesloten</span>
-              </div>
-            </div>
-          </div>
-          <div class="conv-item">
-            <div class="conv-avatar" style="background: var(--purple-medium);">DV</div>
-            <div class="conv-content">
-              <div class="conv-header">
-                <span class="conv-name">Dory Vermeulen</span>
-                <span class="conv-time">2 dagen</span>
-              </div>
-              <div class="conv-preview">Prima, het was vergeten!</div>
-              <div class="conv-meta">
-                <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
-              </div>
-            </div>
-          </div>
-          <div class="conv-item">
-            <div class="conv-avatar" style="background: #16a34a;">JM</div>
-            <div class="conv-content">
-              <div class="conv-header">
-                <span class="conv-name">Julia Maes</span>
-                <span class="conv-time">3 dagen</span>
-              </div>
-              <div class="conv-preview">Bedankt voor de hulp!</div>
-              <div class="conv-meta">
-                <span class="gespreksstatus-badge gs-afgesloten"><span class="gs-dot"></span>Afgesloten</span>
-              </div>
-            </div>
-          </div>
-          <div class="conv-item">
-            <div class="conv-avatar" style="background: #dc2626;">PK</div>
-            <div class="conv-content">
-              <div class="conv-header">
-                <span class="conv-name">Pieter Klassen</span>
-                <span class="conv-time">1 week</span>
-              </div>
-              <div class="conv-preview">Ik heb de afspraak bevestigd...</div>
-              <div class="conv-meta">
-                <span class="gespreksstatus-badge gs-menselijke-overname"><span class="gs-dot"></span>Overname nodig</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="conv-footer">
-          <a href="#">Bekijk alle gesprekken</a>
-        </div>
-      </div>
+(function(){
+  function openClientModal(){document.getElementById('rfClientForm')?.reset();document.getElementById('rfClientModal')?.classList.add('open')}
+  function closeClientModal(){document.getElementById('rfClientModal')?.classList.remove('open')}
+  function fillClientSelect(selectedId){const s=document.getElementById('rfApptClient'); if(!s)return; const data=RF.load(); s.innerHTML='<option value="">Kies klant...</option>'+data.clients.map(c=>`<option value="${c.id}">${RF.esc(c.name)}${c.phone?' · '+RF.esc(c.phone):''}</option>`).join('')+'<option value="__new">+ Nieuwe contactpersoon aanmaken</option>'; if(selectedId)s.value=selectedId; toggleNewClientFields();}
+  function toggleNewClientFields(){const isNew=document.getElementById('rfApptClient')?.value==='__new'; ['rfNewClientNameWrap','rfNewClientEmailWrap','rfNewClientPhoneWrap'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',!isNew));}
+  function openAppointmentModal(clientId, source){fillClientSelect(clientId); const f=document.getElementById('rfAppointmentForm'); if(f) f.reset(); fillClientSelect(clientId); const start=document.getElementById('rfApptStart'); if(start){const d=new Date();d.setHours(d.getHours()+1,0,0,0);start.value=d.toISOString().slice(0,16);} const src=document.getElementById('rfApptSource'); if(src&&source)src.value=source; document.getElementById('rfAppointmentModal')?.classList.add('open')}
+  function closeAppointmentModal(){document.getElementById('rfAppointmentModal')?.classList.remove('open')}
+  function initSharedForms(afterSave){
+    document.getElementById('rfClientForm')?.addEventListener('submit',e=>{e.preventDefault(); RF.addClient({name:rfClientName.value,email:rfClientEmail.value,phone:rfClientPhone.value,note:rfClientNote.value,source:'Klantenpagina'}); closeClientModal(); RF.toast('Contactpersoon opgeslagen'); afterSave&&afterSave();});
+    document.getElementById('rfApptClient')?.addEventListener('change',toggleNewClientFields);
+    document.getElementById('rfAppointmentForm')?.addEventListener('submit',e=>{e.preventDefault(); const clientVal=rfApptClient.value; let newClient=null; if(clientVal==='__new'){ if(!rfApptNewName.value.trim()){alert('Vul een naam in voor de nieuwe klant.');return;} newClient={name:rfApptNewName.value,email:rfApptNewEmail.value,phone:rfApptNewPhone.value,source:'Afspraakflow'}; }
+      RF.addAppointment({clientId:clientVal&&clientVal!=='__new'?clientVal:null,newClient,title:rfApptTitle.value,start:new Date(rfApptStart.value).toISOString(),location:rfApptLocation.value,source:rfApptSource.value,notes:rfApptNotes.value}); closeAppointmentModal(); RF.toast('Afspraak opgeslagen'); afterSave&&afterSave();});
+  }
+  window.RFUI={openClientModal,closeClientModal,openAppointmentModal,closeAppointmentModal,fillClientSelect,initSharedForms};
+})();
 
-      <!-- Middle: Chat View -->
-      <div class="inbox-panel chat-panel">
-        <div class="chat-header">
-          <div class="chat-header-avatar" style="background: var(--orange);">SB</div>
-          <div class="chat-header-info">
-            <div class="chat-header-name">Sophie Baert</div>
-            <div class="chat-header-details">
-              <span class="chat-header-badge">e-mail</span>
-              <span>+32 476 12 34 56</span>
-              <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
-            </div>
-          </div>
-        </div>
-        <div class="chat-messages">
-          <div class="chat-date">Vandaag</div>
-          <div class="chat-msg incoming">
-            Hallo, ik wil graag een afspraak maken voor een installatie van onze nieuwe software. Wanneer zou dit kunnen?
-            <div class="chat-msg-time">09:12</div>
-          </div>
-          <div class="chat-msg incoming">
-            Onze Sophie, u kan dit je doenemen hier in conversatie. Wanneer zou het voor u het beste uitkomen voor een telefonisch adviesgesprek?
-            <div class="chat-msg-time">09:15</div>
-          </div>
-          <div class="chat-msg outgoing">
-            Top! Ik heb dinsdag 10:00 of 15:30 beschikbaar, past het beste voor jou?
-            <div class="chat-msg-time">10:02</div>
-          </div>
-          <div class="chat-msg incoming">
-            Dinsdag om 10:00 is perfect. Waar vindt het gesprek plaats?
-            <div class="chat-msg-time">10:15</div>
-          </div>
-          <div class="chat-msg outgoing">
-            Prima, dan plannen we je in de dinsdag om 10:00. Tot dan!
-            <div class="chat-msg-time">10:18</div>
-          </div>
-        </div>
-        <div class="chat-input">
-          <button class="chat-input-btn">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/></svg>
-          </button>
-          <input type="text" placeholder="Typ een bericht...">
-          <button class="chat-input-btn">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z" clip-rule="evenodd"/></svg>
-          </button>
-          <button class="chat-send-btn">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
-          </button>
-        </div>
-      </div>
 
-      <!-- Right: Client Profile -->
-      <div class="inbox-panel profile-panel">
-        <div class="profile-header-section">
-          <h2>Klantprofiel</h2>
-        </div>
-        <div class="profile-card">
-          <div class="profile-avatar" style="background: var(--orange);">SB</div>
-          <div class="profile-name">Sophie Baert</div>
-          <div class="profile-phone">+32 476 12 34 56</div>
-          <div class="profile-email">sophie.baert@email.com</div>
-          <div class="profile-actions">
-            <button class="profile-action-btn" title="Bellen">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
-            </button>
-            <button class="profile-action-btn" title="E-mail">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-            </button>
-            <button class="profile-action-btn" title="Meer">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
-            </button>
-          </div>
-        </div>
-        <div class="profile-details">
-          <div class="profile-detail-row">
-            <span class="profile-detail-label">Adres</span>
-            <span class="profile-detail-value">Kapellensteenstraat 23, 2000 Antwerpen</span>
-          </div>
-          <div class="profile-detail-row">
-            <span class="profile-detail-label">Type</span>
-            <span class="profile-detail-value">Particulier</span>
-          </div>
-          <div class="profile-detail-row">
-            <span class="profile-detail-label">Laatste activiteit</span>
-            <span class="profile-detail-value">Vandaag om 10:44</span>
-          </div>
-        </div>
-        <div class="profile-section">
-          <div class="profile-section-title">Gespreksstatus</div>
-          <div class="profile-status-row" id="profileGespreksstatus">
-            <span class="profile-status-label">Status</span>
-            <span class="gespreksstatus-badge gs-ai-actief"><span class="gs-dot"></span>AI actief</span>
-          </div>
-          <div class="progress-row">
-            <div class="progress-header">
-              <span class="progress-label">Zelfstandigheid</span>
-              <span class="progress-value">60%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill purple" style="width: 60%;"></div>
-            </div>
-          </div>
-          <div class="progress-row">
-            <div class="progress-header">
-              <span class="progress-label">Gemiddeld antw. gesl.</span>
-              <span class="progress-value">82%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill green" style="width: 82%;"></div>
-            </div>
-          </div>
-        </div>
-        <div class="conv-summary" id="profileSummary">
-          <div class="conv-summary-title">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
-            Samenvatting
-          </div>
-          <div class="conv-summary-text">Klant wil een afspraak inplannen voor een software-installatie. Er is een telefonisch adviesgesprek voorgesteld voor dinsdag om 10:00. Klant heeft bevestigd.</div>
-        </div>
-        <div class="profile-activity">
-          <div class="profile-section-title">Recente activiteit</div>
-          <div class="activity-item">
-            <div class="activity-dot green"></div>
-            <div>
-              <div class="activity-text">In Krantenlijst toegevoegd</div>
-              <div class="activity-date">Vandaag, 10:44</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-dot purple"></div>
-            <div>
-              <div class="activity-text">Klantprofiel bijgewerkt</div>
-              <div class="activity-date">Gisteren, 14:30</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-dot orange"></div>
-            <div>
-              <div class="activity-text">Afspraak ingepland</div>
-              <div class="activity-date">Vorige week</div>
-            </div>
-          </div>
-        </div>
-        <div class="profile-footer">
-          <button class="btn-new-convo">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
-            Nieuw gesprek zoek
-          </button>
-        </div>
-      </div>
+let selectedConvId=null, search='';
+function statusBadge(s){const cls=s==='menselijke_overname'?'gs-menselijke-overname':s==='afgesloten'?'gs-afgesloten':'gs-ai-actief';const lab=s==='menselijke_overname'?'Overname nodig':s==='afgesloten'?'Afgesloten':'AI actief';return `<span class="gespreksstatus-badge ${cls}"><span class="gs-dot"></span>${lab}</span>`}
+function ensureSelection(){const d=RF.load(); const params=new URLSearchParams(location.search); const clientId=params.get('client'); if(clientId){const conv=RF.addConversation(d.clients.find(c=>c.id===clientId)); selectedConvId=conv.id; history.replaceState(null,'','/platform/inbox/')} if(!selectedConvId && d.conversations[0]) selectedConvId=d.conversations[0].id;}
+function renderInbox(){ensureSelection(); const d=RF.load(); const q=search.toLowerCase(); const convs=d.conversations.filter(conv=>{const c=d.clients.find(x=>x.id===conv.clientId)||{};return [c.name,c.phone,c.email,conv.summary,...(conv.messages||[]).map(m=>m.text)].join(' ').toLowerCase().includes(q)}); statOpen.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statUnread.textContent=d.conversations.filter(c=>c.unread).length; const handled=d.conversations.length?Math.round(d.conversations.filter(c=>c.status==='afgesloten').length/d.conversations.length*100):0; statHandled.textContent=handled+'%'; conversationList.innerHTML=convs.map(conv=>{const c=d.clients.find(x=>x.id===conv.clientId)||{}; const last=conv.messages?.at(-1)?.text||conv.summary||'Geen berichten'; return `<div class="conv-item ${conv.id===selectedConvId?'active':''}" onclick="selectConversation('${conv.id}')"><div class="conv-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="conv-content"><div class="conv-header"><span class="conv-name">${RF.esc(c.name||'Onbekende klant')}</span><span class="conv-time">${RF.formatDateTime(conv.updatedAt)}</span></div><div class="conv-preview">${RF.esc(last)}</div><div class="conv-meta">${statusBadge(conv.status)}</div></div></div>`}).join('')||`<div class="empty-state"><strong>Geen gesprekken</strong>Maak een klant aan en open een gesprek vanuit de klantenlijst.</div>`; renderSelected();}
+function renderSelected(){const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); if(!conv){chatHeader.innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>'; chatMessages.innerHTML='<div class="empty-state"><strong>Geen gesprek</strong>Selecteer een gesprek of maak een klant aan.</div>'; profilePanelContent.innerHTML='<div class="empty-state">Geen klantprofiel geselecteerd.</div>'; return;} const c=d.clients.find(x=>x.id===conv.clientId)||{}; chatHeader.innerHTML=`<div class="chat-header-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="chat-header-info"><div class="chat-header-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="chat-header-details"><span class="chat-header-badge">${RF.esc(conv.channel||'sms')}</span><span>${RF.esc(c.phone||c.email||'Geen contactgegevens')}</span>${statusBadge(conv.status)}</div></div><button class="btn-small btn-purple" onclick="RFUI.openAppointmentModal('${c.id||''}','Via inbox')">Afspraak maken</button>`; chatMessages.innerHTML=(conv.messages||[]).map(m=>m.type==='date'?`<div class="chat-date">${RF.esc(m.text)}</div>`:`<div class="chat-msg ${m.type||'incoming'}">${RF.esc(m.text)}<div class="chat-msg-time">${RF.formatDateTime(m.time)}</div></div>`).join('')||`<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder een bericht om het gesprek te starten.</div>`; profilePanelContent.innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="profile-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="profile-phone">${RF.esc(c.phone||'Geen telefoon')}</div><div class="profile-email">${RF.esc(c.email||'Geen e-mail')}</div><div class="profile-actions"><button class="btn-small" onclick="location.href='/platform/klantenlijst/?client=${c.id||''}'">Bekijk klant</button><button class="btn-small btn-purple" onclick="RFUI.openAppointmentModal('${c.id||''}','Via inbox')">Afspraak</button></div></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Adres</span><span class="profile-detail-value">${RF.esc(c.address||'Niet ingevuld')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Type</span><span class="profile-detail-value">${RF.esc(c.type||'Klant')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span class="profile-detail-value">${RF.formatDateTime(conv.updatedAt)}</span></div></div><div class="conv-summary"><div class="conv-summary-title">Samenvatting</div><div class="conv-summary-text">${RF.esc(conv.summary||'Nog geen samenvatting beschikbaar.')}</div></div><div class="profile-footer"><button class="btn-new-convo" onclick="RFUI.openAppointmentModal('${c.id||''}','Via inbox')">Afspraak maken met deze klant</button></div>`; chatMessages.scrollTop=chatMessages.scrollHeight;}
+function selectConversation(id){selectedConvId=id;renderInbox()}
+function sendMessage(){const input=document.getElementById('chatInput'); if(!input.value.trim()||!selectedConvId)return; const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); conv.messages=conv.messages||[]; conv.messages.push({id:RF.uid('msg'),type:'outgoing',text:input.value.trim(),time:RF.nowISO()}); conv.updatedAt=RF.nowISO(); RF.save(d); input.value=''; renderInbox();}
+inboxSearch?.addEventListener('input',e=>{search=e.target.value;renderInbox()}); RFUI.initSharedForms(renderInbox); renderInbox();
 
-    </div>
-  </main>
-
-  <script>
-    const toggle = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebar');
-    if (toggle && sidebar) {
-      toggle.addEventListener('click', function() {
-        sidebar.classList.toggle('open');
-      });
-    }
-
-    var conversations = {
-      sophie: {
-        name: 'Sophie Baert',
-        initials: 'SB',
-        color: 'var(--orange)',
-        phone: '+32 476 12 34 56',
-        email: 'sophie.baert@email.com',
-        address: 'Kapellensteenstraat 23, 2000 Antwerpen',
-        type: 'Particulier',
-        lastActivity: 'Vandaag om 10:44',
-        badge: 'e-mail',
-        selfPct: 60,
-        answerPct: 82,
-        gespreksstatus: 'ai_actief',
-        samenvatting: 'Klant wil een afspraak inplannen voor een software-installatie. Er is een telefonisch adviesgesprek voorgesteld voor dinsdag om 10:00. Klant heeft bevestigd.',
-        messages: [
-          { type: 'date', text: 'Vandaag' },
-          { type: 'incoming', text: 'Hallo, ik wil graag een afspraak maken voor een installatie van onze nieuwe software. Wanneer zou dit kunnen?', time: '09:12' },
-          { type: 'incoming', text: 'Onze Sophie, u kan dit je doenemen hier in conversatie. Wanneer zou het voor u het beste uitkomen voor een telefonisch adviesgesprek?', time: '09:15' },
-          { type: 'outgoing', text: 'Top! Ik heb dinsdag 10:00 of 15:30 beschikbaar, past het beste voor jou?', time: '10:02' },
-          { type: 'incoming', text: 'Dinsdag om 10:00 is perfect. Waar vindt het gesprek plaats?', time: '10:15' },
-          { type: 'outgoing', text: 'Prima, dan plannen we je in de dinsdag om 10:00. Tot dan!', time: '10:18' }
-        ]
-      },
-      tom: {
-        name: 'Tom Peeters',
-        initials: 'TP',
-        color: 'var(--purple)',
-        phone: '+32 476 12 34 56',
-        email: 'tom.peeters@email.be',
-        address: 'Kerkstraat 45, 3000 Leuven',
-        type: 'Zakelijk',
-        lastActivity: 'Vandaag om 13:15',
-        badge: 'sms',
-        selfPct: 45,
-        answerPct: 90,
-        gespreksstatus: 'ai_actief',
-        samenvatting: 'Klant heeft een offerte ontvangen en wil een extra module toevoegen. Er wordt een aangepaste offerte opgestuurd.',
-        messages: [
-          { type: 'date', text: 'Vandaag' },
-          { type: 'incoming', text: 'Hallo, ik heb jullie offerte ontvangen. Kan ik die nog aanpassen?', time: '12:30' },
-          { type: 'outgoing', text: 'Ja natuurlijk! Wat zou je graag willen aanpassen?', time: '12:45' },
-          { type: 'incoming', text: 'Ik wil graag een extra module toevoegen aan het pakket.', time: '13:00' },
-          { type: 'outgoing', text: 'Dat kan zeker. Ik stuur je een aangepaste offerte door.', time: '13:10' },
-          { type: 'incoming', text: 'Bedankt voor de snelle reactie!', time: '13:15' }
-        ]
-      },
-      marc: {
-        name: 'Marc Kerkhofs',
-        initials: 'MK',
-        color: '#16a34a',
-        phone: '+32 471 98 76 54',
-        email: 'marc.kerkhofs@email.be',
-        address: 'Dorpsplein 12, 3500 Hasselt',
-        type: 'VIP',
-        lastActivity: 'Gisteren om 16:45',
-        badge: 'chat',
-        selfPct: 75,
-        answerPct: 68,
-        gespreksstatus: 'menselijke_overname',
-        samenvatting: 'VIP-klant vraagt gedetailleerde informatie over het Premium pakket. Details zijn per e-mail verstuurd. Wacht op reactie van klant.',
-        messages: [
-          { type: 'date', text: 'Gisteren' },
-          { type: 'incoming', text: 'Kan ik meer informatie krijgen over de verschillende offertes?', time: '15:30' },
-          { type: 'outgoing', text: 'Uiteraard! Welk pakket had je in gedachten?', time: '15:45' },
-          { type: 'incoming', text: 'Het Premium pakket lijkt interessant, maar ik wil de details weten.', time: '16:00' },
-          { type: 'outgoing', text: 'Ik stuur je alle details via e-mail. Check je inbox!', time: '16:30' },
-          { type: 'incoming', text: 'Top, bedankt!', time: '16:45' }
-        ]
-      },
-      laura: {
-        name: 'Laura Bosmans',
-        initials: 'LB',
-        color: '#2563eb',
-        phone: '+32 468 11 22 33',
-        email: 'laura.bosmans@email.be',
-        address: 'Stationsstraat 8, 2800 Mechelen',
-        type: 'Particulier',
-        lastActivity: 'Gisteren om 11:20',
-        badge: 'e-mail',
-        selfPct: 50,
-        answerPct: 77,
-        gespreksstatus: 'afgesloten',
-        samenvatting: 'Klant had bemerkingen over het contract, specifiek over leveringsvoorwaarden. Levertermijn van 5 werkdagen is verduidelijkt. Klant is tevreden.',
-        messages: [
-          { type: 'date', text: 'Gisteren' },
-          { type: 'incoming', text: 'Ik heb nog enkele bemerkingen over het contract.', time: '10:00' },
-          { type: 'outgoing', text: 'Geen probleem, wat zijn je opmerkingen?', time: '10:30' },
-          { type: 'incoming', text: 'De leveringsvoorwaarden zijn niet helemaal duidelijk.', time: '10:45' },
-          { type: 'outgoing', text: 'Ik verduidelijk dat graag. De levertermijn is standaard 5 werkdagen.', time: '11:00' },
-          { type: 'incoming', text: 'Dat is duidelijk, bedankt!', time: '11:20' }
-        ]
-      },
-      dory: {
-        name: 'Dory Vermeulen',
-        initials: 'DV',
-        color: 'var(--purple-medium)',
-        phone: '+32 479 44 55 66',
-        email: 'dory.vermeulen@email.be',
-        address: 'Hoogstraat 34, 9000 Gent',
-        type: 'Zakelijk',
-        lastActivity: '2 dagen geleden',
-        badge: 'sms',
-        selfPct: 30,
-        answerPct: 55,
-        gespreksstatus: 'ai_actief',
-        samenvatting: 'Klant wil een afspraak inplannen. Woensdag om 11:00 is voorgesteld en akkoord bevonden.',
-        messages: [
-          { type: 'date', text: '2 dagen geleden' },
-          { type: 'incoming', text: 'Hallo, ik was het bijna vergeten maar we moeten nog een afspraak plannen.', time: '14:00' },
-          { type: 'outgoing', text: 'Geen probleem! Wanneer zou het jou passen?', time: '14:15' },
-          { type: 'incoming', text: 'Volgende week dinsdag of woensdag zou goed zijn.', time: '14:30' },
-          { type: 'outgoing', text: 'Ik plan je in voor woensdag om 11:00. Past dat?', time: '14:45' },
-          { type: 'incoming', text: 'Prima, het was vergeten!', time: '15:00' }
-        ]
-      },
-      julia: {
-        name: 'Julia Maes',
-        initials: 'JM',
-        color: '#16a34a',
-        phone: '+32 488 99 88 77',
-        email: 'julia.maes@email.be',
-        address: 'Marktplein 5, 8000 Brugge',
-        type: 'Particulier',
-        lastActivity: '3 dagen geleden',
-        badge: 'chat',
-        selfPct: 80,
-        answerPct: 92,
-        gespreksstatus: 'afgesloten',
-        samenvatting: 'Klant is geholpen met het instellen van het systeem. Alles werkt goed, klant is zeer tevreden.',
-        messages: [
-          { type: 'date', text: '3 dagen geleden' },
-          { type: 'incoming', text: 'Bedankt voor de hulp bij het instellen van het systeem!', time: '09:00' },
-          { type: 'outgoing', text: 'Graag gedaan! Laat het weten als je nog vragen hebt.', time: '09:30' },
-          { type: 'incoming', text: 'Alles werkt nu perfect. Heel tevreden!', time: '10:00' }
-        ]
-      },
-      pieter: {
-        name: 'Pieter Klassen',
-        initials: 'PK',
-        color: '#dc2626',
-        phone: '+32 495 77 88 99',
-        email: 'pieter.klassen@email.be',
-        address: 'Industrieweg 78, 2000 Antwerpen',
-        type: 'Zakelijk',
-        lastActivity: '1 week geleden',
-        badge: 'e-mail',
-        selfPct: 25,
-        answerPct: 40,
-        gespreksstatus: 'menselijke_overname',
-        samenvatting: 'Klant heeft een afspraak bevestigd voor volgende week. Geen verdere vragen, alles is duidelijk.',
-        messages: [
-          { type: 'date', text: '1 week geleden' },
-          { type: 'incoming', text: 'Ik heb de afspraak bevestigd voor volgende week.', time: '11:00' },
-          { type: 'outgoing', text: 'Super, we kijken ernaar uit! Heb je nog vragen vooraf?', time: '11:30' },
-          { type: 'incoming', text: 'Nee, alles is duidelijk. Tot dan!', time: '12:00' }
-        ]
-      }
-    };
-
-    var convKeys = ['sophie', 'tom', 'marc', 'laura', 'dory', 'julia', 'pieter'];
-    var activeConv = 'sophie';
-
-    var gespreksstatusMap = {
-      'ai_actief': { label: 'AI actief', css: 'gs-ai-actief' },
-      'menselijke_overname': { label: 'Menselijke overname nodig', css: 'gs-menselijke-overname' },
-      'afgesloten': { label: 'Afgesloten gesprek', css: 'gs-afgesloten' }
-    };
-
-    function switchConversation(key) {
-      activeConv = key;
-      var c = conversations[key];
-
-      document.querySelectorAll('.conv-item').forEach(function(item, idx) {
-        if (convKeys[idx] === key) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
-      });
-
-      var chatHeader = document.querySelector('.chat-header');
-      var gs = gespreksstatusMap[c.gespreksstatus] || gespreksstatusMap['ai_actief'];
-      chatHeader.innerHTML =
-        '<div class="chat-header-avatar" style="background:' + c.color + ';">' + c.initials + '</div>' +
-        '<div class="chat-header-info">' +
-          '<div class="chat-header-name">' + c.name + '</div>' +
-          '<div class="chat-header-details">' +
-            '<span class="chat-header-badge">' + c.badge + '</span>' +
-            '<span>' + c.phone + '</span>' +
-            '<span class="gespreksstatus-badge ' + gs.css + '"><span class="gs-dot"></span>' + gs.label + '</span>' +
-          '</div>' +
-        '</div>';
-
-      var msgContainer = document.querySelector('.chat-messages');
-      msgContainer.innerHTML = '';
-      c.messages.forEach(function(m) {
-        if (m.type === 'date') {
-          var div = document.createElement('div');
-          div.className = 'chat-date';
-          div.textContent = m.text;
-          msgContainer.appendChild(div);
-        } else {
-          var div = document.createElement('div');
-          div.className = 'chat-msg ' + m.type;
-          div.innerHTML = m.text + '<div class="chat-msg-time">' + m.time + '</div>';
-          msgContainer.appendChild(div);
-        }
-      });
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-
-      var profilePanel = document.querySelector('.profile-panel');
-      if (profilePanel) {
-        profilePanel.querySelector('.profile-avatar').style.background = c.color;
-        profilePanel.querySelector('.profile-avatar').textContent = c.initials;
-        profilePanel.querySelector('.profile-name').textContent = c.name;
-        profilePanel.querySelector('.profile-phone').textContent = c.phone;
-        profilePanel.querySelector('.profile-email').textContent = c.email;
-        var details = profilePanel.querySelectorAll('.profile-detail-value');
-        if (details[0]) details[0].textContent = c.address;
-        if (details[1]) details[1].textContent = c.type;
-        if (details[2]) details[2].textContent = c.lastActivity;
-        var fills = profilePanel.querySelectorAll('.progress-fill');
-        var values = profilePanel.querySelectorAll('.progress-value');
-        if (fills[0]) fills[0].style.width = c.selfPct + '%';
-        if (values[0]) values[0].textContent = c.selfPct + '%';
-        if (fills[1]) fills[1].style.width = c.answerPct + '%';
-        if (values[1]) values[1].textContent = c.answerPct + '%';
-
-        var gsRow = document.getElementById('profileGespreksstatus');
-        if (gsRow) {
-          var gsInfo = gespreksstatusMap[c.gespreksstatus] || gespreksstatusMap['ai_actief'];
-          gsRow.innerHTML = '<span class="profile-status-label">Status</span><span class="gespreksstatus-badge ' + gsInfo.css + '"><span class="gs-dot"></span>' + gsInfo.label + '</span>';
-        }
-
-        var summarySection = document.getElementById('profileSummary');
-        if (summarySection) {
-          summarySection.querySelector('.conv-summary-text').textContent = c.samenvatting;
-        }
-      }
-    }
-
-    document.querySelectorAll('.conv-item').forEach(function(item, idx) {
-      item.addEventListener('click', function() {
-        switchConversation(convKeys[idx]);
-      });
-    });
-
-    // Tab filtering
-    document.querySelectorAll('.conv-tab').forEach(function(tab) {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.conv-tab').forEach(function(t) { t.classList.remove('active'); });
-        this.classList.add('active');
-        var filter = this.textContent.trim().toLowerCase();
-        document.querySelectorAll('.conv-item').forEach(function(item, idx) {
-          var key = convKeys[idx];
-          var conv = conversations[key];
-          if (filter === 'alles' || conv.badge === filter) {
-            item.style.display = '';
-          } else {
-            item.style.display = 'none';
-          }
-        });
-      });
-    });
-
-    // Send message
-    var chatInput = document.querySelector('.chat-input input');
-    var sendBtn = document.querySelector('.chat-send-btn');
-    function sendMessage() {
-      var text = chatInput.value.trim();
-      if (!text) return;
-      var c = conversations[activeConv];
-      var now = new Date();
-      var time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-      c.messages.push({ type: 'outgoing', text: text, time: time });
-      var msgContainer = document.querySelector('.chat-messages');
-      var div = document.createElement('div');
-      div.className = 'chat-msg outgoing';
-      div.innerHTML = text + '<div class="chat-msg-time">' + time + '</div>';
-      msgContainer.appendChild(div);
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-      chatInput.value = '';
-    }
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') sendMessage();
-    });
-  </script>
-</body>
-</html>
+const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script></body></html>
