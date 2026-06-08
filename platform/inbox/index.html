@@ -937,22 +937,25 @@
 </div>
 <div class="modal-overlay" id="rfAppointmentModal">
   <div class="modal wide">
-    <div class="modal-header"><h2>Klantafspraak toevoegen</h2><button class="modal-close" type="button" onclick="RFUI.closeAppointmentModal()">×</button></div>
+    <div class="modal-header"><h2>Afspraak maken met klant</h2><button class="modal-close" type="button" onclick="RFUI.closeAppointmentModal()">×</button></div>
     <form id="rfAppointmentForm">
       <div class="modal-body">
+        <div id="rfAppointmentAlert" class="empty-state hidden"></div>
+        <input type="hidden" id="rfApptClient">
         <div class="form-grid">
-          <div class="form-field full"><label>Klant</label><select id="rfApptClient"></select><div class="form-help">Kies een bestaande klant of maak een nieuwe contactpersoon aan.</div></div>
-          <div class="form-field hidden" id="rfNewClientNameWrap"><label>Naam nieuwe klant</label><input id="rfApptNewName" placeholder="Naam klant"></div>
-          <div class="form-field hidden" id="rfNewClientEmailWrap"><label>E-mail nieuwe klant</label><input id="rfApptNewEmail" type="email" placeholder="klant@email.be"></div>
-          <div class="form-field hidden" id="rfNewClientPhoneWrap"><label>Telefoon nieuwe klant</label><input id="rfApptNewPhone" type="tel" placeholder="+32 ..."></div>
-          <div class="form-field"><label>Afspraaktype</label><select id="rfApptTitle" required><option value="Klantafspraak">Klantafspraak</option></select><div class="form-help">Wordt gesynced met Cal.com afspraaktypes wanneer beschikbaar.</div></div>
+          <div class="form-field full"><label>Geselecteerde klant</label><input id="rfApptClientDisplay" type="text" readonly><div class="form-help">Deze klant komt uit het geselecteerde inboxgesprek.</div></div>
+          <div class="form-field"><label>Afspraaktype</label><select id="rfApptEventType" required><option value="">Cal.com afspraaktypes laden...</option></select><div class="form-help">Dit zijn dezelfde afspraaktypes als op de agenda-pagina.</div></div>
           <div class="form-field"><label>Startdatum en tijd</label><input id="rfApptStart" type="datetime-local" required></div>
-          <div class="form-field"><label>Locatie</label><input id="rfApptLocation" placeholder="Cal.com video, telefoon of adres"></div>
-          <div class="form-field"><label>Bron</label><select id="rfApptSource"><option>Manueel opgevolgd</option><option>Via inbox</option><option>Via klant</option><option>Via Reactify AI</option></select></div>
-          <div class="form-field full"><label>Notitie</label><textarea id="rfApptNotes" rows="3" placeholder="Extra context"></textarea></div>
+          <div class="form-field"><label>E-mail klant</label><input id="rfApptEmail" type="email" placeholder="klant@email.be"><div class="form-help">Cal.com heeft een e-mailadres nodig.</div></div>
+          <div class="form-field"><label>Telefoon klant</label><input id="rfApptPhone" type="tel" placeholder="+32 ..."></div>
+          <div class="form-field"><label>Plaats</label><select id="rfApptLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="custom">Andere plaats</option></select></div>
+          <div class="form-field"><label>Plaats detail</label><input id="rfApptLocationValue" placeholder="Link, telefoonnummer of adres"><div class="form-help">Bij Cal.com video mag dit leeg blijven.</div></div>
+          <div class="form-field"><label>Duur</label><input id="rfApptLength" type="number" min="5" step="5" placeholder="Automatisch"></div>
+          <div class="form-field full"><label>Opmerking</label><textarea id="rfApptNotes" rows="3" placeholder="Bijv. afspraak ingepland vanuit inbox"></textarea></div>
+          <label class="form-field full" style="display:flex;flex-direction:row;align-items:center;gap:.5rem;"><input id="rfApptForce" type="checkbox" style="width:auto;"> Forceer afspraak buiten beschikbaarheid of bij conflict</label>
         </div>
       </div>
-      <div class="modal-footer"><button type="button" class="btn-cancel" onclick="RFUI.closeAppointmentModal()">Annuleren</button><button type="submit" class="btn-save">Afspraak opslaan</button></div>
+      <div class="modal-footer"><button type="button" class="btn-cancel" onclick="RFUI.closeAppointmentModal()">Annuleren</button><button type="submit" class="btn-save">Afspraak aanmaken</button></div>
     </form>
   </div>
 </div>
@@ -985,19 +988,110 @@
 
 
 (function(){
+  const API={bookings:'/.netlify/functions/cal-bookings',eventTypes:'/.netlify/functions/cal-event-types'};
+  const CAL_USERNAME='christian-damian-62o7zs';
+  const CONTACT_KEY='reactify.contacts';
+  const LOCAL_APPT_KEY='reactify.localAppointments';
+  let inboxEventTypes=[];
+  let activeAppointmentClientId='';
+  const pad=n=>String(n).padStart(2,'0');
+  const toLocalInputValue=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const localToUTCISO=value=>new Date(value).toISOString();
+  const readList=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return []}};
+  const writeList=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+  async function apiFetch(url, options={}){
+    const res=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
+    const data=await res.json().catch(()=>({status:'error',error:'Kon response niet lezen.'}));
+    if(!res.ok || data.status==='error') throw new Error(data.error || data.message || (typeof data.details==='string'?data.details:JSON.stringify(data.details||'')) || 'API request mislukt.');
+    return data;
+  }
   function openClientModal(){document.getElementById('rfClientForm')?.reset();document.getElementById('rfClientModal')?.classList.add('open')}
   function closeClientModal(){document.getElementById('rfClientModal')?.classList.remove('open')}
-  function fillClientSelect(selectedId){const s=document.getElementById('rfApptClient'); if(!s)return; const data=RF.load(); s.innerHTML='<option value="">Kies klant...</option>'+data.clients.map(c=>`<option value="${c.id}">${RF.esc(c.name)}${c.phone?' · '+RF.esc(c.phone):''}</option>`).join('')+'<option value="__new">+ Nieuwe contactpersoon aanmaken</option>'; if(selectedId)s.value=selectedId; toggleNewClientFields();}
-  function toggleNewClientFields(){const isNew=document.getElementById('rfApptClient')?.value==='__new'; ['rfNewClientNameWrap','rfNewClientEmailWrap','rfNewClientPhoneWrap'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',!isNew));}
-  function openAppointmentModal(clientId, source){fillClientSelect(clientId); const f=document.getElementById('rfAppointmentForm'); if(f) f.reset(); fillClientSelect(clientId); const start=document.getElementById('rfApptStart'); if(start){const d=new Date();d.setHours(d.getHours()+1,0,0,0);start.value=d.toISOString().slice(0,16);} const src=document.getElementById('rfApptSource'); if(src&&source)src.value=source; document.getElementById('rfAppointmentModal')?.classList.add('open')}
+  function showAppointmentAlert(type,msg){const el=document.getElementById('rfAppointmentAlert'); if(!el)return; el.classList.remove('hidden'); el.style.color=type==='error'?'var(--red)':type==='ok'?'var(--green)':'var(--gray-600)'; el.innerHTML=RF.esc(msg);}
+  function hideAppointmentAlert(){document.getElementById('rfAppointmentAlert')?.classList.add('hidden')}
+  function mirrorContactForAgenda(contact){
+    if(!contact) return;
+    const contacts=readList(CONTACT_KEY);
+    const existing=contacts.find(c=>c.id===contact.id || (contact.email&&String(c.email||'').toLowerCase()===String(contact.email).toLowerCase()) || (contact.phone&&c.phone===contact.phone));
+    const item={id:contact.id,name:contact.name||'Klant',email:contact.email||'',phone:contact.phone||'',status:contact.status||'active',source:contact.source||'Inbox',lastActivity:new Date().toISOString(),notes:contact.note||contact.notes||''};
+    if(existing) Object.assign(existing,item,{id:existing.id||item.id}); else contacts.unshift(item);
+    writeList(CONTACT_KEY,contacts);
+  }
+  function saveLocalAppointmentForAgenda(appt){
+    const items=readList(LOCAL_APPT_KEY);
+    items.unshift({id:appt.id||RF.uid('appt'),...appt,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+    writeList(LOCAL_APPT_KEY,items);
+  }
+  async function loadCalEventTypesForInbox(){
+    const select=document.getElementById('rfApptEventType'); if(!select) return [];
+    select.innerHTML='<option value="">Cal.com afspraaktypes laden...</option>';
+    try{
+      const payload=await apiFetch(API.eventTypes);
+      inboxEventTypes=Array.isArray(payload.data)?payload.data:[];
+      if(inboxEventTypes.length){
+        select.innerHTML=inboxEventTypes.map(t=>`<option value="${RF.esc(t.id)}" data-slug="${RF.esc(t.slug||'')}" data-title="${RF.esc(t.title||t.slug||'Afspraak')}" data-length="${Number(t.lengthInMinutes||t.length||30)}">${RF.esc(t.title||t.slug||'Afspraak')} · ${Number(t.lengthInMinutes||t.length||30)} min</option>`).join('');
+      }else{
+        select.innerHTML='<option value="" disabled>Geen afspraaktypes gevonden in Cal.com</option>';
+      }
+    }catch(e){
+      console.error(e);
+      inboxEventTypes=[];
+      select.innerHTML='<option value="" disabled>Kon Cal.com afspraaktypes niet laden</option>';
+      showAppointmentAlert('error','Kon afspraaktypes niet ophalen uit Cal.com. Controleer cal-event-types function.');
+    }
+    select.onchange=()=>{const opt=select.selectedOptions[0]; const len=document.getElementById('rfApptLength'); if(len) len.value=opt?.dataset.length||'';};
+    select.onchange();
+    return inboxEventTypes;
+  }
+  function openAppointmentModal(clientId){
+    const d=RF.load(); const contact=d.clients.find(c=>c.id===clientId); if(!contact){RF.toast('Geen klant geselecteerd.'); return;}
+    activeAppointmentClientId=clientId;
+    const f=document.getElementById('rfAppointmentForm'); if(f) f.reset(); hideAppointmentAlert();
+    document.getElementById('rfApptClient').value=clientId;
+    document.getElementById('rfApptClientDisplay').value=`${contact.name||'Klant'}${contact.phone?' · '+contact.phone:''}`;
+    document.getElementById('rfApptEmail').value=contact.email||'';
+    document.getElementById('rfApptPhone').value=contact.phone||'';
+    const start=document.getElementById('rfApptStart'); if(start){const next=new Date(); next.setMinutes(0,0,0); next.setHours(next.getHours()+1); start.value=toLocalInputValue(next);}
+    document.getElementById('rfAppointmentModal')?.classList.add('open');
+    loadCalEventTypesForInbox();
+  }
   function closeAppointmentModal(){document.getElementById('rfAppointmentModal')?.classList.remove('open')}
   function initSharedForms(afterSave){
     document.getElementById('rfClientForm')?.addEventListener('submit',e=>{e.preventDefault(); RF.addClient({name:rfClientName.value,email:rfClientEmail.value,phone:rfClientPhone.value,note:rfClientNote.value,source:'Klantenpagina'}); closeClientModal(); RF.toast('Contactpersoon opgeslagen'); afterSave&&afterSave();});
-    document.getElementById('rfApptClient')?.addEventListener('change',toggleNewClientFields);
-    document.getElementById('rfAppointmentForm')?.addEventListener('submit',e=>{e.preventDefault(); const clientVal=rfApptClient.value; let newClient=null; if(clientVal==='__new'){ if(!rfApptNewName.value.trim()){alert('Vul een naam in voor de nieuwe klant.');return;} newClient={name:rfApptNewName.value,email:rfApptNewEmail.value,phone:rfApptNewPhone.value,source:'Afspraakflow'}; }
-      RF.addAppointment({clientId:clientVal&&clientVal!=='__new'?clientVal:null,newClient,title:rfApptTitle.value,start:new Date(rfApptStart.value).toISOString(),location:rfApptLocation.value,source:rfApptSource.value,notes:rfApptNotes.value}); closeAppointmentModal(); RF.toast('Afspraak opgeslagen'); afterSave&&afterSave();});
+    document.getElementById('rfAppointmentForm')?.addEventListener('submit',async e=>{
+      e.preventDefault();
+      try{
+        const d=RF.load();
+        const clientId=document.getElementById('rfApptClient').value || activeAppointmentClientId;
+        const contact=d.clients.find(c=>c.id===clientId);
+        if(!contact) throw new Error('Geen klant geselecteerd.');
+        const email=document.getElementById('rfApptEmail').value.trim() || contact.email;
+        const phone=document.getElementById('rfApptPhone').value.trim() || contact.phone;
+        if(!email) throw new Error('Cal.com heeft een e-mailadres nodig om een afspraak te maken.');
+        const opt=document.getElementById('rfApptEventType').selectedOptions[0];
+        if(!opt || !opt.value) throw new Error('Kies een geldig Cal.com afspraaktype.');
+        showAppointmentAlert('info','Afspraak aanmaken in Cal.com...');
+        contact.email=email; contact.phone=phone; contact.updatedAt=new Date().toISOString(); RF.save(d); mirrorContactForAgenda(contact);
+        const length=Number(document.getElementById('rfApptLength').value || opt.dataset.length || 30);
+        const startISO=localToUTCISO(document.getElementById('rfApptStart').value);
+        const locationType=document.getElementById('rfApptLocationType').value;
+        const locationValue=document.getElementById('rfApptLocationValue').value.trim();
+        const locationLabel=locationType==='cal_video'?'Cal.com video':locationValue;
+        const title=opt.dataset.title || opt.textContent || 'Reactify afspraak';
+        const payload={start:startISO,eventTypeId:opt.value,eventTypeSlug:opt.dataset.slug,username:CAL_USERNAME,lengthInMinutes:length,attendee:{name:contact.name,email,phoneNumber:phone,timeZone:'Europe/Brussels',language:'nl'},bookingFieldsResponses:{notes:document.getElementById('rfApptNotes').value,title,location:locationLabel},metadata:{source:'reactify-inbox',contactId:contact.id,locationType,locationValue,locationLabel},locationType,locationValue,locationLabel,allowConflicts:document.getElementById('rfApptForce').checked,allowBookingOutOfBounds:document.getElementById('rfApptForce').checked};
+        const createdPayload=await apiFetch(API.bookings,{method:'POST',body:JSON.stringify(payload)});
+        const created=createdPayload?.data||createdPayload?.booking||createdPayload;
+        const calUid=created?.uid||created?.id||null;
+        RF.addAppointment({clientId:contact.id,title,start:startISO,end:new Date(new Date(startISO).getTime()+length*60000).toISOString(),location:locationLabel,type:opt.dataset.title||'Cal.com',source:'Reactify',notes:document.getElementById('rfApptNotes').value});
+        saveLocalAppointmentForAgenda({contactId:contact.id,customer:contact.name,title,start:startISO,end:new Date(new Date(startISO).getTime()+length*60000).toISOString(),status:'accepted',type:opt.dataset.title||'Cal.com',source:'Reactify',location:locationLabel,calUid,meetingUrl:created?.meetingUrl||''});
+        showAppointmentAlert('ok','Afspraak aangemaakt in Cal.com.');
+        RF.toast('Afspraak aangemaakt in Cal.com');
+        afterSave&&afterSave();
+        setTimeout(()=>closeAppointmentModal(),900);
+      }catch(error){console.error(error);showAppointmentAlert('error',error.message||'Afspraak aanmaken mislukt.');}
+    });
   }
-  window.RFUI={openClientModal,closeClientModal,openAppointmentModal,closeAppointmentModal,fillClientSelect,initSharedForms};
+  window.RFUI={openClientModal,closeClientModal,openAppointmentModal,closeAppointmentModal,loadCalEventTypesForInbox,initSharedForms};
 })();
 
 
@@ -1006,16 +1100,10 @@ function statusBadge(s){const cls=s==='menselijke_overname'?'gs-menselijke-overn
 function ensureSelection(){const d=RF.load(); const params=new URLSearchParams(location.search); const clientId=params.get('client'); if(clientId){const conv=RF.addConversation(d.clients.find(c=>c.id===clientId)); selectedConvId=conv.id; history.replaceState(null,'','/platform/inbox/')} if(!selectedConvId && d.conversations[0]) selectedConvId=d.conversations[0].id;}
 function renderInbox(){ensureSelection(); const d=RF.load(); const q=search.toLowerCase(); const convs=d.conversations.filter(conv=>{const c=d.clients.find(x=>x.id===conv.clientId)||{};return [c.name,c.phone,c.email,conv.summary,...(conv.messages||[]).map(m=>m.text)].join(' ').toLowerCase().includes(q)}); statOpen.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statUnread.textContent=d.conversations.filter(c=>c.unread).length; const handled=d.conversations.length?Math.round(d.conversations.filter(c=>c.status==='afgesloten').length/d.conversations.length*100):0; statHandled.textContent=handled+'%'; conversationList.innerHTML=convs.map(conv=>{const c=d.clients.find(x=>x.id===conv.clientId)||{}; const last=conv.messages?.at(-1)?.text||conv.summary||'Geen berichten'; return `<div class="conv-item ${conv.id===selectedConvId?'active':''}" onclick="selectConversation('${conv.id}')"><div class="conv-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="conv-content"><div class="conv-header"><span class="conv-name">${RF.esc(c.name||'Onbekende klant')}</span><span class="conv-time">${RF.formatDateTime(conv.updatedAt)}</span></div><div class="conv-preview">${RF.esc(last)}</div><div class="conv-meta">${statusBadge(conv.status)}</div></div></div>`}).join('')||`<div class="empty-state"><strong>Geen gesprekken</strong>Maak een klant aan en open een gesprek vanuit de klantenlijst.</div>`; renderSelected();}
 
-async function loadCalEventTypesForInbox(){
-  const select=document.getElementById('rfApptTitle'); if(!select) return;
-  try{const res=await fetch('/.netlify/functions/cal-event-types'); if(!res.ok) throw new Error('Geen eventtypes'); const payload=await res.json(); const list=Array.isArray(payload.data)?payload.data:[];
-    if(list.length){select.innerHTML=list.map(t=>`<option value="${RF.esc(t.title||t.slug||'Afspraak')}">${RF.esc(t.title||t.slug||'Afspraak')} · ${t.lengthInMinutes||t.length||30} min</option>`).join('');}
-  }catch(e){select.innerHTML='<option value="Klantafspraak">Klantafspraak</option><option value="Kennismaking">Kennismaking</option><option value="Demo">Demo</option><option value="Telefonisch adviesgesprek">Telefonisch adviesgesprek</option>';}
-}
 
 function renderSelected(){const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); if(!conv){chatHeader.innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>'; chatMessages.innerHTML='<div class="empty-state"><strong>Geen gesprek</strong>Selecteer een gesprek of maak een klant aan.</div>'; profilePanelContent.innerHTML='<div class="empty-state">Geen klantprofiel geselecteerd.</div>'; return;} const c=d.clients.find(x=>x.id===conv.clientId)||{}; chatHeader.innerHTML=`<div class="chat-header-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="chat-header-info"><div class="chat-header-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="chat-header-details"><span class="chat-header-badge">${RF.esc(conv.channel||'sms')}</span><span>${RF.esc(c.phone||c.email||'Geen contactgegevens')}</span>${statusBadge(conv.status)}</div></div>`; chatMessages.innerHTML=(conv.messages||[]).map(m=>m.type==='date'?`<div class="chat-date">${RF.esc(m.text)}</div>`:`<div class="chat-msg ${m.type||'incoming'}">${RF.esc(m.text)}<div class="chat-msg-time">${RF.formatDateTime(m.time)}</div></div>`).join('')||`<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder een bericht om het gesprek te starten.</div>`; profilePanelContent.innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="profile-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="profile-phone">${RF.esc(c.phone||'Geen telefoon')}</div><div class="profile-email">${RF.esc(c.email||'Geen e-mail')}</div><div class="profile-actions"><button class="btn-small" onclick="location.href='/platform/klantenlijst/?client=${c.id||''}'">Bekijk klant</button></div></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Adres</span><span class="profile-detail-value">${RF.esc(c.address||'Niet ingevuld')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Type</span><span class="profile-detail-value">${RF.esc(c.type||'Klant')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span class="profile-detail-value">${RF.formatDateTime(conv.updatedAt)}</span></div></div><div class="conv-summary"><div class="conv-summary-title">Samenvatting</div><div class="conv-summary-text">${RF.esc(conv.summary||'Nog geen samenvatting beschikbaar.')}</div></div><div class="profile-footer"><button class="btn-new-convo" onclick="RFUI.openAppointmentModal('${c.id||''}','Via inbox')">Afspraak maken met deze klant</button></div>`; chatMessages.scrollTop=chatMessages.scrollHeight;}
 function selectConversation(id){selectedConvId=id;renderInbox()}
-function sendMessage(){const input=document.getElementById('chatInput'); if(!input.value.trim()||!selectedConvId)return; const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); conv.messages=conv.messages||[]; conv.messages.push({id:RF.uid('msg'),type:'outgoing',text:input.value.trim(),time:RF.nowISO()}); conv.updatedAt=RF.nowISO(); RF.save(d); input.value=''; loadCalEventTypesForInbox(); renderInbox();}
+function sendMessage(){const input=document.getElementById('chatInput'); if(!input.value.trim()||!selectedConvId)return; const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); conv.messages=conv.messages||[]; conv.messages.push({id:RF.uid('msg'),type:'outgoing',text:input.value.trim(),time:RF.nowISO()}); conv.updatedAt=RF.nowISO(); RF.save(d); input.value=''; renderInbox();}
 inboxSearch?.addEventListener('input',e=>{search=e.target.value;renderInbox()}); RFUI.initSharedForms(renderInbox); renderInbox();
 
 const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script></body></html>
