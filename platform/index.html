@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Reactify Platform"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Klantenlijst | Reactify</title><style>
+<html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Reactify Platform"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Platform | Reactify</title><style>
     :root {
       --purple-dark: #3D1D72;
       --purple: #5B2E91;
@@ -14,18 +14,10 @@
       --gray-100: #F3F4F6;
       --gray-200: #E5E7EB;
       --gray-300: #D1D5DB;
-      --gray-400: #9CA3AF;
-      --gray-500: #6B7280;
       --gray-600: #4B5563;
       --gray-700: #374151;
       --gray-800: #1F2937;
       --gray-900: #111827;
-      --green: #16a34a;
-      --green-light: #dcfce7;
-      --blue: #2563eb;
-      --blue-light: #dbeafe;
-      --red: #dc2626;
-      --red-light: #fee2e2;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -62,8 +54,17 @@
       gap: 0.75rem;
     }
 
-    .sidebar-logo svg { width: 32px; height: 32px; flex-shrink: 0; }
-    .sidebar-logo span { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+    .sidebar-logo svg {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo span {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
 
     .sidebar-nav {
       flex: 1;
@@ -87,10 +88,25 @@
       transition: all 0.2s ease;
     }
 
-    .sidebar-link:hover { color: var(--white); background: rgba(255,255,255,0.1); }
-    .sidebar-link.active { color: var(--white); background: var(--purple); }
-    .sidebar-link svg { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.8; }
+    .sidebar-link:hover {
+      color: var(--white);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .sidebar-link.active {
+      color: var(--white);
+      background: var(--purple);
+    }
+
+    .sidebar-link svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
     .sidebar-link.active svg { opacity: 1; }
+
     .sidebar-spacer { flex: 1; }
 
     .sidebar-user {
@@ -127,20 +143,47 @@
       min-height: 100vh;
     }
 
-    .page-header {
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 2rem;
     }
 
-    .page-header h1 {
+    .main-header h1 {
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--gray-900);
-      margin-bottom: 0.25rem;
     }
 
-    .page-header p {
-      font-size: 0.875rem;
-      color: var(--gray-500);
+    .main-header h1 span {
+      color: var(--orange);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
     }
 
     /* Stats Grid */
@@ -148,7 +191,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1.25rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
 
     .stat-card {
@@ -174,157 +217,67 @@
 
     .stat-icon.purple { background: var(--purple-light); color: var(--purple); }
     .stat-icon.orange { background: var(--orange-light); color: var(--orange-dark); }
-    .stat-icon.green { background: var(--green-light); color: var(--green); }
-    .stat-icon.blue { background: var(--blue-light); color: var(--blue); }
+    .stat-icon.green { background: #dcfce7; color: #16a34a; }
+    .stat-icon.blue { background: #dbeafe; color: #2563eb; }
 
     .stat-info { line-height: 1.3; }
     .stat-label { font-size: 0.75rem; color: var(--gray-600); font-weight: 500; }
     .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--gray-900); }
 
-    /* Toolbar */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
-      flex-wrap: wrap;
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.25rem;
     }
 
-    .search-box {
-      flex: 1;
-      min-width: 200px;
-      max-width: 320px;
-      position: relative;
-    }
-
-    .search-box svg {
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      color: var(--gray-400);
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 0.5rem 0.75rem 0.5rem 2.25rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-family: var(--font-sans);
-      color: var(--gray-800);
-      background: var(--white);
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    .search-box input::placeholder { color: var(--gray-400); }
-    .search-box input:focus { border-color: var(--purple); }
-
-    .filter-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--gray-600);
-      background: var(--white);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-
-    .filter-btn:hover { border-color: var(--gray-300); background: var(--gray-50); }
-    .filter-btn svg { width: 14px; height: 14px; }
-
-    .toolbar-spacer { flex: 1; }
-
-    .btn-export {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--gray-700);
-      background: var(--white);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-
-    .btn-export:hover { border-color: var(--gray-300); background: var(--gray-50); }
-    .btn-export svg { width: 16px; height: 16px; }
-
-    .btn-new-client {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--white);
-      background: var(--purple);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-
-    .btn-new-client:hover { background: var(--purple-dark); }
-    .btn-new-client svg { width: 16px; height: 16px; }
-
-    /* Table */
-    .table-container {
+    .dashboard-card {
       background: var(--white);
       border-radius: 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       overflow: hidden;
     }
 
-    .client-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .client-table thead th {
-      padding: 0.75rem 1.25rem;
-      text-align: left;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--gray-500);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .card-header {
+      padding: 1rem 1.25rem;
       border-bottom: 1px solid var(--gray-100);
-      background: var(--gray-50);
-      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .client-table tbody td {
-      padding: 0.875rem 1.25rem;
-      font-size: 0.85rem;
-      border-bottom: 1px solid var(--gray-100);
-      vertical-align: middle;
+    .card-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-900);
     }
 
-    .client-table tbody tr:last-child td { border-bottom: none; }
-    .client-table tbody tr:hover { background: var(--gray-50); }
+    .card-header a {
+      font-size: 0.8rem;
+      color: var(--purple);
+      text-decoration: none;
+      font-weight: 500;
+    }
 
-    .table-client {
+    .card-header a:hover { color: var(--orange); }
+
+    .card-body {
+      padding: 0.5rem 0;
+    }
+
+    /* Client list */
+    .client-item {
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      padding: 0.625rem 1.25rem;
+      transition: background 0.15s ease;
     }
 
-    .table-avatar {
+    .client-item:hover { background: var(--gray-50); }
+    .client-item { cursor: pointer; }
+
+    .client-avatar {
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -337,498 +290,75 @@
       flex-shrink: 0;
     }
 
-    .table-client-info { line-height: 1.3; }
-    .table-client-name { font-weight: 600; color: var(--gray-900); }
-    .table-client-email { font-size: 0.75rem; color: var(--gray-500); }
+    .client-info { flex: 1; min-width: 0; }
+    .client-name { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
+    .client-phone { font-size: 0.75rem; color: var(--gray-600); }
 
-    .table-phone { color: var(--gray-700); white-space: nowrap; }
-
-    .table-activity {
-      color: var(--gray-600);
-      font-size: 0.8rem;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      padding: 0.25rem 0.625rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    .status-badge .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
-
-    .status-badge.active { background: var(--green-light); color: var(--green); }
-    .status-badge.active .dot { background: var(--green); }
-
-    .status-badge.inactive { background: var(--gray-100); color: var(--gray-500); }
-    .status-badge.inactive .dot { background: var(--gray-400); }
-
-    .status-badge.new { background: var(--purple-light); color: var(--purple); }
-    .status-badge.new .dot { background: var(--purple); }
-
-    .status-badge.vip { background: var(--orange-light); color: var(--orange-dark); }
-    .status-badge.vip .dot { background: var(--orange); }
-
-    .action-btns {
+    /* Inbox */
+    .inbox-item {
       display: flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .action-btn {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      border-radius: 6px;
-      background: transparent;
-      color: var(--gray-400);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .action-btn:hover { background: var(--gray-100); color: var(--gray-700); }
-    .action-btn svg { width: 16px; height: 16px; }
-
-    /* Pagination */
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
       padding: 0.75rem 1.25rem;
-      border-top: 1px solid var(--gray-100);
+      transition: background 0.15s ease;
     }
 
-    .pagination-info {
-      font-size: 0.8rem;
-      color: var(--gray-500);
-    }
+    .inbox-item:hover { background: var(--gray-50); }
+    .inbox-item { cursor: pointer; }
 
-    .pagination-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .page-btn {
-      min-width: 32px;
-      height: 32px;
+    .inbox-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid var(--gray-200);
-      border-radius: 6px;
-      background: var(--white);
-      color: var(--gray-700);
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-
-    .page-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
-    .page-btn.active { background: var(--purple); color: var(--white); border-color: var(--purple); }
-    .page-btn:disabled { opacity: 0.4; cursor: default; }
-    .page-btn svg { width: 14px; height: 14px; }
-
-    .pagination-per-page {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-      color: var(--gray-500);
-    }
-
-    .pagination-per-page select {
-      padding: 0.25rem 0.5rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-family: var(--font-sans);
-      color: var(--gray-700);
-      background: var(--white);
-      cursor: pointer;
-    }
-
-    /* Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: var(--white);
-      border-radius: 16px;
-      width: 480px;
-      max-width: 95vw;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--gray-100);
-    }
-
-    .modal-header h2 {
-      font-size: 1.1rem;
       font-weight: 700;
-      color: var(--gray-900);
+      font-size: 0.75rem;
+      color: var(--white);
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
-    .modal-close {
-      width: 32px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-      border: none; border-radius: 8px;
-      background: var(--gray-100);
-      color: var(--gray-600);
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: all 0.2s ease;
-    }
-    .modal-close:hover { background: var(--gray-200); color: var(--gray-900); }
+    .inbox-content { flex: 1; min-width: 0; }
+    .inbox-sender { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
+    .inbox-preview { font-size: 0.78rem; color: var(--gray-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .inbox-time { font-size: 0.7rem; color: var(--gray-600); white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
 
-    .modal-body { padding: 1.5rem; }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--gray-700);
-      margin-bottom: 0.375rem;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-family: var(--font-sans);
-      color: var(--gray-800);
-      background: var(--white);
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    .form-group input:focus, .form-group select:focus { border-color: var(--purple); }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .modal-footer {
+    /* Agenda */
+    .agenda-item {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
       gap: 0.75rem;
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--gray-100);
+      padding: 0.625rem 1.25rem;
+      transition: background 0.15s ease;
     }
 
-    .btn-cancel {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--gray-700);
-      background: var(--white);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-    .btn-cancel:hover { background: var(--gray-50); border-color: var(--gray-300); }
+    .agenda-item:hover { background: var(--gray-50); }
+    .agenda-item { cursor: pointer; }
 
-    .btn-save {
-      padding: 0.5rem 1.25rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.8rem;
+    .agenda-time {
+      font-size: 0.78rem;
       font-weight: 600;
-      color: var(--white);
-      background: var(--purple);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-    .btn-save:hover { background: var(--purple-dark); }
-
-    .btn-delete-confirm {
-      padding: 0.5rem 1.25rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--white);
-      background: var(--red);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-    .btn-delete-confirm:hover { background: #b91c1c; }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.625rem 0;
-      border-bottom: 1px solid var(--gray-50);
-    }
-    .detail-row:last-child { border-bottom: none; }
-    .detail-label { font-size: 0.8rem; color: var(--gray-500); font-weight: 500; }
-    .detail-value { font-size: 0.85rem; color: var(--gray-800); font-weight: 500; }
-
-    .client-table tbody tr { cursor: pointer; }
-
-    /* Edit Sidebar */
-    .edit-sidebar-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.3);
-      z-index: 999;
-    }
-    .edit-sidebar-overlay.open { display: block; }
-
-    .edit-sidebar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 420px;
-      max-width: 95vw;
-      height: 100vh;
-      background: var(--white);
-      box-shadow: -4px 0 24px rgba(0,0,0,0.12);
-      z-index: 1000;
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .edit-sidebar.open { transform: translateX(0); }
-
-    .edit-sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--gray-100);
+      color: var(--purple);
+      width: 44px;
       flex-shrink: 0;
     }
 
-    .edit-sidebar-header h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--gray-900);
-    }
-
-    .edit-sidebar-close {
-      width: 34px; height: 34px;
-      display: flex; align-items: center; justify-content: center;
-      border: none; border-radius: 8px;
-      background: var(--gray-100);
-      color: var(--gray-600);
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: all 0.2s ease;
-    }
-    .edit-sidebar-close:hover { background: var(--gray-200); color: var(--gray-900); }
-
-    .edit-sidebar-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.5rem;
-    }
-
-    .edit-sidebar-footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 0.75rem;
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--gray-100);
+    .agenda-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .photo-upload-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--gray-100);
-    }
+    .agenda-dot.purple { background: var(--purple); }
+    .agenda-dot.orange { background: var(--orange); }
+    .agenda-dot.green { background: #16a34a; }
 
-    .photo-preview {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--white);
-      margin-bottom: 0.75rem;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .photo-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    .photo-preview-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      border-radius: 50%;
-    }
-
-    .photo-preview:hover .photo-preview-overlay { opacity: 1; }
-
-    .photo-preview-overlay svg {
-      width: 24px;
-      height: 24px;
-      color: var(--white);
-    }
-
-    .photo-upload-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      padding: 0.375rem 0.75rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--gray-600);
-      background: var(--white);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s ease;
-    }
-    .photo-upload-btn:hover { border-color: var(--gray-300); background: var(--gray-50); }
-    .photo-upload-btn svg { width: 14px; height: 14px; }
-
-    .edit-section-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--gray-900);
-      margin-bottom: 0.75rem;
-      margin-top: 1.25rem;
-    }
-
-    .edit-section-title:first-child { margin-top: 0; }
-
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.375rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      background: var(--purple-light);
-      color: var(--purple);
-    }
-
-    .tag-remove {
-      width: 14px;
-      height: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      border-radius: 50%;
-      background: transparent;
-      color: var(--purple);
-      cursor: pointer;
-      font-size: 0.8rem;
-      padding: 0;
-      transition: all 0.15s ease;
-    }
-    .tag-remove:hover { background: var(--purple); color: var(--white); }
-
-    .tag-input-row {
-      display: flex;
-      gap: 0.375rem;
-    }
-
-    .tag-input-row input {
-      flex: 1;
-      padding: 0.375rem 0.625rem;
-      border: 1px solid var(--gray-200);
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-family: var(--font-sans);
-      color: var(--gray-800);
-      outline: none;
-    }
-    .tag-input-row input:focus { border-color: var(--purple); }
-    .tag-input-row input::placeholder { color: var(--gray-400); }
-
-    .tag-add-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.375rem 0.625rem;
-      border: 1px solid var(--purple);
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--purple);
-      background: var(--white);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      white-space: nowrap;
-      transition: all 0.2s ease;
-    }
-    .tag-add-btn:hover { background: var(--purple); color: var(--white); }
+    .agenda-info { flex: 1; min-width: 0; }
+    .agenda-title { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
+    .agenda-sub { font-size: 0.75rem; color: var(--gray-600); }
 
     /* Mobile */
     .mobile-sidebar-toggle {
@@ -844,23 +374,22 @@
       font-weight: 500;
       cursor: pointer;
       font-family: var(--font-sans);
-      margin-bottom: 1rem;
     }
 
     @media (max-width: 1024px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .table-container { overflow-x: auto; }
-      .client-table { min-width: 700px; }
     }
 
     @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
       .sidebar.open { transform: translateX(0); }
       .main { margin-left: 0; }
       .mobile-sidebar-toggle { display: inline-flex; }
-      .toolbar { flex-direction: column; align-items: stretch; }
-      .search-box { max-width: 100%; }
-      .toolbar-spacer { display: none; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 480px) {
@@ -899,28 +428,15 @@
     .toast{position:fixed;right:1rem;bottom:1rem;background:var(--gray-900);color:#fff;padding:.75rem 1rem;border-radius:10px;z-index:2000;font-size:.85rem;box-shadow:0 12px 30px rgba(0,0,0,.2);display:none;}
     .toast.show{display:block;}
     @media(max-width:768px){.form-grid{grid-template-columns:1fr}.modal-actions,.modal-footer{flex-wrap:wrap}.modal-actions button,.modal-footer button{flex:1}}
-
-    .client-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.35);z-index:998}.client-drawer-overlay.open{display:block}
-    .client-drawer{position:fixed;top:0;right:0;width:460px;max-width:95vw;height:100vh;background:var(--white);box-shadow:-8px 0 30px rgba(0,0,0,.14);z-index:999;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column}.client-drawer.open{transform:translateX(0)}
-    .client-drawer-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}.client-drawer-header h2{font-size:1.1rem;color:var(--gray-900)}
-    .client-drawer-close{width:34px;height:34px;border:0;border-radius:8px;background:var(--gray-100);font-size:1.25rem;color:var(--gray-600);cursor:pointer}.client-drawer-close:hover{background:var(--gray-200);color:var(--gray-900)}
-    .client-drawer-body{padding:1.5rem;overflow-y:auto;flex:1}.client-drawer-footer{padding:1rem 1.5rem;border-top:1px solid var(--gray-100);display:flex;justify-content:flex-end;gap:.75rem}
-    .drawer-photo{display:flex;flex-direction:column;align-items:center;padding-bottom:1.25rem;margin-bottom:1.25rem;border-bottom:1px solid var(--gray-100)}
-    .drawer-avatar{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;font-weight:800;overflow:hidden;margin-bottom:.75rem}.drawer-avatar img{width:100%;height:100%;object-fit:cover}
-    .drawer-photo-btn{border:1px solid var(--gray-200);border-radius:8px;background:#fff;padding:.45rem .75rem;font-size:.78rem;color:var(--gray-700);font-weight:600;cursor:pointer}.drawer-photo-btn:hover{background:var(--gray-50)}
-    .drawer-section-title{font-size:.78rem;font-weight:800;color:var(--gray-900);margin:1.15rem 0 .7rem}.drawer-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.drawer-input{margin-bottom:.9rem}.drawer-input label{display:block;font-size:.78rem;font-weight:700;color:var(--gray-700);margin-bottom:.35rem}.drawer-input input,.drawer-input select,.drawer-input textarea{width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;outline:none}.drawer-input input:focus,.drawer-input select:focus,.drawer-input textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.12)}
-    @media(max-width:520px){.drawer-row{grid-template-columns:1fr}.client-drawer-footer{flex-wrap:wrap}.client-drawer-footer button{flex:1}}
-
 </style></head><body>
-<aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
-<a href="/platform/klantenlijst/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
+<aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
+<a href="/platform/klantenlijst/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
 <a href="/platform/inbox/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>Inbox</a>
 <a href="/platform/agenda/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>Agenda</a><div class="sidebar-spacer"></div><a href="#" class="sidebar-link">Instellingen</a><a href="#" class="sidebar-link">Help</a></nav><div class="sidebar-user"><div class="user-avatar">BD</div><div class="user-info"><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div></aside>
 
-<main class="main"><button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button><div class="page-header"><h1>Klantenlijst</h1><p>Overzicht van al je contactpersonen en klanten</p></div>
-<div class="stats-grid"><div class="stat-card"><div class="stat-icon purple">👥</div><div class="stat-info"><div class="stat-label">Totaal klanten</div><div class="stat-value" id="statTotalClients">0</div></div></div><div class="stat-card"><div class="stat-icon orange">＋</div><div class="stat-info"><div class="stat-label">Nieuwe deze maand</div><div class="stat-value" id="statNewMonth">0</div></div></div><div class="stat-card"><div class="stat-icon green">💬</div><div class="stat-info"><div class="stat-label">Actieve gesprekken</div><div class="stat-value" id="statActiveConvs">0</div></div></div><div class="stat-card"><div class="stat-icon blue">📅</div><div class="stat-info"><div class="stat-label">Afspraken gepland</div><div class="stat-value" id="statPlannedAppts">0</div></div></div></div>
-<div class="toolbar"><div class="search-box"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg><input id="clientSearch" type="text" placeholder="Zoek op naam, e-mail of telefoon..."></div><div class="toolbar-spacer"></div><button class="btn-export" onclick="exportClients()">Exporteren</button><button class="btn-new-client" onclick="RFUI.openClientModal()">Nieuwe Klant</button></div>
-<div class="table-container"><table class="client-table"><thead><tr><th>Naam</th><th>Contactgegevens</th><th>Laatste activiteit</th><th>Status</th><th>Acties</th></tr></thead><tbody id="clientTableBody"></tbody></table><div class="pagination"><div class="pagination-info" id="paginationInfo">0 klanten</div><div class="pagination-controls"></div><div class="pagination-per-page"><span>Live gesynced</span></div></div></div></main>
+<main class="main"><div class="main-header"><div><button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button><h1>Welkom terug, <span>Bob!</span></h1><p style="font-size:.875rem;color:var(--gray-500);margin-top:.25rem;">Overzicht van klanten, gesprekken en klantafspraken.</p></div><div class="header-actions"><a href="/" class="btn-back">Terug naar site</a></div></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-icon purple">👥</div><div class="stat-info"><div class="stat-label">Totaal klanten</div><div class="stat-value" id="statClients">0</div></div></div><div class="stat-card"><div class="stat-icon orange">💬</div><div class="stat-info"><div class="stat-label">Open gesprekken</div><div class="stat-value" id="statConversations">0</div></div></div><div class="stat-card"><div class="stat-icon green">📅</div><div class="stat-info"><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeekAppts">0</div></div></div><div class="stat-card"><div class="stat-icon blue">↗</div><div class="stat-info"><div class="stat-label">Klantafspraken vandaag</div><div class="stat-value" id="statTodayAppts">0</div></div></div></div>
+<div class="dashboard-grid"><div class="dashboard-card"><div class="card-header"><h2>Recente klanten</h2><a href="/platform/klantenlijst/">Bekijk alles</a></div><div class="card-body" id="recentClients"></div></div><div class="dashboard-card"><div class="card-header"><h2>Recente gesprekken</h2><a href="/platform/inbox/">Open inbox</a></div><div class="card-body" id="recentConversations"></div></div><div class="dashboard-card"><div class="card-header"><h2>Komende klantafspraken</h2><a href="/platform/agenda/">Open agenda</a></div><div class="card-body" id="upcomingAppointments"></div></div></div></main>
 
 
 <div class="modal-overlay" id="rfClientModal">
@@ -958,23 +474,6 @@
     </form>
   </div>
 </div>
-
-<div class="client-drawer-overlay" id="clientDrawerOverlay" onclick="closeClientDrawer()"></div>
-<aside class="client-drawer" id="clientDrawer">
-  <div class="client-drawer-header"><h2>Klantprofiel aanpassen</h2><button class="client-drawer-close" type="button" onclick="closeClientDrawer()">×</button></div>
-  <form id="clientDrawerForm" class="client-drawer-body">
-    <input type="hidden" id="drawerClientId">
-    <div class="drawer-photo"><div class="drawer-avatar" id="drawerAvatar">?</div><button class="drawer-photo-btn" type="button" onclick="document.getElementById('drawerPhotoInput').click()">Foto wijzigen</button><input id="drawerPhotoInput" type="file" accept="image/*" style="display:none"></div>
-    <div class="drawer-section-title">Profielgegevens</div>
-    <div class="drawer-input"><label>Naam</label><input id="drawerName" required></div>
-    <div class="drawer-row"><div class="drawer-input"><label>E-mail</label><input id="drawerEmail" type="email"></div><div class="drawer-input"><label>Telefoon</label><input id="drawerPhone" type="tel"></div></div>
-    <div class="drawer-input"><label>Adres</label><input id="drawerAddress"></div>
-    <div class="drawer-row"><div class="drawer-input"><label>Status</label><select id="drawerStatus"><option value="active">Actief</option><option value="vip">VIP</option><option value="new">Nieuw</option><option value="inactive">Inactief</option></select></div><div class="drawer-input"><label>Type</label><select id="drawerType"><option>Klant</option><option>Lead</option><option>Particulier</option><option>Zakelijk</option><option>VIP</option></select></div></div>
-    <div class="drawer-section-title">Notities</div><div class="drawer-input"><label>Klantnotitie</label><textarea id="drawerNote" rows="4"></textarea></div>
-  </form>
-  <div class="client-drawer-footer"><button class="btn-cancel" type="button" onclick="closeClientDrawer()">Annuleren</button><button class="btn-save" type="button" onclick="saveClientDrawer()">Opslaan</button></div>
-</aside>
-
 <div id="rfToast" class="toast"></div><script>
 (function(){
   const STORE_KEY='reactify_platform_data_v3';
@@ -991,7 +490,6 @@
   const toast=(msg)=>{let t=byId('rfToast'); if(!t){t=document.createElement('div');t.id='rfToast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)};
   function addClient(client){const d=load(); const name=(client.name||`${client.firstName||''} ${client.lastName||''}`).trim(); const phone=(client.phone||'').trim(); const email=(client.email||'').trim().toLowerCase(); const existing=d.clients.find(c=>(email&&String(c.email||'').toLowerCase()===email)||(phone&&c.phone===phone)); if(existing){Object.assign(existing,{...client,name:name||existing.name,email:email||existing.email,phone:phone||existing.phone,updatedAt:nowISO()}); save(d); return existing;} const c={id:uid('client'), name:name||'Nieuwe contactpersoon', email, phone, status:client.status||'new', type:client.type||'Klant', address:client.address||'', note:client.note||'', source:client.source||'Manueel', createdAt:nowISO(), updatedAt:nowISO(), color:colors[d.clients.length%colors.length]}; d.clients.unshift(c); save(d); return c;}
   function deleteClient(id){const d=load(); d.clients=d.clients.filter(c=>c.id!==id); d.conversations=d.conversations.map(x=>x.clientId===id?{...x,clientId:null}:x); save(d);}
-  function updateClient(id, fields){const d=load(); const c=d.clients.find(x=>x.id===id); if(!c) return null; Object.assign(c,fields,{updatedAt:nowISO()}); save(d); return c;}
   function addConversation(client, message){const d=load(); let c=client?.id?client:addClient(client||{}); let conv=d.conversations.find(x=>x.clientId===c.id); if(!conv){conv={id:uid('conv'),clientId:c.id,status:'ai_actief',channel:'sms',messages:[],summary:'Gesprek aangemaakt via Reactify.',createdAt:nowISO(),updatedAt:nowISO()};d.conversations.unshift(conv)} if(message){conv.messages.push({id:uid('msg'),type:'incoming',text:message,time:nowISO()});conv.updatedAt=nowISO();} save(d); return conv;}
   function addAppointment(appt){const d=load(); let c=d.clients.find(x=>x.id===appt.clientId); if(!c && appt.newClient){c=addClient(appt.newClient); appt.clientId=c.id} if(!c && (appt.clientName||appt.clientEmail||appt.clientPhone)){c=addClient({name:appt.clientName,email:appt.clientEmail,phone:appt.clientPhone,source:'Afspraak'});appt.clientId=c.id} const a={id:uid('appt'),clientId:appt.clientId||c?.id||null,title:appt.title||'Klantafspraak',start:appt.start,end:appt.end||appt.start,location:appt.location||'',type:appt.type||'Reactify afspraak',status:'planned',source:appt.source||'Reactify',notes:appt.notes||'',createdAt:nowISO()}; d.appointments.push(a); if(c) addConversation(c,`Afspraak ingepland: ${a.title}`); else save(d); return a;}
   function deleteAppointment(id){const d=load();d.appointments=d.appointments.filter(a=>a.id!==id);save(d)}
@@ -1000,7 +498,7 @@
   function weekRange(){const n=new Date(); const s=new Date(n); const day=s.getDay()||7; s.setDate(s.getDate()-day+1); s.setHours(0,0,0,0); const e=new Date(s);e.setDate(s.getDate()+7);return {s,e};}
   function todayRange(){const s=new Date();s.setHours(0,0,0,0);const e=new Date(s);e.setDate(e.getDate()+1);return{s,e}}
   function matchesRange(iso,s,e){const d=new Date(iso);return d>=s&&d<e}
-  window.RF={load,save,addClient,updateClient,deleteClient,addConversation,addAppointment,deleteAppointment,clientName,formatDateTime,weekRange,todayRange,matchesRange,esc,initials,toast,colors,uid,nowISO};
+  window.RF={load,save,addClient,deleteClient,addConversation,addAppointment,deleteAppointment,clientName,formatDateTime,weekRange,todayRange,matchesRange,esc,initials,toast,colors,uid,nowISO};
 })();
 
 
@@ -1021,28 +519,10 @@
 })();
 
 
-let clientFilter='';
-function statusLabel(s){return s==='active'?'Actief':s==='vip'?'VIP':s==='inactive'?'Inactief':'Nieuw'}
-function renderClients(){const d=RF.load(); const now=new Date(); const monthStart=new Date(now.getFullYear(),now.getMonth(),1); statTotalClients.textContent=d.clients.length; statNewMonth.textContent=d.clients.filter(c=>new Date(c.createdAt)>=monthStart).length; statActiveConvs.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statPlannedAppts.textContent=d.appointments.length; const q=clientFilter.toLowerCase(); const rows=d.clients.filter(c=>[c.name,c.email,c.phone].join(' ').toLowerCase().includes(q)); clientTableBody.innerHTML=rows.map(c=>`<tr onclick="openClientDrawer('${c.id}')"><td><div class="table-client"><div class="table-avatar" style="background:${c.color||'var(--purple)'}">${c.photo?`<img src="${c.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:RF.initials(c.name)}</div><div class="table-client-info"><div class="table-client-name">${RF.esc(c.name)}</div><div class="table-client-email">${RF.esc(c.email||'Geen e-mail')}</div></div></div></td><td class="table-phone">${RF.esc(c.phone||'Geen telefoon')}</td><td class="table-activity">${RF.formatDateTime(c.updatedAt||c.createdAt)}</td><td><span class="status-badge ${c.status||'new'}"><span class="dot"></span>${statusLabel(c.status)}</span></td><td><div class="action-btns" onclick="event.stopPropagation()"><button class="btn-small" onclick="openInbox('${c.id}')">Inbox</button><button class="btn-small" onclick="openClientDrawer('${c.id}')">Aanpassen</button><button class="btn-small btn-danger-small" onclick="removeClient('${c.id}')">Verwijder</button></div></td></tr>`).join('')||`<tr><td colspan="5"><div class="empty-state"><strong>Geen klanten gevonden</strong>Maak een nieuwe klant aan of pas je zoekopdracht aan.</div></td></tr>`; paginationInfo.textContent=`${rows.length} van ${d.clients.length} klanten`;}
-function removeClient(id){if(confirm('Deze klant verwijderen?')){RF.deleteClient(id);renderClients();RF.toast('Klant verwijderd')}}
-function openInbox(id){RF.addConversation(RF.load().clients.find(c=>c.id===id)); location.href='/platform/inbox/?client='+id}
-function exportClients(){const d=RF.load(); const csv=['Naam,E-mail,Telefoon,Status'].concat(d.clients.map(c=>`"${c.name||''}","${c.email||''}","${c.phone||''}","${c.status||''}"`)).join('\n'); const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='reactify-klanten.csv';a.click();}
-clientSearch?.addEventListener('input',e=>{clientFilter=e.target.value;renderClients()}); RFUI.initSharedForms(renderClients); renderClients();
-
-
-let drawerPhotoData='';
-function openClientDrawer(id){
-  const c=RF.load().clients.find(x=>x.id===id); if(!c)return;
-  drawerClientId.value=c.id; drawerName.value=c.name||''; drawerEmail.value=c.email||''; drawerPhone.value=c.phone||''; drawerAddress.value=c.address||''; drawerStatus.value=c.status||'new'; drawerType.value=c.type||'Klant'; drawerNote.value=c.note||''; drawerPhotoData=c.photo||'';
-  renderDrawerAvatar(c);
-  clientDrawer.classList.add('open'); clientDrawerOverlay.classList.add('open');
-}
-function closeClientDrawer(){clientDrawer.classList.remove('open'); clientDrawerOverlay.classList.remove('open')}
-function renderDrawerAvatar(c){const av=document.getElementById('drawerAvatar'); if(drawerPhotoData){av.innerHTML=`<img src="${drawerPhotoData}">`;av.style.background=c.color||'var(--purple)'}else{av.textContent=RF.initials(c.name||drawerName.value);av.style.background=c.color||'var(--purple)'}}
-drawerPhotoInput?.addEventListener('change',function(){const file=this.files?.[0]; if(!file)return; const r=new FileReader(); r.onload=e=>{drawerPhotoData=e.target.result; renderDrawerAvatar({name:drawerName.value,color:'var(--purple)'})}; r.readAsDataURL(file)});
-function saveClientDrawer(){
-  const id=drawerClientId.value; RF.updateClient(id,{name:drawerName.value,email:drawerEmail.value,phone:drawerPhone.value,address:drawerAddress.value,status:drawerStatus.value,type:drawerType.value,note:drawerNote.value,photo:drawerPhotoData}); closeClientDrawer(); RF.toast('Klant aangepast'); renderClients();
-}
-window.openClientDrawer=openClientDrawer; window.closeClientDrawer=closeClientDrawer; window.saveClientDrawer=saveClientDrawer;
+function renderDashboard(){const d=RF.load(); const wr=RF.weekRange(), tr=RF.todayRange(); statClients.textContent=d.clients.length; statConversations.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statWeekAppts.textContent=d.appointments.filter(a=>RF.matchesRange(a.start,wr.s,wr.e)).length; statTodayAppts.textContent=d.appointments.filter(a=>RF.matchesRange(a.start,tr.s,tr.e)).length;
+ recentClients.innerHTML=d.clients.slice(0,5).map(c=>`<div class="client-item" onclick="location.href='/platform/klantenlijst/?client=${c.id}'"><div class="client-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="client-info"><div class="client-name">${RF.esc(c.name)}</div><div class="client-phone">${RF.esc(c.phone||c.email||'Geen contactgegevens')}</div></div></div>`).join('')||`<div class="empty-state"><strong>Nog geen klanten</strong>Maak je eerste contactpersoon aan.</div>`;
+ recentConversations.innerHTML=d.conversations.slice(0,5).map(conv=>{const c=d.clients.find(x=>x.id===conv.clientId)||{}; const msg=conv.messages?.at(-1)?.text||conv.summary||'Geen berichten'; return `<div class="inbox-item" onclick="location.href='/platform/inbox/?conversation=${conv.id}'"><div class="inbox-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="inbox-content"><div class="inbox-sender">${RF.esc(c.name||'Onbekende klant')}</div><div class="inbox-preview">${RF.esc(msg)}</div></div><div class="inbox-time">${RF.formatDateTime(conv.updatedAt)}</div></div>`}).join('')||`<div class="empty-state"><strong>Nog geen gesprekken</strong>Gesprekken verschijnen wanneer je een klant opvolgt.</div>`;
+ upcomingAppointments.innerHTML=d.appointments.filter(a=>new Date(a.start)>=new Date()).sort((a,b)=>new Date(a.start)-new Date(b.start)).slice(0,5).map(a=>`<div class="agenda-item"><div class="agenda-time">${new Date(a.start).toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'})}</div><div class="agenda-dot purple"></div><div class="agenda-info"><div class="agenda-title">${RF.esc(a.title)}</div><div class="agenda-sub">${RF.esc(RF.clientName(a.clientId))} · ${RF.formatDateTime(a.start)}</div></div></div>`).join('')||`<div class="empty-state"><strong>Geen komende afspraken</strong>Klantafspraken verschijnen hier automatisch.</div>`;}
+RFUI.initSharedForms(renderDashboard); renderDashboard(); window.addEventListener('storage',renderDashboard);
 
 const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script></body></html>
