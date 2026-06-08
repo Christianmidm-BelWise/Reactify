@@ -1,5 +1,15 @@
 <!DOCTYPE html>
-<html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Reactify Platform"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Platform | Reactify</title><style>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reactify Platform - Beheer je klanten, afspraken en berichten op één plek.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Platform | Reactify</title>
+  <style>
     :root {
       --purple-dark: #3D1D72;
       --purple: #5B2E91;
@@ -395,134 +405,352 @@
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr; }
     }
-  
+  </style>
+</head>
+<body>
 
-    .empty-state{padding:1.25rem;text-align:center;color:var(--gray-500);font-size:.85rem;}
-    .empty-state strong{display:block;color:var(--gray-900);font-size:.95rem;margin-bottom:.25rem;}
-    .btn-small{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.38rem .7rem;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-700);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:none;font-family:var(--font-sans);transition:.2s;}
-    .btn-small:hover{background:var(--gray-50);border-color:var(--gray-300);}
-    .btn-purple{background:var(--purple);color:var(--white);border-color:var(--purple);}
-    .btn-purple:hover{background:var(--purple-dark);color:var(--white);}
-    .btn-orange{background:var(--orange);color:var(--white);border-color:var(--orange);}
-    .btn-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
-    .modal-overlay,.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
-    .modal-overlay.open,.modal-backdrop.open{display:flex;}
-    .modal{background:var(--white);border-radius:16px;width:min(560px,95vw);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.16);}
-    .modal.wide{width:min(760px,95vw);}
-    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-100);}
-    .modal-header h2,.modal-title{font-size:1.05rem;font-weight:800;color:var(--gray-900);}
-    .modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:var(--gray-100);color:var(--gray-600);cursor:pointer;font-size:1.1rem;}
-    .modal-body{padding:1.5rem;}
-    .modal-footer,.modal-actions{display:flex;justify-content:flex-end;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid var(--gray-100);}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-    .form-field,.form-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem;}
-    .form-field.full{grid-column:1/-1;}
-    .form-field label,.form-group label{font-size:.78rem;font-weight:700;color:var(--gray-700);}
-    .form-field input,.form-field select,.form-field textarea,.form-group input,.form-group select,.form-group textarea{width:100%;padding:.55rem .75rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.85rem;font-family:var(--font-sans);color:var(--gray-800);background:var(--white);outline:none;}
-    .form-field input:focus,.form-field select:focus,.form-field textarea:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.1);}
-    .form-help{font-size:.72rem;color:var(--gray-500);}
-    .btn-save,.btn-primary{padding:.55rem 1.1rem;border:0;border-radius:8px;font-size:.8rem;font-weight:700;color:var(--white);background:var(--purple);cursor:pointer;font-family:var(--font-sans);}
-    .btn-cancel,.btn-secondary{padding:.55rem 1rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.8rem;font-weight:600;color:var(--gray-700);background:var(--white);cursor:pointer;font-family:var(--font-sans);}
-    .btn-danger-small{background:var(--red-light);color:var(--red);border-color:var(--red-light);}
-    .hidden{display:none!important;}
-    .toast{position:fixed;right:1rem;bottom:1rem;background:var(--gray-900);color:#fff;padding:.75rem 1rem;border-radius:10px;z-index:2000;font-size:.85rem;box-shadow:0 12px 30px rgba(0,0,0,.2);display:none;}
-    .toast.show{display:block;}
-    @media(max-width:768px){.form-grid{grid-template-columns:1fr}.modal-actions,.modal-footer{flex-wrap:wrap}.modal-actions button,.modal-footer button{flex:1}}
-</style></head><body>
-<aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
-<a href="/platform/klantenlijst/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
-<a href="/platform/inbox/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>Inbox</a>
-<a href="/platform/agenda/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>Agenda</a><div class="sidebar-spacer"></div><a href="#" class="sidebar-link">Instellingen</a><a href="#" class="sidebar-link">Help</a></nav><div class="sidebar-user"><div class="user-avatar">BD</div><div class="user-info"><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div></aside>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="/logo.png" alt="Reactify" style="height: 28px; width: auto; filter: brightness(1.8);">
+    </div>
 
-<main class="main"><div class="main-header"><div><button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button><h1>Welkom terug, <span>Bob!</span></h1><p style="font-size:.875rem;color:var(--gray-500);margin-top:.25rem;">Overzicht van klanten, gesprekken en klantafspraken.</p></div><div class="header-actions"><a href="/" class="btn-back">Terug naar site</a></div></div>
-<div class="stats-grid"><div class="stat-card"><div class="stat-icon purple">👥</div><div class="stat-info"><div class="stat-label">Totaal klanten</div><div class="stat-value" id="statClients">0</div></div></div><div class="stat-card"><div class="stat-icon orange">💬</div><div class="stat-info"><div class="stat-label">Open gesprekken</div><div class="stat-value" id="statConversations">0</div></div></div><div class="stat-card"><div class="stat-icon green">📅</div><div class="stat-info"><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeekAppts">0</div></div></div><div class="stat-card"><div class="stat-icon blue">↗</div><div class="stat-info"><div class="stat-label">Klantafspraken vandaag</div><div class="stat-value" id="statTodayAppts">0</div></div></div></div>
-<div class="dashboard-grid"><div class="dashboard-card"><div class="card-header"><h2>Recente klanten</h2><a href="/platform/klantenlijst/">Bekijk alles</a></div><div class="card-body" id="recentClients"></div></div><div class="dashboard-card"><div class="card-header"><h2>Recente gesprekken</h2><a href="/platform/inbox/">Open inbox</a></div><div class="card-body" id="recentConversations"></div></div><div class="dashboard-card"><div class="card-header"><h2>Komende klantafspraken</h2><a href="/platform/agenda/">Open agenda</a></div><div class="card-body" id="upcomingAppointments"></div></div></div></main>
+    <nav class="sidebar-nav">
+      <a href="/platform/" class="sidebar-link active">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        Dashboard
+      </a>
+      <a href="/platform/klantenlijst/" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        Klanten
+      </a>
+      <a href="/platform/inbox/" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+        Inbox
+      </a>
+      <a href="/platform/agenda/" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+        Agenda
+      </a>
 
+      <div class="sidebar-spacer"></div>
 
-<div class="modal-overlay" id="rfClientModal">
-  <div class="modal">
-    <div class="modal-header"><h2>Nieuwe contactpersoon</h2><button class="modal-close" type="button" onclick="RFUI.closeClientModal()">×</button></div>
-    <form id="rfClientForm">
-      <div class="modal-body">
-        <div class="form-group"><label>Naam</label><input id="rfClientName" required placeholder="Naam klant"></div>
-        <div class="form-group"><label>E-mail</label><input id="rfClientEmail" type="email" placeholder="klant@email.be"></div>
-        <div class="form-group"><label>Telefoon</label><input id="rfClientPhone" type="tel" placeholder="+32 ..."></div>
-        <div class="form-group"><label>Notitie</label><textarea id="rfClientNote" rows="3" placeholder="Korte notitie"></textarea></div>
+      <a href="#" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        Instellingen
+      </a>
+      <a href="#" class="sidebar-link">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+        Help
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">BD</div>
+      <div class="user-info">
+        <div class="user-name">Bob Demo</div>
+        <div class="user-role">Beheerder</div>
       </div>
-      <div class="modal-footer"><button type="button" class="btn-cancel" onclick="RFUI.closeClientModal()">Annuleren</button><button class="btn-save" type="submit">Opslaan</button></div>
-    </form>
-  </div>
-</div>
-<div class="modal-overlay" id="rfAppointmentModal">
-  <div class="modal wide">
-    <div class="modal-header"><h2>Klantafspraak toevoegen</h2><button class="modal-close" type="button" onclick="RFUI.closeAppointmentModal()">×</button></div>
-    <form id="rfAppointmentForm">
-      <div class="modal-body">
-        <div class="form-grid">
-          <div class="form-field full"><label>Klant</label><select id="rfApptClient"></select><div class="form-help">Kies een bestaande klant of maak een nieuwe contactpersoon aan.</div></div>
-          <div class="form-field hidden" id="rfNewClientNameWrap"><label>Naam nieuwe klant</label><input id="rfApptNewName" placeholder="Naam klant"></div>
-          <div class="form-field hidden" id="rfNewClientEmailWrap"><label>E-mail nieuwe klant</label><input id="rfApptNewEmail" type="email" placeholder="klant@email.be"></div>
-          <div class="form-field hidden" id="rfNewClientPhoneWrap"><label>Telefoon nieuwe klant</label><input id="rfApptNewPhone" type="tel" placeholder="+32 ..."></div>
-          <div class="form-field"><label>Afspraaktype</label><input id="rfApptTitle" required placeholder="Bijv. Kennismaking"></div>
-          <div class="form-field"><label>Startdatum en tijd</label><input id="rfApptStart" type="datetime-local" required></div>
-          <div class="form-field"><label>Locatie</label><input id="rfApptLocation" placeholder="Cal.com video, telefoon of adres"></div>
-          <div class="form-field"><label>Bron</label><select id="rfApptSource"><option>Manueel opgevolgd</option><option>Via inbox</option><option>Via klant</option><option>Via Reactify AI</option></select></div>
-          <div class="form-field full"><label>Notitie</label><textarea id="rfApptNotes" rows="3" placeholder="Extra context"></textarea></div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <button class="mobile-sidebar-toggle" id="sidebarToggle">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+          Menu
+        </button>
+        <h1>Welkom terug, <span>Bob!</span></h1>
+      </div>
+      <div class="header-actions">
+        <a href="/" class="btn-back">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+          Terug naar site
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon purple">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Totaal klanten</div>
+          <div class="stat-value" id="statClients">0</div>
         </div>
       </div>
-      <div class="modal-footer"><button type="button" class="btn-cancel" onclick="RFUI.closeAppointmentModal()">Annuleren</button><button type="submit" class="btn-save">Afspraak opslaan</button></div>
-    </form>
-  </div>
-</div>
-<div id="rfToast" class="toast"></div><script>
-(function(){
-  const STORE_KEY='reactify_platform_data_v3';
-  const nowISO=()=>new Date().toISOString();
-  const uid=(prefix='id')=>prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
-  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  const initials=name=>String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?';
-  const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb','var(--purple-medium, #7B52AB)','#dc2626'];
-  const parse=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))||null}catch(e){return null}};
-  const blank=()=>({clients:[], conversations:[], appointments:[], settings:{ownerName:'Bob Demo'}});
-  const save=data=>{localStorage.setItem(STORE_KEY,JSON.stringify(data)); window.dispatchEvent(new CustomEvent('reactify:data',{detail:data}));};
-  const load=()=>{let d=parse(); if(!d){d=blank(); save(d)}; d.clients ||= []; d.conversations ||= []; d.appointments ||= []; d.settings ||= {ownerName:'Bob Demo'}; return d;};
-  const byId=id=>document.getElementById(id);
-  const toast=(msg)=>{let t=byId('rfToast'); if(!t){t=document.createElement('div');t.id='rfToast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)};
-  function addClient(client){const d=load(); const name=(client.name||`${client.firstName||''} ${client.lastName||''}`).trim(); const phone=(client.phone||'').trim(); const email=(client.email||'').trim().toLowerCase(); const existing=d.clients.find(c=>(email&&String(c.email||'').toLowerCase()===email)||(phone&&c.phone===phone)); if(existing){Object.assign(existing,{...client,name:name||existing.name,email:email||existing.email,phone:phone||existing.phone,updatedAt:nowISO()}); save(d); return existing;} const c={id:uid('client'), name:name||'Nieuwe contactpersoon', email, phone, status:client.status||'new', type:client.type||'Klant', address:client.address||'', note:client.note||'', source:client.source||'Manueel', createdAt:nowISO(), updatedAt:nowISO(), color:colors[d.clients.length%colors.length]}; d.clients.unshift(c); save(d); return c;}
-  function deleteClient(id){const d=load(); d.clients=d.clients.filter(c=>c.id!==id); d.conversations=d.conversations.map(x=>x.clientId===id?{...x,clientId:null}:x); save(d);}
-  function addConversation(client, message){const d=load(); let c=client?.id?client:addClient(client||{}); let conv=d.conversations.find(x=>x.clientId===c.id); if(!conv){conv={id:uid('conv'),clientId:c.id,status:'ai_actief',channel:'sms',messages:[],summary:'Gesprek aangemaakt via Reactify.',createdAt:nowISO(),updatedAt:nowISO()};d.conversations.unshift(conv)} if(message){conv.messages.push({id:uid('msg'),type:'incoming',text:message,time:nowISO()});conv.updatedAt=nowISO();} save(d); return conv;}
-  function addAppointment(appt){const d=load(); let c=d.clients.find(x=>x.id===appt.clientId); if(!c && appt.newClient){c=addClient(appt.newClient); appt.clientId=c.id} if(!c && (appt.clientName||appt.clientEmail||appt.clientPhone)){c=addClient({name:appt.clientName,email:appt.clientEmail,phone:appt.clientPhone,source:'Afspraak'});appt.clientId=c.id} const a={id:uid('appt'),clientId:appt.clientId||c?.id||null,title:appt.title||'Klantafspraak',start:appt.start,end:appt.end||appt.start,location:appt.location||'',type:appt.type||'Reactify afspraak',status:'planned',source:appt.source||'Reactify',notes:appt.notes||'',createdAt:nowISO()}; d.appointments.push(a); if(c) addConversation(c,`Afspraak ingepland: ${a.title}`); else save(d); return a;}
-  function deleteAppointment(id){const d=load();d.appointments=d.appointments.filter(a=>a.id!==id);save(d)}
-  function clientName(id){const c=load().clients.find(c=>c.id===id);return c?.name||'Onbekende klant'}
-  function formatDateTime(iso){if(!iso)return ''; const d=new Date(iso); return d.toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
-  function weekRange(){const n=new Date(); const s=new Date(n); const day=s.getDay()||7; s.setDate(s.getDate()-day+1); s.setHours(0,0,0,0); const e=new Date(s);e.setDate(s.getDate()+7);return {s,e};}
-  function todayRange(){const s=new Date();s.setHours(0,0,0,0);const e=new Date(s);e.setDate(e.getDate()+1);return{s,e}}
-  function matchesRange(iso,s,e){const d=new Date(iso);return d>=s&&d<e}
-  window.RF={load,save,addClient,deleteClient,addConversation,addAppointment,deleteAppointment,clientName,formatDateTime,weekRange,todayRange,matchesRange,esc,initials,toast,colors,uid,nowISO};
-})();
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Open gesprekken</div>
+          <div class="stat-value" id="statConversations">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Afspraken deze week</div>
+          <div class="stat-value" id="statWeekAppts">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Klantafspraken vandaag</div>
+          <div class="stat-value" id="statTodayAppts">0</div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Dashboard Cards -->
+    <div class="dashboard-grid">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2>Recente klanten</h2>
+          <a href="/platform/klantenlijst/">Bekijk alles</a>
+        </div>
+        <div class="card-body" id="recentClients">
+          <div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Klanten laden...</div>
+        </div>
+      </div>
 
-(function(){
-  function openClientModal(){document.getElementById('rfClientForm')?.reset();document.getElementById('rfClientModal')?.classList.add('open')}
-  function closeClientModal(){document.getElementById('rfClientModal')?.classList.remove('open')}
-  function fillClientSelect(selectedId){const s=document.getElementById('rfApptClient'); if(!s)return; const data=RF.load(); s.innerHTML='<option value="">Kies klant...</option>'+data.clients.map(c=>`<option value="${c.id}">${RF.esc(c.name)}${c.phone?' · '+RF.esc(c.phone):''}</option>`).join('')+'<option value="__new">+ Nieuwe contactpersoon aanmaken</option>'; if(selectedId)s.value=selectedId; toggleNewClientFields();}
-  function toggleNewClientFields(){const isNew=document.getElementById('rfApptClient')?.value==='__new'; ['rfNewClientNameWrap','rfNewClientEmailWrap','rfNewClientPhoneWrap'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',!isNew));}
-  function openAppointmentModal(clientId, source){fillClientSelect(clientId); const f=document.getElementById('rfAppointmentForm'); if(f) f.reset(); fillClientSelect(clientId); const start=document.getElementById('rfApptStart'); if(start){const d=new Date();d.setHours(d.getHours()+1,0,0,0);start.value=d.toISOString().slice(0,16);} const src=document.getElementById('rfApptSource'); if(src&&source)src.value=source; document.getElementById('rfAppointmentModal')?.classList.add('open')}
-  function closeAppointmentModal(){document.getElementById('rfAppointmentModal')?.classList.remove('open')}
-  function initSharedForms(afterSave){
-    document.getElementById('rfClientForm')?.addEventListener('submit',e=>{e.preventDefault(); RF.addClient({name:rfClientName.value,email:rfClientEmail.value,phone:rfClientPhone.value,note:rfClientNote.value,source:'Klantenpagina'}); closeClientModal(); RF.toast('Contactpersoon opgeslagen'); afterSave&&afterSave();});
-    document.getElementById('rfApptClient')?.addEventListener('change',toggleNewClientFields);
-    document.getElementById('rfAppointmentForm')?.addEventListener('submit',e=>{e.preventDefault(); const clientVal=rfApptClient.value; let newClient=null; if(clientVal==='__new'){ if(!rfApptNewName.value.trim()){alert('Vul een naam in voor de nieuwe klant.');return;} newClient={name:rfApptNewName.value,email:rfApptNewEmail.value,phone:rfApptNewPhone.value,source:'Afspraakflow'}; }
-      RF.addAppointment({clientId:clientVal&&clientVal!=='__new'?clientVal:null,newClient,title:rfApptTitle.value,start:new Date(rfApptStart.value).toISOString(),location:rfApptLocation.value,source:rfApptSource.value,notes:rfApptNotes.value}); closeAppointmentModal(); RF.toast('Afspraak opgeslagen'); afterSave&&afterSave();});
-  }
-  window.RFUI={openClientModal,closeClientModal,openAppointmentModal,closeAppointmentModal,fillClientSelect,initSharedForms};
-})();
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2>Recente gesprekken</h2>
+          <a href="/platform/inbox/">Open inbox</a>
+        </div>
+        <div class="card-body" id="recentConversations">
+          <div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Gesprekken laden...</div>
+        </div>
+      </div>
 
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2>Komende klantafspraken</h2>
+          <a href="/platform/agenda/">Open agenda</a>
+        </div>
+        <div class="card-body" id="upcomingAppointments">
+          <div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Afspraken laden...</div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-function renderDashboard(){const d=RF.load(); const wr=RF.weekRange(), tr=RF.todayRange(); statClients.textContent=d.clients.length; statConversations.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statWeekAppts.textContent=d.appointments.filter(a=>RF.matchesRange(a.start,wr.s,wr.e)).length; statTodayAppts.textContent=d.appointments.filter(a=>RF.matchesRange(a.start,tr.s,tr.e)).length;
- recentClients.innerHTML=d.clients.slice(0,5).map(c=>`<div class="client-item" onclick="location.href='/platform/klantenlijst/?client=${c.id}'"><div class="client-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="client-info"><div class="client-name">${RF.esc(c.name)}</div><div class="client-phone">${RF.esc(c.phone||c.email||'Geen contactgegevens')}</div></div></div>`).join('')||`<div class="empty-state"><strong>Nog geen klanten</strong>Maak je eerste contactpersoon aan.</div>`;
- recentConversations.innerHTML=d.conversations.slice(0,5).map(conv=>{const c=d.clients.find(x=>x.id===conv.clientId)||{}; const msg=conv.messages?.at(-1)?.text||conv.summary||'Geen berichten'; return `<div class="inbox-item" onclick="location.href='/platform/inbox/?conversation=${conv.id}'"><div class="inbox-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="inbox-content"><div class="inbox-sender">${RF.esc(c.name||'Onbekende klant')}</div><div class="inbox-preview">${RF.esc(msg)}</div></div><div class="inbox-time">${RF.formatDateTime(conv.updatedAt)}</div></div>`}).join('')||`<div class="empty-state"><strong>Nog geen gesprekken</strong>Gesprekken verschijnen wanneer je een klant opvolgt.</div>`;
- upcomingAppointments.innerHTML=d.appointments.filter(a=>new Date(a.start)>=new Date()).sort((a,b)=>new Date(a.start)-new Date(b.start)).slice(0,5).map(a=>`<div class="agenda-item"><div class="agenda-time">${new Date(a.start).toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'})}</div><div class="agenda-dot purple"></div><div class="agenda-info"><div class="agenda-title">${RF.esc(a.title)}</div><div class="agenda-sub">${RF.esc(RF.clientName(a.clientId))} · ${RF.formatDateTime(a.start)}</div></div></div>`).join('')||`<div class="empty-state"><strong>Geen komende afspraken</strong>Klantafspraken verschijnen hier automatisch.</div>`;}
-RFUI.initSharedForms(renderDashboard); renderDashboard(); window.addEventListener('storage',renderDashboard);
+  <script>
+    const toggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    if (toggle && sidebar) {
+      toggle.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+      });
+    }
 
-const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script></body></html>
+    const KEYS = {
+      contacts: 'reactify.contacts',
+      conversations: 'reactify.conversations',
+      localAppointments: 'reactify.localAppointments'
+    };
+    const API = { bookings: '/.netlify/functions/cal-bookings' };
+    const colors = ['var(--purple)', 'var(--orange)', '#16a34a', '#2563eb', 'var(--purple-medium)'];
+
+    function readStore(key, fallback = []) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    function esc(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function initials(name = '') {
+      return String(name).split(' ').filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase() || 'KL';
+    }
+
+    function formatTime(date) {
+      return new Date(date).toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels' });
+    }
+
+    function formatDateTime(date) {
+      return new Date(date).toLocaleString('nl-BE', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels' });
+    }
+
+    function getWeekRange() {
+      const now = new Date();
+      const day = (now.getDay() + 6) % 7;
+      const start = new Date(now);
+      start.setHours(0, 0, 0, 0);
+      start.setDate(now.getDate() - day);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 7);
+      return { start, end };
+    }
+
+    function getTodayRange() {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 1);
+      return { start, end };
+    }
+
+    function inRange(dateValue, start, end) {
+      const date = new Date(dateValue);
+      return !Number.isNaN(date.getTime()) && date >= start && date < end;
+    }
+
+    function contactName(contactId, contacts) {
+      return contacts.find(c => c.id === contactId)?.name || 'Klant';
+    }
+
+    function normalizeCalBookings(payload) {
+      const raw = Array.isArray(payload?.data) ? payload.data : Array.isArray(payload?.bookings) ? payload.bookings : [];
+      return raw
+        .filter(b => b.status === 'accepted' || b.status === 'pending')
+        .map((b, index) => {
+          const attendee = Array.isArray(b.attendees) ? b.attendees[0] : {};
+          const customer = attendee?.name || b.bookingFieldsResponses?.name || 'Klant';
+          return {
+            id: `cal_${b.uid || b.id || index}`,
+            calUid: b.uid || b.id,
+            contactId: b.metadata?.contactId || '',
+            title: b.bookingFieldsResponses?.title || b.title || b.eventType?.title || b.eventType?.slug || 'Afspraak',
+            customer,
+            start: b.start,
+            end: b.end,
+            status: b.status || 'accepted',
+            source: 'Cal.com',
+            external: true
+          };
+        });
+    }
+
+    async function fetchCalAppointments() {
+      try {
+        const response = await fetch(API.bookings, { headers: { 'Content-Type': 'application/json' } });
+        const data = await response.json();
+        if (!response.ok || data.status === 'error') throw new Error(data.error || 'Cal.com kon niet geladen worden.');
+        return normalizeCalBookings(data);
+      } catch (error) {
+        console.warn('Dashboard: Cal.com afspraken niet geladen:', error.message);
+        return [];
+      }
+    }
+
+    async function getDashboardData() {
+      const contacts = readStore(KEYS.contacts, []);
+      const conversations = readStore(KEYS.conversations, []);
+      const localAppointments = readStore(KEYS.localAppointments, []).filter(a => a.status !== 'cancelled');
+      const calAppointments = await fetchCalAppointments();
+      const calIds = new Set(calAppointments.map(a => String(a.calUid || a.id)));
+      const localOnly = localAppointments.filter(a => !a.calUid || !calIds.has(String(a.calUid)));
+      const appointments = [...calAppointments, ...localOnly]
+        .filter(a => a.start && !Number.isNaN(new Date(a.start).getTime()))
+        .sort((a, b) => new Date(a.start) - new Date(b.start));
+      return { contacts, conversations, appointments };
+    }
+
+    function renderClients(contacts) {
+      const target = document.getElementById('recentClients');
+      const items = [...contacts]
+        .sort((a, b) => new Date(b.lastActivity || b.updatedAt || b.createdAt || 0) - new Date(a.lastActivity || a.updatedAt || a.createdAt || 0))
+        .slice(0, 5);
+
+      target.innerHTML = items.map((client, index) => `
+        <div class="client-item" onclick="window.location.href='/platform/klantenlijst/'">
+          <div class="client-avatar" style="background:${colors[index % colors.length]};">${esc(initials(client.name))}</div>
+          <div class="client-info">
+            <div class="client-name">${esc(client.name || 'Nieuwe klant')}</div>
+            <div class="client-phone">${esc(client.phone || client.email || 'Geen contactgegevens')}</div>
+          </div>
+        </div>
+      `).join('') || `<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;"><strong style="display:block;color:var(--gray-900);margin-bottom:.25rem;">Geen klanten</strong>Nieuwe klanten verschijnen hier automatisch.</div>`;
+    }
+
+    function renderConversations(conversations, contacts) {
+      const target = document.getElementById('recentConversations');
+      const items = [...conversations]
+        .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))
+        .slice(0, 5);
+
+      target.innerHTML = items.map((conv, index) => {
+        const contact = contacts.find(c => c.id === conv.contactId) || {};
+        const lastMessage = Array.isArray(conv.messages) && conv.messages.length ? conv.messages[conv.messages.length - 1] : null;
+        const preview = lastMessage?.text || conv.summary || 'Nog geen berichten.';
+        const time = lastMessage?.time || conv.updatedAt || conv.createdAt;
+        return `
+          <div class="inbox-item" onclick="window.location.href='/platform/inbox/'">
+            <div class="inbox-avatar" style="background:${colors[(index + 1) % colors.length]};">${esc(initials(contact.name || 'Klant'))}</div>
+            <div class="inbox-content">
+              <div class="inbox-sender">${esc(contact.name || 'Klant')}</div>
+              <div class="inbox-preview">${esc(preview)}</div>
+            </div>
+            <div class="inbox-time">${time ? esc(formatTime(time)) : ''}</div>
+          </div>
+        `;
+      }).join('') || `<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;"><strong style="display:block;color:var(--gray-900);margin-bottom:.25rem;">Geen gesprekken</strong>Gesprekken uit de inbox verschijnen hier automatisch.</div>`;
+    }
+
+    function renderAppointments(appointments, contacts) {
+      const target = document.getElementById('upcomingAppointments');
+      const now = new Date();
+      const items = appointments
+        .filter(a => new Date(a.start) >= now)
+        .sort((a, b) => new Date(a.start) - new Date(b.start))
+        .slice(0, 5);
+
+      target.innerHTML = items.map((appt, index) => {
+        const customer = appt.customer || contactName(appt.contactId, contacts);
+        return `
+          <div class="agenda-item" onclick="window.location.href='/platform/agenda/'">
+            <div class="agenda-time">${esc(formatTime(appt.start))}</div>
+            <div class="agenda-dot ${['purple', 'orange', 'green'][index % 3]}"></div>
+            <div class="agenda-info">
+              <div class="agenda-title">${esc(appt.title || 'Klantafspraak')}</div>
+              <div class="agenda-sub">${esc(customer)} · ${esc(formatDateTime(appt.start))}</div>
+            </div>
+          </div>
+        `;
+      }).join('') || `<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;"><strong style="display:block;color:var(--gray-900);margin-bottom:.25rem;">Geen komende afspraken</strong>Klantafspraken uit Reactify en Cal.com verschijnen hier automatisch.</div>`;
+    }
+
+    async function renderDashboard() {
+      const { contacts, conversations, appointments } = await getDashboardData();
+      const week = getWeekRange();
+      const today = getTodayRange();
+
+      document.getElementById('statClients').textContent = contacts.length;
+      document.getElementById('statConversations').textContent = conversations.filter(c => c.status !== 'afgesloten' && c.status !== 'closed').length;
+      document.getElementById('statWeekAppts').textContent = appointments.filter(a => inRange(a.start, week.start, week.end)).length;
+      document.getElementById('statTodayAppts').textContent = appointments.filter(a => inRange(a.start, today.start, today.end)).length;
+
+      renderClients(contacts);
+      renderConversations(conversations, contacts);
+      renderAppointments(appointments, contacts);
+    }
+
+    renderDashboard();
+    window.addEventListener('storage', renderDashboard);
+    window.addEventListener('reactify:datachange', renderDashboard);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) renderDashboard(); });
+  </script>
+</body>
+</html>
