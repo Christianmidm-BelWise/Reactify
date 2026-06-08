@@ -251,7 +251,28 @@
     function fillScheduleSelect(){const s=$("typeSchedule");s.innerHTML='<option value="">Standaard Cal.com schema</option>'+schedules.map(sc=>`<option value="${sc.id}">${escapeHTML(sc.name)}${sc.isDefault?' · standaard':''}</option>`).join("");}
     function renderEventTypeList(){const el=$("eventTypeList");el.innerHTML=eventTypes.slice(0,6).map(t=>`<div class="type-item"><div><div class="type-title">${escapeHTML(t.title)}</div><div class="type-sub">/${escapeHTML(t.slug)} · ${t.lengthInMinutes||30} min</div></div><a class="btn-secondary" href="${t.bookingUrl||`https://cal.com/${CAL_USERNAME}/${t.slug}`}" target="_blank">Open</a></div>`).join("");}
 
-    function openModal(id){$(id).classList.add("open");$(id).setAttribute("aria-hidden","false");document.body.style.overflow="hidden";}
+    function setBookingStartFromSelectedDate(){
+      const input = $("bookingStart");
+      if(!input) return;
+
+      const chosen = new Date(selectedDate);
+      const currentValue = input.value ? new Date(input.value) : null;
+
+      // Behoud het uur dat al in het formulier staat. Als er nog geen uur is, gebruik 10:00.
+      const hasValidCurrent = currentValue && !Number.isNaN(currentValue.getTime());
+      const hours = hasValidCurrent ? currentValue.getHours() : 10;
+      const minutes = hasValidCurrent ? currentValue.getMinutes() : 0;
+
+      chosen.setHours(hours, minutes, 0, 0);
+      input.value = toLocalInputValue(chosen);
+    }
+
+    function openModal(id){
+      if(id === "bookingModal") setBookingStartFromSelectedDate();
+      $(id).classList.add("open");
+      $(id).setAttribute("aria-hidden","false");
+      document.body.style.overflow="hidden";
+    }
     function closeModal(id){$(id).classList.remove("open");$(id).setAttribute("aria-hidden","true");document.body.style.overflow="";}
     function showAlert(id,type,msg){const a=$(id);a.className=`alert ${type} show`;a.textContent=msg;}
     window.openModal=openModal;window.closeModal=closeModal;
