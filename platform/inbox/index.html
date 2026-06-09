@@ -913,6 +913,11 @@
 
 
     /* Reactify live notification + inbox improvements */
+
+.ai-toggle-btn{border:1px solid var(--green);background:var(--green-light);color:var(--green);border-radius:999px;padding:.38rem .7rem;font-size:.72rem;font-weight:900;cursor:pointer}.ai-toggle-btn.off{border-color:var(--orange);background:var(--orange-light);color:var(--orange-dark)}.ai-toggle-btn:hover{filter:brightness(.97)}
+.gespreksstatus-badge.gs-manual{background:var(--orange-light);color:var(--orange-dark)}.gespreksstatus-badge.gs-manual .gs-dot{background:var(--orange)}
+.urgency-meter{position:relative;height:12px;background:linear-gradient(90deg,#facc15,#f97316,#dc2626);border-radius:999px;overflow:visible}.urgency-meter-fill{display:none}.urgency-knob{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid #dc2626;box-shadow:0 3px 10px rgba(17,24,39,.22);transform:translate(-50%,-50%);transition:left .25s ease}.urgency-meter[data-level="low"] .urgency-knob{border-color:#facc15}.urgency-meter[data-level="medium"] .urgency-knob{border-color:#f97316}.urgency-meter[data-level="high"] .urgency-knob{border-color:#dc2626}
+
     .notification-badge,.unread-badge{min-width:18px;height:18px;border-radius:999px;background:var(--orange);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
     .notification-btn .notification-badge{position:absolute;right:-7px;top:-7px;display:none}.notification-btn.has-notifications .notification-badge{display:inline-flex}
     .conv-item.unread{background:#fffaf0}.conv-item.unread.active{background:var(--purple-bg)}.conv-item.unread .conv-name{font-weight:800}.conv-item.unread .conv-preview{color:var(--gray-800);font-weight:600}
@@ -920,6 +925,14 @@
     .intent-pill{display:inline-flex;align-items:center;padding:.16rem .5rem;border-radius:999px;background:var(--purple-light);color:var(--purple);font-size:.68rem;font-weight:800}
     .urgency-meter{width:100%;height:10px;border-radius:999px;background:var(--gray-100);overflow:hidden;margin-top:.35rem}.urgency-meter-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#facc15,#f97316,#dc2626);transition:width .25s ease}.urgency-caption{display:flex;justify-content:space-between;gap:.5rem;margin-top:.25rem;font-size:.7rem;color:var(--gray-500)}
     .notification-panel{position:fixed;right:1.5rem;top:5rem;width:min(380px,92vw);max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--gray-200);border-radius:14px;box-shadow:0 20px 60px rgba(17,24,39,.18);z-index:1500;display:none}.notification-panel.open{display:block}.notification-panel-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;border-bottom:1px solid var(--gray-100)}.notification-panel-header h3{font-size:.95rem;font-weight:900;color:var(--gray-900)}.notification-list{display:grid;gap:.35rem;padding:.65rem}.notification-item{padding:.75rem;border-radius:10px;background:var(--gray-50);border-left:3px solid var(--purple)}.notification-item.unread{background:var(--orange-light);border-left-color:var(--orange)}.notification-title{font-weight:800;font-size:.82rem;color:var(--gray-900);margin-bottom:.2rem}.notification-body{font-size:.76rem;color:var(--gray-600);line-height:1.45}.notification-meta{font-size:.68rem;color:var(--gray-400);margin-top:.35rem}.notification-empty{padding:1.25rem;color:var(--gray-500);text-align:center;font-size:.82rem}
+
+
+
+/* Reactify global meldingen + sidebar badges */
+.rf-sidebar-badge{margin-left:auto;min-width:18px;height:18px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
+.sidebar-link.has-rf-badge .rf-sidebar-badge{display:inline-flex}.sidebar-link.has-rf-badge{position:relative}.sidebar-link.has-rf-badge svg{flex-shrink:0}
+.rf-global-notification{position:fixed;right:1.35rem;top:1.25rem;z-index:1800}.rf-global-bell{width:40px;height:40px;border:1px solid var(--gray-200,#E5E7EB);border-radius:12px;background:#fff;color:var(--gray-700,#374151);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 22px rgba(17,24,39,.10);position:relative}.rf-global-bell:hover{border-color:var(--purple,#5B2E91);color:var(--purple,#5B2E91)}.rf-global-count{position:absolute;right:-7px;top:-7px;min-width:19px;height:19px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;padding:0 .35rem}.rf-global-bell.has-items .rf-global-count{display:inline-flex}.rf-global-panel{position:absolute;right:0;top:48px;width:min(390px,92vw);max-height:72vh;overflow:auto;background:#fff;border:1px solid var(--gray-200,#E5E7EB);border-radius:16px;box-shadow:0 22px 70px rgba(17,24,39,.18);display:none}.rf-global-panel.open{display:block}.rf-global-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem 1.05rem;border-bottom:1px solid var(--gray-100,#F3F4F6)}.rf-global-head strong{font-size:.95rem;color:var(--gray-900,#111827)}.rf-global-head button{border:1px solid var(--gray-200,#E5E7EB);background:#fff;border-radius:8px;padding:.35rem .55rem;font-size:.72rem;font-weight:800;color:var(--gray-700,#374151);cursor:pointer}.rf-global-list{display:grid;gap:.4rem;padding:.7rem}.rf-global-item{border:0;text-align:left;width:100%;padding:.78rem;border-radius:12px;background:var(--gray-50,#F9FAFB);border-left:3px solid var(--purple,#5B2E91);cursor:pointer}.rf-global-item.unread{background:var(--orange-light,#FFF3DC);border-left-color:var(--orange,#F5A623)}.rf-global-title{font-size:.82rem;font-weight:900;color:var(--gray-900,#111827);margin-bottom:.2rem}.rf-global-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.45}.rf-global-meta{font-size:.68rem;color:var(--gray-500,#6B7280);margin-top:.28rem}.rf-global-empty{padding:1.25rem;color:var(--gray-500,#6B7280);font-size:.82rem;text-align:center}
+@media(max-width:768px){.rf-global-notification{right:.8rem;top:.8rem}.rf-global-panel{right:-.25rem}}
 
 </style></head><body>
 <aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
@@ -1119,8 +1132,8 @@ const INBOX_API={
   classify:'/.netlify/functions/classify-conversation'
 };
 const STATUS_MAP={
-  'ai-active':'ai_actief','ai_actief':'ai_actief','ai actief':'ai_actief',
-  'human-required':'menselijke_overname','human_required':'menselijke_overname','human-needed':'menselijke_overname','human_needed':'menselijke_overname','overname nodig':'menselijke_overname','menselijke-overname':'menselijke_overname','menselijke_overname':'menselijke_overname',
+  'ai-active':'ai_actief','ai_active':'ai_actief','ai_actief':'ai_actief','ai actief':'ai_actief',
+  'manual-overname':'manual_overname','manual_overname':'manual_overname','ai-paused':'manual_overname','ai_paused':'manual_overname','overgenomen':'manual_overname','human-required':'menselijke_overname','human_required':'menselijke_overname','human-needed':'menselijke_overname','human_needed':'menselijke_overname','overname nodig':'menselijke_overname','menselijke-overname':'menselijke_overname','menselijke_overname':'menselijke_overname',
   'closed':'afgesloten','inactive':'afgesloten','inactief':'afgesloten','niet actief':'afgesloten','afgesloten':'afgesloten'
 };
 function normalizeStatus(s){return STATUS_MAP[String(s||'').toLowerCase()]||'ai_actief'}
@@ -1163,7 +1176,7 @@ function prettyIntent(value){
 }
 function urgencyScore(value){const v=String(value||'normaal').toLowerCase(); if(['hoog','high','urgent','kritiek','critical'].includes(v)) return 95; if(['medium','middel','gemiddeld','normal','normaal'].includes(v)) return 55; if(['laag','low'].includes(v)) return 25; return 40;}
 function prettyUrgency(value){const v=String(value||'normaal').toLowerCase(); if(['hoog','high','urgent','kritiek','critical'].includes(v)) return 'Hoog'; if(['medium','middel','gemiddeld','normal','normaal'].includes(v)) return 'Normaal'; if(['laag','low'].includes(v)) return 'Laag'; return prettyIntent(value);}
-function statusLabel(s){s=normalizeStatus(s);return s==='menselijke_overname'?'Overname nodig':s==='afgesloten'?'Niet actief':'AI actief'}
+function statusLabel(s){s=normalizeStatus(s);return s==='manual_overname'?'Overgenomen':s==='menselijke_overname'?'Overname nodig':s==='afgesloten'?'Niet actief':'AI actief'}
 function buildAutoSummary(conv, contact){
   const ai=conv.ai||{};
   if(ai.summary) return ai.summary;
@@ -1225,7 +1238,7 @@ async function pollCalBookingsForNotifications(){
 
 function normalizePhoneDigits(v){return String(v||'').replace(/\D+/g,'');}
 function looksLikeDefaultName(name, phone){const n=String(name||'').trim().toLowerCase(); const p=normalizePhoneDigits(phone); return !n || n==='onbekende klant' || n==='nieuwe contactpersoon' || (p && normalizePhoneDigits(n)===p);}
-function statusBadge(s){s=normalizeStatus(s);const cls=s==='menselijke_overname'?'gs-menselijke-overname':s==='afgesloten'?'gs-afgesloten':'gs-ai-actief';const lab=statusLabel(s);return `<span class="gespreksstatus-badge ${cls}"><span class="gs-dot"></span>${lab}</span>`}
+function statusBadge(s){s=normalizeStatus(s);const cls=s==='manual_overname'?'gs-manual':s==='menselijke_overname'?'gs-menselijke-overname':s==='afgesloten'?'gs-afgesloten':'gs-ai-actief';const lab=statusLabel(s);return `<span class="gespreksstatus-badge ${cls}"><span class="gs-dot"></span>${lab}</span>`}
 async function inboxApiFetch(url, options={}){
   const res=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
   const data=await res.json().catch(()=>({status:'error',error:'Kon backend response niet lezen.'}));
@@ -1278,7 +1291,7 @@ function normalizeBackendConversation(row){
   return {id,backendId:id,clientId:c.id,status:normalizeStatus(row.status||(ai.requiresHuman?'menselijke_overname':'ai_actief')),channel:row.channel||'sms',messages:[],summary:ai.summary||row.last_message||'Nieuw gesprek',ai,unread:Number(row.unread||row.unread_count||0),createdAt:row.created_at||new Date().toISOString(),updatedAt:row.updated_at||row.last_message_at||new Date().toISOString(),lastMessage:row.last_message||row.preview||''};
 }
 function normalizeBackendMessage(row){return {id:row.id||row.message_id||RF.uid('msg'),backendId:row.id||row.message_id||'',type:(row.direction||row.role)==='outgoing'||(row.direction||row.role)==='agent'?'outgoing':'incoming',text:row.body||row.text||row.message||'',time:row.created_at||row.createdAt||row.time||new Date().toISOString(),channel:row.channel||'sms'};}
-function saveBackendConversationsToLocal(convs){const d=RF.load(); const deleted=new Set(getDeletedConversationIds()); const byId=new Map(d.conversations.filter(c=>!deleted.has(c.id)&&!deleted.has(c.backendId)).map(c=>[c.id,c])); convs.forEach(c=>{if(deleted.has(c.id)||deleted.has(c.backendId)) return; const old=byId.get(c.id)||{}; const incomingChanged=(old.lastMessage&&c.lastMessage&&old.lastMessage!==c.lastMessage)||(old.updatedAt&&c.updatedAt&&old.updatedAt!==c.updatedAt); const unread=Number(c.unread || old.unread || 0) + (incomingChanged && c.id!==selectedConvId ? 1 : 0); byId.set(c.id,{...old,...c,unread, lastReadAt: old.lastReadAt || '', messages:c.messages?.length?c.messages:(old.messages||[])});}); d.conversations=[...byId.values()].sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0)); RF.save(d);}
+function saveBackendConversationsToLocal(convs){const d=RF.load(); const deleted=new Set(getDeletedConversationIds()); const byId=new Map(d.conversations.filter(c=>!deleted.has(c.id)&&!deleted.has(c.backendId)).map(c=>[c.id,c])); convs.forEach(c=>{if(deleted.has(c.id)||deleted.has(c.backendId)) return; const old=byId.get(c.id)||{}; const incomingChanged=(old.lastMessage&&c.lastMessage&&old.lastMessage!==c.lastMessage)||(old.updatedAt&&c.updatedAt&&old.updatedAt!==c.updatedAt); const unread=Number(c.unread || old.unread || 0) + (incomingChanged && c.id!==selectedConvId ? 1 : 0); const preservedStatus=(normalizeStatus(old.status)==='manual_overname'||normalizeStatus(old.status)==='menselijke_overname')?old.status:c.status; byId.set(c.id,{...old,...c,status:preservedStatus,unread, lastReadAt: old.lastReadAt || '', messages:c.messages?.length?c.messages:(old.messages||[])});}); d.conversations=[...byId.values()].sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0)); RF.save(d);}
 function getInboxSignature(){
   const d=RF.load();
   return d.conversations.map(c=>`${c.id}:${c.updatedAt||''}:${c.lastMessage||''}:${c.messages?.length||0}:${c.status||''}`).join('|');
@@ -1358,14 +1371,31 @@ function renderInbox(){
   renderSelected();
   renderNotificationBadge();
 }
+
+function isAiEnabledStatus(status){return normalizeStatus(status)==='ai_actief'}
+async function setConversationAiEnabled(convId, enabled){
+  const d=RF.load(); const conv=d.conversations.find(x=>x.id===convId); if(!conv) return;
+  const newStatus=enabled?'ai-active':'manual_overname';
+  conv.status=normalizeStatus(newStatus);
+  conv.ai=conv.ai||{}; conv.ai.requiresHuman=!enabled;
+  RF.save(d); renderInbox();
+  if(conv.backendId&&inboxUsesBackend){
+    try{await inboxApiFetch(INBOX_API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:newStatus,aiEnabled:enabled})});}
+    catch(e){RF.toast('Status lokaal aangepast, maar backend status kon niet worden bijgewerkt.');}
+  }
+  RF.toast(enabled?'AI opnieuw geactiveerd.':'Je hebt het gesprek overgenomen. AI antwoordt niet meer.');
+}
+function toggleActiveConversationAi(){if(selectedConvId){const d=RF.load();const conv=d.conversations.find(x=>x.id===selectedConvId);setConversationAiEnabled(selectedConvId,!isAiEnabledStatus(conv?.status));}}
+function urgencyLevel(value){const score=urgencyScore(value);return score>=80?'high':score>=45?'medium':'low'}
+
 function renderSelected(){
   const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId);
   if(!conv){chatHeader.innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>'; chatMessages.innerHTML='<div class="empty-state"><strong>Geen gesprek</strong>Selecteer een gesprek of maak een klant aan.</div>'; profilePanelContent.innerHTML='<div class="empty-state">Geen klantprofiel geselecteerd.</div>'; return;}
   const c=d.clients.find(x=>x.id===conv.clientId)||{}; const ai=conv.ai||{}; const urgency=urgencyScore(ai.urgency); const summary=buildAutoSummary(conv,c);
-  chatHeader.innerHTML=`<div class="chat-header-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="chat-header-info"><div class="chat-header-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="chat-header-details"><span class="chat-header-badge">${RF.esc(conv.channel||'sms')}</span><span>${RF.esc(c.phone||c.email||'Geen contactgegevens')}</span>${statusBadge(conv.status)}</div></div><div class="btn-row"><button class="btn-small" onclick="refreshInbox()">Vernieuwen</button><button class="chat-delete-btn" onclick="deleteActiveConversation()">Verwijder chat</button></div>`;
+  chatHeader.innerHTML=`<div class="chat-header-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="chat-header-info"><div class="chat-header-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="chat-header-details"><span class="chat-header-badge">${RF.esc(conv.channel||'sms')}</span><span>${RF.esc(c.phone||c.email||'Geen contactgegevens')}</span>${statusBadge(conv.status)}</div></div><div class="btn-row"><button class="ai-toggle-btn ${isAiEnabledStatus(conv.status)?'':'off'}" onclick="toggleActiveConversationAi()">${isAiEnabledStatus(conv.status)?'Zelf overnemen':'AI opnieuw aan'}</button><button class="btn-small" onclick="refreshInbox()">Vernieuwen</button><button class="chat-delete-btn" onclick="deleteActiveConversation()">Verwijder chat</button></div>`;
   chatMessages.innerHTML=(conv.messages||[]).map(m=>m.type==='date'?`<div class="chat-date">${RF.esc(m.text)}</div>`:`<div class="chat-msg ${m.type||'incoming'}">${RF.esc(m.text)}<div class="chat-msg-time">${RF.formatDateTime(m.time)}${m.failed?' · niet verzonden':''}</div></div>`).join('')||`<div class="empty-state"><strong>Nog geen berichten geladen</strong>${conv.backendId?'Klik op vernieuwen of selecteer het gesprek opnieuw.':'Stuur hieronder een bericht om het gesprek te starten.'}</div>`;
   profilePanelContent.innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="profile-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="profile-phone">${RF.esc(c.phone||'Geen telefoon')}</div><div class="profile-email">${RF.esc(c.email||'Geen e-mail')}</div><div class="profile-actions"><button class="btn-small" onclick="location.href='/platform/klantenlijst/?client=${c.id||''}'">Bekijk klant</button></div></div>
-  <div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="profile-detail-value"><span class="intent-pill">${RF.esc(prettyIntent(ai.intent))}</span></span></div><div class="progress-row"><div class="progress-header"><span class="progress-label">Urgentie</span><span class="progress-value">${RF.esc(prettyUrgency(ai.urgency))}</span></div><div class="urgency-meter"><div class="urgency-meter-fill" style="width:${urgency}%"></div></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span><span class="profile-detail-value">${statusLabel(conv.status)}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span class="profile-detail-value">${RF.formatDateTime(conv.updatedAt)}</span></div></div>
+  <div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="profile-detail-value"><span class="intent-pill">${RF.esc(prettyIntent(ai.intent))}</span></span></div><div class="progress-row"><div class="progress-header"><span class="progress-label">Urgentie</span><span class="progress-value">${RF.esc(prettyUrgency(ai.urgency))}</span></div><div class="urgency-meter" data-level="${urgencyLevel(ai.urgency)}"><span class="urgency-knob" style="left:${urgency}%"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span><span class="profile-detail-value">${statusBadge(conv.status)}</span></div><div class="profile-detail-row"><span class="profile-detail-label">AI-bediening</span><span class="profile-detail-value"><button class="ai-toggle-btn ${isAiEnabledStatus(conv.status)?'':'off'}" onclick="toggleActiveConversationAi()">${isAiEnabledStatus(conv.status)?'Zelf overnemen':'AI opnieuw aan'}</button></span></div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span class="profile-detail-value">${RF.formatDateTime(conv.updatedAt)}</span></div></div>
   <div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${RF.esc(summary)}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${RF.esc(ai.recommendedAction||'Bekijk het laatste bericht, antwoord persoonlijk als de klant een concrete vraag stelt en plan een afspraak in wanneer de klant dat vraagt.')}</div></div><div class="conv-summary"><div class="conv-summary-title">Voorgesteld antwoord</div><div class="conv-summary-text">${RF.esc(ai.suggestedReply||'Dag, bedankt voor je bericht. Ik kijk dit even na en kom hier zo snel mogelijk op terug.')}</div><div class="btn-row" style="margin-top:.65rem"><button class="btn-small" onclick="useSuggestedReply()">Gebruik antwoord</button><button class="btn-small" onclick="classifyActiveConversation()">AI opnieuw analyseren</button></div></div><div class="profile-footer"><button class="btn-new-convo" onclick="RFUI.openAppointmentModal('${c.id||''}','Via inbox')">Afspraak maken met deze klant</button></div>`;
   chatMessages.scrollTop=chatMessages.scrollHeight;
 }
@@ -1382,7 +1412,7 @@ async function deleteActiveConversation(){
 async function refreshInbox(){await loadInboxConversations({silent:false})}
 function useSuggestedReply(){const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); const text=conv?.ai?.suggestedReply||''; if(text) document.getElementById('chatInput').value=text;}
 async function classifyActiveConversation(){const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); if(!conv?.backendId){RF.toast('Alleen backendgesprekken kunnen opnieuw geanalyseerd worden.');return;} try{const payload=await inboxApiFetch(INBOX_API.classify,{method:'POST',body:JSON.stringify({conversationId:conv.backendId})}); const ai=payload.data||payload; conv.ai={intent:ai.intent||conv.ai?.intent,urgency:ai.urgency||conv.ai?.urgency,requiresHuman:Boolean(ai.requiresHuman||ai.requires_human),summary:ai.summary||conv.ai?.summary,recommendedAction:ai.recommendedAction||ai.recommended_action||conv.ai?.recommendedAction,suggestedReply:ai.suggestedReply||ai.suggested_reply||conv.ai?.suggestedReply}; conv.status=normalizeStatus(ai.status||ai.conversationStatus||(conv.ai.requiresHuman?'menselijke_overname':'ai_actief')); RF.save(d); renderInbox(); RF.toast('AI-analyse bijgewerkt.');}catch(error){RF.toast(error.message||'AI-analyse mislukt.');}}
-async function sendMessage(){const input=document.getElementById('chatInput'); const text=input.value.trim(); if(!text||!selectedConvId)return; const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); conv.messages=conv.messages||[]; const optimistic={id:RF.uid('msg'),type:'outgoing',text,time:RF.nowISO()}; conv.messages.push(optimistic); conv.lastMessage=text; conv.updatedAt=optimistic.time; RF.save(d); input.value=''; renderInbox(); if(conv.backendId&&inboxUsesBackend){try{await inboxApiFetch(INBOX_API.sendSms,{method:'POST',body:JSON.stringify({conversationId:conv.backendId,message:text})}); await loadConversationMessages(conv.id,{silent:true}); RF.toast('Bericht verzonden via SMSTools.');}catch(error){optimistic.failed=true; RF.save(d); renderInbox(); RF.toast(error.message||'Bericht verzenden mislukt.');}}}
+async function sendMessage(){const input=document.getElementById('chatInput'); const text=input.value.trim(); if(!text||!selectedConvId)return; const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); conv.messages=conv.messages||[]; const optimistic={id:RF.uid('msg'),type:'outgoing',text,time:RF.nowISO()}; conv.messages.push(optimistic); conv.lastMessage=text; conv.updatedAt=optimistic.time; conv.status='manual_overname'; conv.ai=conv.ai||{}; conv.ai.requiresHuman=true; RF.save(d); input.value=''; renderInbox(); if(conv.backendId&&inboxUsesBackend){try{await inboxApiFetch(INBOX_API.sendSms,{method:'POST',body:JSON.stringify({conversationId:conv.backendId,message:text,manualTakeover:true})}); await loadConversationMessages(conv.id,{silent:true}); RF.toast('Bericht verzonden via SMSTools. AI staat uit voor dit gesprek.');}catch(error){optimistic.failed=true; RF.save(d); renderInbox(); RF.toast(error.message||'Bericht verzenden mislukt.');}}}
 inboxSearch?.addEventListener('input',e=>{search=e.target.value;renderInbox()});
 document.getElementById('chatInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 RFUI.initSharedForms(()=>loadInboxConversations({silent:true}));
@@ -1394,4 +1424,120 @@ if('Notification' in window && Notification.permission==='default'){
 renderNotificationBadge();
 loadInboxConversations().then(()=>{lastInboxSignature=getInboxSignature();pollCalBookingsForNotifications();startInboxPolling();});
 
-const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script></body></html>
+const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script>
+<script>
+(function(){
+  if(window.ReactifyGlobalNotificationsLoaded) return;
+  window.ReactifyGlobalNotificationsLoaded=true;
+  const NOTIFICATION_KEY='reactify.notifications';
+  const SEEN_MSG_KEY='reactify.globalSeenMessages';
+  const SEEN_APPT_KEY='reactify.globalSeenAppointments';
+  const INIT_KEY='reactify.globalNotificationsInitialized';
+  const uid=(p='note')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+  const read=(k,f=[])=>{try{const raw=localStorage.getItem(k);return raw?JSON.parse(raw):f}catch(e){return f}};
+  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));};
+  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  const fmt=iso=>{try{return new Date(iso).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'})}catch(e){return ''}};
+  const pathForType=t=>t==='appointment'?'/platform/agenda/':'/platform/inbox/';
+  function notes(){return read(NOTIFICATION_KEY,[])}
+  function saveNotes(items){write(NOTIFICATION_KEY,items.slice(0,120));renderBadges();}
+  function pushNote(note){
+    const items=notes();
+    const dedupe=note.dedupeKey||`${note.type}:${note.title}:${note.body}`;
+    if(items.some(n=>n.dedupeKey===dedupe)) return;
+    const item={id:uid(),type:note.type||'message',title:note.title||'Reactify melding',body:note.body||'',contactName:note.contactName||'',message:note.message||'',appointmentType:note.appointmentType||'',appointmentMoment:note.appointmentMoment||'',link:note.link||pathForType(note.type),dedupeKey:dedupe,createdAt:new Date().toISOString(),read:false};
+    items.unshift(item);saveNotes(items);
+    if('Notification' in window && Notification.permission==='granted'){try{new Notification(item.title,{body:item.body||'Nieuwe melding in Reactify'});}catch(e){}}
+  }
+  window.ReactifyPushNotification=pushNote;
+  function unread(type){return notes().filter(n=>!n.read && (!type || n.type===type)).length;}
+  function markTypeRead(type){const items=notes().map(n=>n.type===type?{...n,read:true}:n);saveNotes(items);}
+  window.ReactifyMarkNotificationsReadByType=markTypeRead;
+  function renderBadges(){
+    const total=unread();
+    const btn=document.getElementById('rfGlobalBell')||document.getElementById('notificationBtn');
+    const badge=document.getElementById('rfGlobalCount')||document.getElementById('notificationBadge');
+    if(btn) btn.classList.toggle('has-items',total>0), btn.classList.toggle('has-notifications',total>0);
+    if(badge) badge.textContent=total>99?'99+':String(total);
+    document.querySelectorAll('a.sidebar-link').forEach(a=>{
+      const href=a.getAttribute('href')||'';
+      const type=href.includes('/agenda')?'appointment':href.includes('/inbox')?'message':'';
+      if(!type) return;
+      let b=a.querySelector('.rf-sidebar-badge'); if(!b){b=document.createElement('span');b.className='rf-sidebar-badge';a.appendChild(b);}
+      const c=unread(type); b.textContent=c>99?'99+':String(c); a.classList.toggle('has-rf-badge',c>0);
+      if(!a.dataset.rfReadHook){a.dataset.rfReadHook='1';a.addEventListener('click',()=>markTypeRead(type));}
+    });
+  }
+  function ensureWidget(){
+    if(document.getElementById('rfGlobalNotifications')) return;
+    if(document.getElementById('notificationBtn')) return; // inbox has its own top-right button
+    const box=document.createElement('div');box.id='rfGlobalNotifications';box.className='rf-global-notification';
+    box.innerHTML=`<button class="rf-global-bell" id="rfGlobalBell" type="button" title="Meldingen">🔔<span class="rf-global-count" id="rfGlobalCount">0</span></button><div class="rf-global-panel" id="rfGlobalPanel"><div class="rf-global-head"><strong>Meldingen</strong><button type="button" id="rfGlobalReadAll">Alles gelezen</button></div><div class="rf-global-list" id="rfGlobalList"></div></div>`;
+    document.body.appendChild(box);
+    document.getElementById('rfGlobalBell')?.addEventListener('click',()=>{renderPanel();document.getElementById('rfGlobalPanel')?.classList.toggle('open');});
+    document.getElementById('rfGlobalReadAll')?.addEventListener('click',e=>{e.stopPropagation();saveNotes(notes().map(n=>({...n,read:true})));renderPanel();});
+  }
+  function renderPanel(){
+    const list=document.getElementById('rfGlobalList')||document.getElementById('notificationList'); if(!list) return;
+    const items=notes();
+    list.innerHTML=items.length?items.map(n=>`<button class="rf-global-item notification-item ${n.read?'':'unread'}" data-id="${esc(n.id)}"><div class="rf-global-title notification-title">${esc(n.title)}</div><div class="rf-global-body notification-body">${esc(n.body||n.message||'')}</div>${n.contactName?`<div class="rf-global-meta notification-meta">Contact: ${esc(n.contactName)}</div>`:''}${n.appointmentType?`<div class="rf-global-meta notification-meta">Afspraak: ${esc(n.appointmentType)} · ${esc(n.appointmentMoment||'')}</div>`:''}<div class="rf-global-meta notification-meta">${fmt(n.createdAt)}</div></button>`).join(''):'<div class="rf-global-empty notification-empty">Nog geen meldingen.</div>';
+    list.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('click',()=>{const id=el.dataset.id;let target='/platform/inbox/';saveNotes(notes().map(n=>{if(n.id===id){target=n.link||pathForType(n.type);return {...n,read:true};}return n;}));location.href=target;}));
+  }
+  window.toggleNotificationsPanel=function(){ensureWidget();renderPanel();(document.getElementById('rfGlobalPanel')||document.getElementById('notificationPanel'))?.classList.toggle('open');};
+  window.markAllNotificationsRead=function(){saveNotes(notes().map(n=>({...n,read:true})));renderPanel();};
+  async function pollConversations(){
+    try{
+      const payload=await fetch('/.netlify/functions/conversations').then(r=>r.json());
+      const rows=Array.isArray(payload?.data)?payload.data:[];
+      const seen=read(SEEN_MSG_KEY,{}), next={...seen};
+      const initialized=localStorage.getItem(INIT_KEY)==='1';
+      rows.forEach(r=>{
+        const id=r.id||r.conversation_id; if(!id) return;
+        const key=`${r.last_message_at||r.updated_at||''}:${r.last_message||''}`;
+        const direction=String(r.last_message_direction||'').toLowerCase();
+        if(!key.trim()) return;
+        if(seen[id] && seen[id]!==key && direction!=='outgoing'){
+          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
+        } else if(!seen[id] && initialized && direction!=='outgoing') {
+          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
+        }
+        next[id]=key;
+      });
+      write(SEEN_MSG_KEY,next);
+    }catch(e){}
+  }
+  async function pollBookings(){
+    try{
+      const payload=await fetch('/.netlify/functions/cal-bookings').then(r=>r.json());
+      const rows=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:[];
+      const seen=read(SEEN_APPT_KEY,{}), next={...seen};
+      const initialized=localStorage.getItem(INIT_KEY)==='1';
+      rows.forEach((b,i)=>{
+        const attendee=Array.isArray(b.attendees)?b.attendees[0]:(b.attendee||{});
+        const id=String(b.uid||b.id||`${b.start}_${attendee?.email||i}`);
+        const start=b.start||b.startTime||'';
+        const title=b.eventType?.title||b.title||b.bookingFieldsResponses?.title||'Afspraak';
+        const contact=attendee?.name||b.bookingFieldsResponses?.name||'Klant';
+        const key=`${start}:${title}:${contact}`;
+        if(seen[id] && seen[id]!==key || (!seen[id] && initialized)){
+          pushNote({type:'appointment',title:`Nieuwe afspraak: ${contact}`,body:`${title} staat ingepland op ${fmt(start)}.`,contactName:contact,appointmentType:title,appointmentMoment:fmt(start),link:'/platform/agenda/',dedupeKey:`appt:${id}:${key}`});
+        }
+        next[id]=key;
+      });
+      write(SEEN_APPT_KEY,next);
+    }catch(e){}
+  }
+  function boot(){
+    ensureWidget();renderBadges();renderPanel();
+    if('Notification' in window && Notification.permission==='default') Notification.requestPermission().catch(()=>{});
+    pollConversations();pollBookings();
+    setTimeout(()=>localStorage.setItem(INIT_KEY,'1'),1500);
+    setInterval(()=>{pollConversations();pollBookings();renderBadges();},12000);
+  }
+  window.addEventListener('storage',e=>{if(e.key===NOTIFICATION_KEY) renderBadges();});
+  window.addEventListener('reactify:datachange',renderBadges);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+</script>
+
+</body></html>
