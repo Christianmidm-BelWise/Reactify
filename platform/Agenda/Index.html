@@ -171,6 +171,13 @@
     const formatDate=d=>new Date(d).toLocaleDateString("nl-BE",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Brussels"});
     const readJSON=(key, fallback=[])=>{try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback}catch(e){return fallback}};
     const writeJSON=(key,val)=>{localStorage.setItem(key,JSON.stringify(val));window.dispatchEvent(new CustomEvent("reactify:datachange",{detail:{key}}))};
+const NOTIFICATION_KEY="reactify.notifications";
+    function pushNotification(type,title,body,extra={}){
+      const list=readJSON(NOTIFICATION_KEY,[]);
+      list.unshift({id:uid("note"),type,title,body,...extra,read:false,createdAt:new Date().toISOString()});
+      writeJSON(NOTIFICATION_KEY,list.slice(0,80));
+      if("Notification" in window && Notification.permission==="granted"){try{new Notification(title,{body});}catch(e){}}
+    }
     const initials=name=>String(name||"Klant").split(" ").filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"KL";
     const normalizeEmail=e=>String(e||"").trim().toLowerCase();
     const normalizePhone=p=>String(p||"").replace(/\s+/g,"").trim();
@@ -202,7 +209,13 @@
     function saveLocalAppointment(item){
       const list=readJSON(LOCAL_APPT_KEY,[]);
       const appt={id:item.id||uid("appt"),...item,updatedAt:new Date().toISOString()};
-      list.unshift(appt); writeJSON(LOCAL_APPT_KEY,list); return appt;
+      const key=appt.calUid||appt.id;
+      if(key && list.some(a=>(a.calUid||a.id)===key)) return appt;
+      list.unshift(appt); writeJSON(LOCAL_APPT_KEY,list);
+      if(!item.silentNotification){
+        pushNotification("appointment",`Nieuwe afspraak: ${appt.customer||"Klant"}`,`${appt.title||"Afspraak"} staat ingepland op ${formatDate(appt.start)} om ${formatTime(appt.start)}.`,{contactName:appt.customer||"",appointmentType:appt.title||appt.type||"Afspraak",appointmentMoment:`${formatDate(appt.start)} ${formatTime(appt.start)}`});
+      }
+      return appt;
     }
 
     function normalizeBookings(payload){
@@ -374,6 +387,7 @@
     document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id))});
     const startDefault=new Date();startDefault.setDate(startDefault.getDate()+1);startDefault.setHours(10,0,0,0);$("bookingStart").value=toLocalInputValue(startDefault);
     window.addEventListener("reactify:datachange",()=>{fillContactSelect(); renderAll();});
+    if("Notification" in window && Notification.permission==="default") Notification.requestPermission().catch(()=>{});
     visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll();loadAll();
   </script>
 </body>
