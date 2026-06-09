@@ -911,6 +911,14 @@
     .drawer-section-title{font-size:.78rem;font-weight:800;color:var(--gray-900);margin:1.15rem 0 .7rem}.drawer-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.drawer-input{margin-bottom:.9rem}.drawer-input label{display:block;font-size:.78rem;font-weight:700;color:var(--gray-700);margin-bottom:.35rem}.drawer-input input,.drawer-input select,.drawer-input textarea{width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;outline:none}.drawer-input input:focus,.drawer-input select:focus,.drawer-input textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.12)}
     @media(max-width:520px){.drawer-row{grid-template-columns:1fr}.client-drawer-footer{flex-wrap:wrap}.client-drawer-footer button{flex:1}}
 
+
+
+/* Reactify global meldingen + sidebar badges */
+.rf-sidebar-badge{margin-left:auto;min-width:18px;height:18px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
+.sidebar-link.has-rf-badge .rf-sidebar-badge{display:inline-flex}.sidebar-link.has-rf-badge{position:relative}.sidebar-link.has-rf-badge svg{flex-shrink:0}
+.rf-global-notification{position:fixed;right:1.35rem;top:1.25rem;z-index:1800}.rf-global-bell{width:40px;height:40px;border:1px solid var(--gray-200,#E5E7EB);border-radius:12px;background:#fff;color:var(--gray-700,#374151);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 22px rgba(17,24,39,.10);position:relative}.rf-global-bell:hover{border-color:var(--purple,#5B2E91);color:var(--purple,#5B2E91)}.rf-global-count{position:absolute;right:-7px;top:-7px;min-width:19px;height:19px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;padding:0 .35rem}.rf-global-bell.has-items .rf-global-count{display:inline-flex}.rf-global-panel{position:absolute;right:0;top:48px;width:min(390px,92vw);max-height:72vh;overflow:auto;background:#fff;border:1px solid var(--gray-200,#E5E7EB);border-radius:16px;box-shadow:0 22px 70px rgba(17,24,39,.18);display:none}.rf-global-panel.open{display:block}.rf-global-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem 1.05rem;border-bottom:1px solid var(--gray-100,#F3F4F6)}.rf-global-head strong{font-size:.95rem;color:var(--gray-900,#111827)}.rf-global-head button{border:1px solid var(--gray-200,#E5E7EB);background:#fff;border-radius:8px;padding:.35rem .55rem;font-size:.72rem;font-weight:800;color:var(--gray-700,#374151);cursor:pointer}.rf-global-list{display:grid;gap:.4rem;padding:.7rem}.rf-global-item{border:0;text-align:left;width:100%;padding:.78rem;border-radius:12px;background:var(--gray-50,#F9FAFB);border-left:3px solid var(--purple,#5B2E91);cursor:pointer}.rf-global-item.unread{background:var(--orange-light,#FFF3DC);border-left-color:var(--orange,#F5A623)}.rf-global-title{font-size:.82rem;font-weight:900;color:var(--gray-900,#111827);margin-bottom:.2rem}.rf-global-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.45}.rf-global-meta{font-size:.68rem;color:var(--gray-500,#6B7280);margin-top:.28rem}.rf-global-empty{padding:1.25rem;color:var(--gray-500,#6B7280);font-size:.82rem;text-align:center}
+@media(max-width:768px){.rf-global-notification{right:.8rem;top:.8rem}.rf-global-panel{right:-.25rem}}
+
 </style></head><body>
 <aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
 <a href="/platform/klantenlijst/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
@@ -1061,4 +1069,120 @@ function saveClientDrawer(){
 }
 window.openClientDrawer=openClientDrawer; window.closeClientDrawer=closeClientDrawer; window.saveClientDrawer=saveClientDrawer;
 
-const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script></body></html>
+const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script>
+<script>
+(function(){
+  if(window.ReactifyGlobalNotificationsLoaded) return;
+  window.ReactifyGlobalNotificationsLoaded=true;
+  const NOTIFICATION_KEY='reactify.notifications';
+  const SEEN_MSG_KEY='reactify.globalSeenMessages';
+  const SEEN_APPT_KEY='reactify.globalSeenAppointments';
+  const INIT_KEY='reactify.globalNotificationsInitialized';
+  const uid=(p='note')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+  const read=(k,f=[])=>{try{const raw=localStorage.getItem(k);return raw?JSON.parse(raw):f}catch(e){return f}};
+  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));};
+  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  const fmt=iso=>{try{return new Date(iso).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'})}catch(e){return ''}};
+  const pathForType=t=>t==='appointment'?'/platform/agenda/':'/platform/inbox/';
+  function notes(){return read(NOTIFICATION_KEY,[])}
+  function saveNotes(items){write(NOTIFICATION_KEY,items.slice(0,120));renderBadges();}
+  function pushNote(note){
+    const items=notes();
+    const dedupe=note.dedupeKey||`${note.type}:${note.title}:${note.body}`;
+    if(items.some(n=>n.dedupeKey===dedupe)) return;
+    const item={id:uid(),type:note.type||'message',title:note.title||'Reactify melding',body:note.body||'',contactName:note.contactName||'',message:note.message||'',appointmentType:note.appointmentType||'',appointmentMoment:note.appointmentMoment||'',link:note.link||pathForType(note.type),dedupeKey:dedupe,createdAt:new Date().toISOString(),read:false};
+    items.unshift(item);saveNotes(items);
+    if('Notification' in window && Notification.permission==='granted'){try{new Notification(item.title,{body:item.body||'Nieuwe melding in Reactify'});}catch(e){}}
+  }
+  window.ReactifyPushNotification=pushNote;
+  function unread(type){return notes().filter(n=>!n.read && (!type || n.type===type)).length;}
+  function markTypeRead(type){const items=notes().map(n=>n.type===type?{...n,read:true}:n);saveNotes(items);}
+  window.ReactifyMarkNotificationsReadByType=markTypeRead;
+  function renderBadges(){
+    const total=unread();
+    const btn=document.getElementById('rfGlobalBell')||document.getElementById('notificationBtn');
+    const badge=document.getElementById('rfGlobalCount')||document.getElementById('notificationBadge');
+    if(btn) btn.classList.toggle('has-items',total>0), btn.classList.toggle('has-notifications',total>0);
+    if(badge) badge.textContent=total>99?'99+':String(total);
+    document.querySelectorAll('a.sidebar-link').forEach(a=>{
+      const href=a.getAttribute('href')||'';
+      const type=href.includes('/agenda')?'appointment':href.includes('/inbox')?'message':'';
+      if(!type) return;
+      let b=a.querySelector('.rf-sidebar-badge'); if(!b){b=document.createElement('span');b.className='rf-sidebar-badge';a.appendChild(b);}
+      const c=unread(type); b.textContent=c>99?'99+':String(c); a.classList.toggle('has-rf-badge',c>0);
+      if(!a.dataset.rfReadHook){a.dataset.rfReadHook='1';a.addEventListener('click',()=>markTypeRead(type));}
+    });
+  }
+  function ensureWidget(){
+    if(document.getElementById('rfGlobalNotifications')) return;
+    if(document.getElementById('notificationBtn')) return; // inbox has its own top-right button
+    const box=document.createElement('div');box.id='rfGlobalNotifications';box.className='rf-global-notification';
+    box.innerHTML=`<button class="rf-global-bell" id="rfGlobalBell" type="button" title="Meldingen">🔔<span class="rf-global-count" id="rfGlobalCount">0</span></button><div class="rf-global-panel" id="rfGlobalPanel"><div class="rf-global-head"><strong>Meldingen</strong><button type="button" id="rfGlobalReadAll">Alles gelezen</button></div><div class="rf-global-list" id="rfGlobalList"></div></div>`;
+    document.body.appendChild(box);
+    document.getElementById('rfGlobalBell')?.addEventListener('click',()=>{renderPanel();document.getElementById('rfGlobalPanel')?.classList.toggle('open');});
+    document.getElementById('rfGlobalReadAll')?.addEventListener('click',e=>{e.stopPropagation();saveNotes(notes().map(n=>({...n,read:true})));renderPanel();});
+  }
+  function renderPanel(){
+    const list=document.getElementById('rfGlobalList')||document.getElementById('notificationList'); if(!list) return;
+    const items=notes();
+    list.innerHTML=items.length?items.map(n=>`<button class="rf-global-item notification-item ${n.read?'':'unread'}" data-id="${esc(n.id)}"><div class="rf-global-title notification-title">${esc(n.title)}</div><div class="rf-global-body notification-body">${esc(n.body||n.message||'')}</div>${n.contactName?`<div class="rf-global-meta notification-meta">Contact: ${esc(n.contactName)}</div>`:''}${n.appointmentType?`<div class="rf-global-meta notification-meta">Afspraak: ${esc(n.appointmentType)} · ${esc(n.appointmentMoment||'')}</div>`:''}<div class="rf-global-meta notification-meta">${fmt(n.createdAt)}</div></button>`).join(''):'<div class="rf-global-empty notification-empty">Nog geen meldingen.</div>';
+    list.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('click',()=>{const id=el.dataset.id;let target='/platform/inbox/';saveNotes(notes().map(n=>{if(n.id===id){target=n.link||pathForType(n.type);return {...n,read:true};}return n;}));location.href=target;}));
+  }
+  window.toggleNotificationsPanel=function(){ensureWidget();renderPanel();(document.getElementById('rfGlobalPanel')||document.getElementById('notificationPanel'))?.classList.toggle('open');};
+  window.markAllNotificationsRead=function(){saveNotes(notes().map(n=>({...n,read:true})));renderPanel();};
+  async function pollConversations(){
+    try{
+      const payload=await fetch('/.netlify/functions/conversations').then(r=>r.json());
+      const rows=Array.isArray(payload?.data)?payload.data:[];
+      const seen=read(SEEN_MSG_KEY,{}), next={...seen};
+      const initialized=localStorage.getItem(INIT_KEY)==='1';
+      rows.forEach(r=>{
+        const id=r.id||r.conversation_id; if(!id) return;
+        const key=`${r.last_message_at||r.updated_at||''}:${r.last_message||''}`;
+        const direction=String(r.last_message_direction||'').toLowerCase();
+        if(!key.trim()) return;
+        if(seen[id] && seen[id]!==key && direction!=='outgoing'){
+          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
+        } else if(!seen[id] && initialized && direction!=='outgoing') {
+          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
+        }
+        next[id]=key;
+      });
+      write(SEEN_MSG_KEY,next);
+    }catch(e){}
+  }
+  async function pollBookings(){
+    try{
+      const payload=await fetch('/.netlify/functions/cal-bookings').then(r=>r.json());
+      const rows=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:[];
+      const seen=read(SEEN_APPT_KEY,{}), next={...seen};
+      const initialized=localStorage.getItem(INIT_KEY)==='1';
+      rows.forEach((b,i)=>{
+        const attendee=Array.isArray(b.attendees)?b.attendees[0]:(b.attendee||{});
+        const id=String(b.uid||b.id||`${b.start}_${attendee?.email||i}`);
+        const start=b.start||b.startTime||'';
+        const title=b.eventType?.title||b.title||b.bookingFieldsResponses?.title||'Afspraak';
+        const contact=attendee?.name||b.bookingFieldsResponses?.name||'Klant';
+        const key=`${start}:${title}:${contact}`;
+        if(seen[id] && seen[id]!==key || (!seen[id] && initialized)){
+          pushNote({type:'appointment',title:`Nieuwe afspraak: ${contact}`,body:`${title} staat ingepland op ${fmt(start)}.`,contactName:contact,appointmentType:title,appointmentMoment:fmt(start),link:'/platform/agenda/',dedupeKey:`appt:${id}:${key}`});
+        }
+        next[id]=key;
+      });
+      write(SEEN_APPT_KEY,next);
+    }catch(e){}
+  }
+  function boot(){
+    ensureWidget();renderBadges();renderPanel();
+    if('Notification' in window && Notification.permission==='default') Notification.requestPermission().catch(()=>{});
+    pollConversations();pollBookings();
+    setTimeout(()=>localStorage.setItem(INIT_KEY,'1'),1500);
+    setInterval(()=>{pollConversations();pollBookings();renderBadges();},12000);
+  }
+  window.addEventListener('storage',e=>{if(e.key===NOTIFICATION_KEY) renderBadges();});
+  window.addEventListener('reactify:datachange',renderBadges);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+</script>
+
+</body></html>
