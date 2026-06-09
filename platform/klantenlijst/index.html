@@ -986,7 +986,23 @@
   const parse=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))||null}catch(e){return null}};
   const blank=()=>({clients:[], conversations:[], appointments:[], settings:{ownerName:'Bob Demo'}});
   const save=data=>{localStorage.setItem(STORE_KEY,JSON.stringify(data)); window.dispatchEvent(new CustomEvent('reactify:data',{detail:data}));};
-  const load=()=>{let d=parse(); if(!d){d=blank(); save(d)}; d.clients ||= []; d.conversations ||= []; d.appointments ||= []; d.settings ||= {ownerName:'Bob Demo'}; return d;};
+  function mergeExternalData(d){
+    const readArr=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return []}};
+    const extContacts=readArr('reactify.contacts');
+    extContacts.forEach(ec=>{
+      const email=String(ec.email||'').toLowerCase(); const phone=String(ec.phone||'').replace(/\s+/g,'');
+      let c=d.clients.find(x=>(email&&String(x.email||'').toLowerCase()===email)||(phone&&String(x.phone||'').replace(/\s+/g,'')===phone)||x.id===ec.id);
+      const item={id:ec.id||uid('client'),name:ec.name||'Klant',email:ec.email||'',phone:ec.phone||'',status:ec.status||'active',type:ec.type||'Klant',address:ec.address||'',note:ec.notes||ec.note||'',source:ec.source||'Reactify',createdAt:ec.createdAt||ec.lastActivity||nowISO(),updatedAt:ec.updatedAt||ec.lastActivity||nowISO(),color:ec.color||colors[d.clients.length%colors.length]};
+      if(c) Object.assign(c,{...item,id:c.id||item.id,color:c.color||item.color}); else d.clients.unshift(item);
+    });
+    const extAppts=readArr('reactify.localAppointments');
+    extAppts.forEach(a=>{
+      const key=a.calUid||a.id; if(key && d.appointments.some(x=>(x.calUid||x.id)===key)) return;
+      d.appointments.push({id:a.id||uid('appt'),calUid:a.calUid||'',clientId:a.contactId||a.clientId||null,title:a.title||'Klantafspraak',start:a.start,end:a.end||a.start,location:a.location||'',type:a.type||'Reactify afspraak',status:a.status||'planned',source:a.source||'Reactify',notes:a.notes||'',createdAt:a.createdAt||nowISO()});
+    });
+    return d;
+  }
+  const load=()=>{let d=parse(); if(!d){d=blank(); save(d)}; d.clients ||= []; d.conversations ||= []; d.appointments ||= []; d.settings ||= {ownerName:'Bob Demo'}; d=mergeExternalData(d); return d;};
   const byId=id=>document.getElementById(id);
   const toast=(msg)=>{let t=byId('rfToast'); if(!t){t=document.createElement('div');t.id='rfToast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)};
   function addClient(client){const d=load(); const name=(client.name||`${client.firstName||''} ${client.lastName||''}`).trim(); const phone=(client.phone||'').trim(); const email=(client.email||'').trim().toLowerCase(); const existing=d.clients.find(c=>(email&&String(c.email||'').toLowerCase()===email)||(phone&&c.phone===phone)); if(existing){Object.assign(existing,{...client,name:name||existing.name,email:email||existing.email,phone:phone||existing.phone,updatedAt:nowISO()}); save(d); return existing;} const c={id:uid('client'), name:name||'Nieuwe contactpersoon', email, phone, status:client.status||'new', type:client.type||'Klant', address:client.address||'', note:client.note||'', source:client.source||'Manueel', createdAt:nowISO(), updatedAt:nowISO(), color:colors[d.clients.length%colors.length]}; d.clients.unshift(c); save(d); return c;}
