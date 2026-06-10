@@ -934,6 +934,17 @@
 .rf-global-notification{position:fixed;right:1.35rem;top:1.25rem;z-index:1800}.rf-global-bell{width:40px;height:40px;border:1px solid var(--gray-200,#E5E7EB);border-radius:12px;background:#fff;color:var(--gray-700,#374151);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 22px rgba(17,24,39,.10);position:relative}.rf-global-bell:hover{border-color:var(--purple,#5B2E91);color:var(--purple,#5B2E91)}.rf-global-count{position:absolute;right:-7px;top:-7px;min-width:19px;height:19px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;padding:0 .35rem}.rf-global-bell.has-items .rf-global-count{display:inline-flex}.rf-global-panel{position:absolute;right:0;top:48px;width:min(390px,92vw);max-height:72vh;overflow:auto;background:#fff;border:1px solid var(--gray-200,#E5E7EB);border-radius:16px;box-shadow:0 22px 70px rgba(17,24,39,.18);display:none}.rf-global-panel.open{display:block}.rf-global-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem 1.05rem;border-bottom:1px solid var(--gray-100,#F3F4F6)}.rf-global-head strong{font-size:.95rem;color:var(--gray-900,#111827)}.rf-global-head button{border:1px solid var(--gray-200,#E5E7EB);background:#fff;border-radius:8px;padding:.35rem .55rem;font-size:.72rem;font-weight:800;color:var(--gray-700,#374151);cursor:pointer}.rf-global-list{display:grid;gap:.4rem;padding:.7rem}.rf-global-item{border:0;text-align:left;width:100%;padding:.78rem;border-radius:12px;background:var(--gray-50,#F9FAFB);border-left:3px solid var(--purple,#5B2E91);cursor:pointer}.rf-global-item.unread{background:var(--orange-light,#FFF3DC);border-left-color:var(--orange,#F5A623)}.rf-global-title{font-size:.82rem;font-weight:900;color:var(--gray-900,#111827);margin-bottom:.2rem}.rf-global-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.45}.rf-global-meta{font-size:.68rem;color:var(--gray-500,#6B7280);margin-top:.28rem}.rf-global-empty{padding:1.25rem;color:var(--gray-500,#6B7280);font-size:.82rem;text-align:center}
 @media(max-width:768px){.rf-global-notification{right:.8rem;top:.8rem}.rf-global-panel{right:-.25rem}}
 
+
+
+/* Reactify final fixes: top toast, bell position */
+.rf-global-notification{top:1.25rem!important;right:1.25rem!important;z-index:2100!important}
+.rf-top-toast{position:fixed;top:1.1rem;left:50%;transform:translate(-50%,-130%);z-index:2400;width:min(560px,calc(100vw - 2rem));background:#fff;border:1px solid var(--purple-light,#E8DCF5);border-left:5px solid var(--orange,#F5A623);border-radius:14px;box-shadow:0 18px 50px rgba(17,24,39,.18);padding:.9rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;opacity:0;pointer-events:none;transition:transform .28s ease,opacity .28s ease}.rf-top-toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.rf-top-toast-icon{width:34px;height:34px;border-radius:999px;background:var(--orange-light,#FFF3DC);color:var(--orange-dark,#E0941A);display:flex;align-items:center;justify-content:center;flex-shrink:0}.rf-top-toast-title{font-size:.86rem;font-weight:900;color:var(--gray-900,#111827)}.rf-top-toast-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:768px){.rf-global-notification{top:.85rem!important;right:.85rem!important}.rf-top-toast{top:.75rem;width:calc(100vw - 1.5rem)}}
+
+
+
+/* Inbox final controls */
+.ai-toggle-btn{display:none!important}.chat-delete-btn{display:none!important}.btn-row{align-items:center}.ai-switch{display:inline-flex;align-items:center;gap:.45rem;border:1px solid transparent;border-radius:999px;padding:.25rem .65rem .25rem .28rem;font-size:.72rem;font-weight:900;cursor:pointer;white-space:nowrap;min-height:32px}.ai-switch.on{background:var(--green-light);color:var(--green);border-color:var(--green-light)}.ai-switch.off{background:var(--orange-light);color:var(--orange-dark);border-color:var(--orange-light)}.ai-switch-knob{width:22px;height:22px;border-radius:999px;background:currentColor;display:inline-block;box-shadow:0 2px 7px rgba(17,24,39,.16)}.ai-switch-text{line-height:1}.icon-danger-btn{width:34px;height:34px;border:0;border-radius:9px;background:var(--red-light);color:var(--red);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:.92rem}.icon-danger-btn:hover{filter:brightness(.96)}.profile-footer{display:none!important}.urgency-meter{position:relative!important;width:100%!important;height:12px!important;border-radius:999px!important;background:linear-gradient(90deg,#facc15,#f97316,#dc2626)!important;overflow:visible!important;margin-top:.35rem}.urgency-meter-fill{display:none!important}.urgency-knob{position:absolute!important;top:50%!important;width:18px!important;height:18px!important;border-radius:50%!important;background:#fff!important;border:3px solid #f97316!important;box-shadow:0 3px 10px rgba(17,24,39,.22)!important;transform:translate(-50%,-50%);transition:left .25s ease;animation:urgencyRingWiggle 1.15s ease-in-out infinite alternate}.urgency-meter[data-level="low"] .urgency-knob{border-color:#facc15!important}.urgency-meter[data-level="medium"] .urgency-knob{border-color:#f97316!important}.urgency-meter[data-level="high"] .urgency-knob{border-color:#dc2626!important}@keyframes urgencyRingWiggle{0%{box-shadow:0 0 0 0 rgba(249,115,22,.0),0 3px 10px rgba(17,24,39,.20);transform:translate(-50%,-50%) scale(1)}100%{box-shadow:0 0 0 6px rgba(249,115,22,.18),0 3px 12px rgba(17,24,39,.24);transform:translate(-50%,-50%) scale(1.08)}}
+
 </style></head><body>
 <aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img src="/logo.png" alt="Reactify" style="height:28px;width:auto;filter:brightness(1.8);"></div><nav class="sidebar-nav"><a href="/platform/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
 <a href="/platform/klantenlijst/" class="sidebar-link "><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
@@ -1029,7 +1040,7 @@
   const readList=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return []}};
   const writeList=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
   async function apiFetch(url, options={}){
-    const res=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
+    const res=await fetch(url,{...options,headers:reactifyApiHeaders(options.headers||{})});
     const data=await res.json().catch(()=>({status:'error',error:'Kon response niet lezen.'}));
     if(!res.ok || data.status==='error') throw new Error(data.error || data.message || (typeof data.details==='string'?data.details:JSON.stringify(data.details||'')) || 'API request mislukt.');
     return data;
@@ -1125,6 +1136,8 @@
 
 
 let selectedConvId=null, search='', inboxUsesBackend=false, inboxLoading=false, lastInboxSignature='', inboxPollTimer=null;
+const REACTIFY_TENANT_ID=(localStorage.getItem('reactify.tenantId')||localStorage.getItem('reactify.currentTenantId')||'').trim();
+function reactifyApiHeaders(extra={}){const h={'Content-Type':'application/json',...extra}; if(REACTIFY_TENANT_ID) h['X-Tenant-Id']=REACTIFY_TENANT_ID; return h;}
 const INBOX_API={
   conversations:'/.netlify/functions/conversations',
   messages:'/.netlify/functions/conversation-messages',
@@ -1210,7 +1223,7 @@ function mirrorAppointmentToLegacy(appt){
 }
 async function pollCalBookingsForNotifications(){
   try{
-    const res=await fetch('/.netlify/functions/cal-bookings');
+    const res=await fetch('/.netlify/functions/cal-bookings',{headers:reactifyApiHeaders()});
     const data=await res.json();
     const rows=Array.isArray(data?.data)?data.data:Array.isArray(data?.bookings)?data.bookings:[];
     const seen=new Set(readJSON(SEEN_CAL_BOOKINGS_KEY,[]));
@@ -1240,7 +1253,7 @@ function normalizePhoneDigits(v){return String(v||'').replace(/\D+/g,'');}
 function looksLikeDefaultName(name, phone){const n=String(name||'').trim().toLowerCase(); const p=normalizePhoneDigits(phone); return !n || n==='onbekende klant' || n==='nieuwe contactpersoon' || (p && normalizePhoneDigits(n)===p);}
 function statusBadge(s){s=normalizeStatus(s);const cls=s==='manual_overname'?'gs-manual':s==='menselijke_overname'?'gs-menselijke-overname':s==='afgesloten'?'gs-afgesloten':'gs-ai-actief';const lab=statusLabel(s);return `<span class="gespreksstatus-badge ${cls}"><span class="gs-dot"></span>${lab}</span>`}
 async function inboxApiFetch(url, options={}){
-  const res=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
+  const res=await fetch(url,{...options,headers:reactifyApiHeaders(options.headers||{})});
   const data=await res.json().catch(()=>({status:'error',error:'Kon backend response niet lezen.'}));
   if(!res.ok || data.status==='error') throw new Error(data.error||data.message||(typeof data.details==='string'?data.details:JSON.stringify(data.details||''))||'Inbox API request mislukt.');
   return data;
@@ -1291,7 +1304,25 @@ function normalizeBackendConversation(row){
   return {id,backendId:id,clientId:c.id,status:normalizeStatus(row.status||(ai.requiresHuman?'menselijke_overname':'ai_actief')),channel:row.channel||'sms',messages:[],summary:ai.summary||row.last_message||'Nieuw gesprek',ai,unread:Number(row.unread||row.unread_count||0),createdAt:row.created_at||new Date().toISOString(),updatedAt:row.updated_at||row.last_message_at||new Date().toISOString(),lastMessage:row.last_message||row.preview||''};
 }
 function normalizeBackendMessage(row){return {id:row.id||row.message_id||RF.uid('msg'),backendId:row.id||row.message_id||'',type:(row.direction||row.role)==='outgoing'||(row.direction||row.role)==='agent'?'outgoing':'incoming',text:row.body||row.text||row.message||'',time:row.created_at||row.createdAt||row.time||new Date().toISOString(),channel:row.channel||'sms'};}
-function saveBackendConversationsToLocal(convs){const d=RF.load(); const deleted=new Set(getDeletedConversationIds()); const byId=new Map(d.conversations.filter(c=>!deleted.has(c.id)&&!deleted.has(c.backendId)).map(c=>[c.id,c])); convs.forEach(c=>{if(deleted.has(c.id)||deleted.has(c.backendId)) return; const old=byId.get(c.id)||{}; const incomingChanged=(old.lastMessage&&c.lastMessage&&old.lastMessage!==c.lastMessage)||(old.updatedAt&&c.updatedAt&&old.updatedAt!==c.updatedAt); const unread=Number(c.unread || old.unread || 0) + (incomingChanged && c.id!==selectedConvId ? 1 : 0); const preservedStatus=(normalizeStatus(old.status)==='manual_overname'||normalizeStatus(old.status)==='menselijke_overname')?old.status:c.status; byId.set(c.id,{...old,...c,status:preservedStatus,unread, lastReadAt: old.lastReadAt || '', messages:c.messages?.length?c.messages:(old.messages||[])});}); d.conversations=[...byId.values()].sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0)); RF.save(d);}
+function saveBackendConversationsToLocal(convs){
+  const d=RF.load();
+  const deleted=new Set(getDeletedConversationIds());
+  const oldById=new Map(d.conversations.map(c=>[c.id,c]));
+  const allowedClientIds=new Set();
+  const rows=[];
+  convs.forEach(c=>{
+    if(deleted.has(c.id)||deleted.has(c.backendId)) return;
+    const old=oldById.get(c.id)||{};
+    const incomingChanged=(old.lastMessage&&c.lastMessage&&old.lastMessage!==c.lastMessage)||(old.updatedAt&&c.updatedAt&&old.updatedAt!==c.updatedAt);
+    const unread=Number(c.unread||old.unread||0)+(incomingChanged&&c.id!==selectedConvId?1:0);
+    const preservedStatus=(normalizeStatus(old.status)==='manual_overname'||normalizeStatus(old.status)==='menselijke_overname')?old.status:c.status;
+    allowedClientIds.add(c.clientId);
+    rows.push({...old,...c,status:preservedStatus,unread,lastReadAt:old.lastReadAt||'',messages:c.messages?.length?c.messages:(old.messages||[])});
+  });
+  d.conversations=rows.sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
+  d.clients=d.clients.filter(c=>allowedClientIds.has(c.id)||String(c.source||'').toLowerCase().includes('manueel'));
+  RF.save(d);
+}
 function getInboxSignature(){
   const d=RF.load();
   return d.conversations.map(c=>`${c.id}:${c.updatedAt||''}:${c.lastMessage||''}:${c.messages?.length||0}:${c.status||''}`).join('|');
@@ -1392,10 +1423,10 @@ function renderSelected(){
   const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId);
   if(!conv){chatHeader.innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>'; chatMessages.innerHTML='<div class="empty-state"><strong>Geen gesprek</strong>Selecteer een gesprek of maak een klant aan.</div>'; profilePanelContent.innerHTML='<div class="empty-state">Geen klantprofiel geselecteerd.</div>'; return;}
   const c=d.clients.find(x=>x.id===conv.clientId)||{}; const ai=conv.ai||{}; const urgency=urgencyScore(ai.urgency); const summary=buildAutoSummary(conv,c);
-  chatHeader.innerHTML=`<div class="chat-header-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="chat-header-info"><div class="chat-header-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="chat-header-details"><span class="chat-header-badge">${RF.esc(conv.channel||'sms')}</span><span>${RF.esc(c.phone||c.email||'Geen contactgegevens')}</span>${statusBadge(conv.status)}</div></div><div class="btn-row"><button class="ai-toggle-btn ${isAiEnabledStatus(conv.status)?'':'off'}" onclick="toggleActiveConversationAi()">${isAiEnabledStatus(conv.status)?'Zelf overnemen':'AI opnieuw aan'}</button><button class="btn-small" onclick="refreshInbox()">Vernieuwen</button><button class="chat-delete-btn" onclick="deleteActiveConversation()">Verwijder chat</button></div>`;
-  chatMessages.innerHTML=(conv.messages||[]).map(m=>m.type==='date'?`<div class="chat-date">${RF.esc(m.text)}</div>`:`<div class="chat-msg ${m.type||'incoming'}">${RF.esc(m.text)}<div class="chat-msg-time">${RF.formatDateTime(m.time)}${m.failed?' · niet verzonden':''}</div></div>`).join('')||`<div class="empty-state"><strong>Nog geen berichten geladen</strong>${conv.backendId?'Klik op vernieuwen of selecteer het gesprek opnieuw.':'Stuur hieronder een bericht om het gesprek te starten.'}</div>`;
+  chatHeader.innerHTML=`<div class="chat-header-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="chat-header-info"><div class="chat-header-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="chat-header-details"><span class="chat-header-badge">${RF.esc(conv.channel||'sms')}</span><span>${RF.esc(c.phone||c.email||'Geen contactgegevens')}</span>${statusBadge(conv.status)}</div></div><div class="btn-row"><button class="ai-switch ${isAiEnabledStatus(conv.status)?'on':'off'}" onclick="toggleActiveConversationAi()" title="${isAiEnabledStatus(conv.status)?'Zelf overnemen':'AI opnieuw inschakelen'}"><span class="ai-switch-knob"></span><span class="ai-switch-text">${isAiEnabledStatus(conv.status)?'AI aan':'AI uit'}</span></button><button class="icon-danger-btn" onclick="deleteActiveConversation()" title="Chat verwijderen" aria-label="Chat verwijderen">🗑️</button></div>`;
+  chatMessages.innerHTML=(conv.messages||[]).map(m=>m.type==='date'?`<div class="chat-date">${RF.esc(m.text)}</div>`:`<div class="chat-msg ${m.type||'incoming'}">${RF.esc(m.text)}<div class="chat-msg-time">${RF.formatDateTime(m.time)}${m.failed?' · niet verzonden':''}</div></div>`).join('')||`<div class="empty-state"><strong>Nog geen berichten geladen</strong>${conv.backendId?'Selecteer het gesprek opnieuw als berichten niet meteen zichtbaar zijn.':'Stuur hieronder een bericht om het gesprek te starten.'}</div>`;
   profilePanelContent.innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${c.color||'var(--purple)'}">${RF.initials(c.name)}</div><div class="profile-name">${RF.esc(c.name||'Onbekende klant')}</div><div class="profile-phone">${RF.esc(c.phone||'Geen telefoon')}</div><div class="profile-email">${RF.esc(c.email||'Geen e-mail')}</div><div class="profile-actions"><button class="btn-small" onclick="location.href='/platform/klantenlijst/?client=${c.id||''}'">Bekijk klant</button></div></div>
-  <div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="profile-detail-value"><span class="intent-pill">${RF.esc(prettyIntent(ai.intent))}</span></span></div><div class="progress-row"><div class="progress-header"><span class="progress-label">Urgentie</span><span class="progress-value">${RF.esc(prettyUrgency(ai.urgency))}</span></div><div class="urgency-meter" data-level="${urgencyLevel(ai.urgency)}"><span class="urgency-knob" style="left:${urgency}%"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span><span class="profile-detail-value">${statusBadge(conv.status)}</span></div><div class="profile-detail-row"><span class="profile-detail-label">AI-bediening</span><span class="profile-detail-value"><button class="ai-toggle-btn ${isAiEnabledStatus(conv.status)?'':'off'}" onclick="toggleActiveConversationAi()">${isAiEnabledStatus(conv.status)?'Zelf overnemen':'AI opnieuw aan'}</button></span></div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span class="profile-detail-value">${RF.formatDateTime(conv.updatedAt)}</span></div></div>
+  <div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="profile-detail-value"><span class="intent-pill">${RF.esc(prettyIntent(ai.intent))}</span></span></div><div class="progress-row"><div class="progress-header"><span class="progress-label">Urgentie</span><span class="progress-value">${RF.esc(prettyUrgency(ai.urgency))}</span></div><div class="urgency-meter" data-level="${urgencyLevel(ai.urgency)}"><span class="urgency-knob" style="left:${urgency}%"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span><span class="profile-detail-value">${statusBadge(conv.status)}</span></div><div class="profile-detail-row"><span class="profile-detail-label">AI-bediening</span><span class="profile-detail-value"><button class="ai-switch ${isAiEnabledStatus(conv.status)?'on':'off'}" onclick="toggleActiveConversationAi()" title="${isAiEnabledStatus(conv.status)?'Zelf overnemen':'AI opnieuw inschakelen'}"><span class="ai-switch-knob"></span><span class="ai-switch-text">${isAiEnabledStatus(conv.status)?'AI aan':'AI uit'}</span></button></span></div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span class="profile-detail-value">${RF.formatDateTime(conv.updatedAt)}</span></div></div>
   <div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${RF.esc(summary)}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${RF.esc(ai.recommendedAction||'Bekijk het laatste bericht, antwoord persoonlijk als de klant een concrete vraag stelt en plan een afspraak in wanneer de klant dat vraagt.')}</div></div><div class="conv-summary"><div class="conv-summary-title">Voorgesteld antwoord</div><div class="conv-summary-text">${RF.esc(ai.suggestedReply||'Dag, bedankt voor je bericht. Ik kijk dit even na en kom hier zo snel mogelijk op terug.')}</div><div class="btn-row" style="margin-top:.65rem"><button class="btn-small" onclick="useSuggestedReply()">Gebruik antwoord</button><button class="btn-small" onclick="classifyActiveConversation()">AI opnieuw analyseren</button></div></div><div class="profile-footer"><button class="btn-new-convo" onclick="RFUI.openAppointmentModal('${c.id||''}','Via inbox')">Afspraak maken met deze klant</button></div>`;
   chatMessages.scrollTop=chatMessages.scrollHeight;
 }
@@ -1439,6 +1470,16 @@ const toggle=document.getElementById('sidebarToggle');const sidebar=document.get
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const fmt=iso=>{try{return new Date(iso).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'})}catch(e){return ''}};
   const pathForType=t=>t==='appointment'?'/platform/agenda/':'/platform/inbox/';
+  function showTopToast(note){
+    let el=document.getElementById('rfTopToast');
+    if(!el){el=document.createElement('div');el.id='rfTopToast';el.className='rf-top-toast';document.body.appendChild(el);}
+    const target=note.link||pathForType(note.type);
+    el.innerHTML=`<div class="rf-top-toast-icon">${note.type==='appointment'?'📅':'💬'}</div><div style="min-width:0;flex:1"><div class="rf-top-toast-title">${esc(note.title||'Reactify melding')}</div><div class="rf-top-toast-body">${esc(note.body||note.message||'Nieuwe melding in Reactify')}</div></div>`;
+    el.onclick=()=>{ saveNotes(notes().map(n=>n.id===note.id?{...n,read:true}:n)); location.href=target; };
+    el.classList.add('show');
+    clearTimeout(window.__rfTopToastTimer);
+    window.__rfTopToastTimer=setTimeout(()=>el.classList.remove('show'),5000);
+  }
   function notes(){return read(NOTIFICATION_KEY,[])}
   function saveNotes(items){write(NOTIFICATION_KEY,items.slice(0,120));renderBadges();}
   function pushNote(note){
@@ -1446,7 +1487,7 @@ const toggle=document.getElementById('sidebarToggle');const sidebar=document.get
     const dedupe=note.dedupeKey||`${note.type}:${note.title}:${note.body}`;
     if(items.some(n=>n.dedupeKey===dedupe)) return;
     const item={id:uid(),type:note.type||'message',title:note.title||'Reactify melding',body:note.body||'',contactName:note.contactName||'',message:note.message||'',appointmentType:note.appointmentType||'',appointmentMoment:note.appointmentMoment||'',link:note.link||pathForType(note.type),dedupeKey:dedupe,createdAt:new Date().toISOString(),read:false};
-    items.unshift(item);saveNotes(items);
+    items.unshift(item);saveNotes(items);showTopToast(item);
     if('Notification' in window && Notification.permission==='granted'){try{new Notification(item.title,{body:item.body||'Nieuwe melding in Reactify'});}catch(e){}}
   }
   window.ReactifyPushNotification=pushNote;
@@ -1487,7 +1528,7 @@ const toggle=document.getElementById('sidebarToggle');const sidebar=document.get
   window.markAllNotificationsRead=function(){saveNotes(notes().map(n=>({...n,read:true})));renderPanel();};
   async function pollConversations(){
     try{
-      const payload=await fetch('/.netlify/functions/conversations').then(r=>r.json());
+      const payload=await fetch('/.netlify/functions/conversations',{headers:reactifyApiHeaders()}).then(r=>r.json());
       const rows=Array.isArray(payload?.data)?payload.data:[];
       const seen=read(SEEN_MSG_KEY,{}), next={...seen};
       const initialized=localStorage.getItem(INIT_KEY)==='1';
@@ -1508,7 +1549,7 @@ const toggle=document.getElementById('sidebarToggle');const sidebar=document.get
   }
   async function pollBookings(){
     try{
-      const payload=await fetch('/.netlify/functions/cal-bookings').then(r=>r.json());
+      const payload=await fetch('/.netlify/functions/cal-bookings',{headers:reactifyApiHeaders()}).then(r=>r.json());
       const rows=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:[];
       const seen=read(SEEN_APPT_KEY,{}), next={...seen};
       const initialized=localStorage.getItem(INIT_KEY)==='1';
