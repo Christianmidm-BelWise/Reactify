@@ -135,7 +135,7 @@
           conversation.ai.summary = "De afspraak is succesvol ingepland.";
           conversation.ai.recommendedAction = "Geen verdere actie nodig. Het gesprek is afgerond.";
           changed = true;
-          if (conversation.backendId) backendPatches.push(conversation.backendId);
+          if (conversation.backendId) backendPatches.push({ conversationId: conversation.backendId, name: info.name, email: info.email, phone: info.phone });
         }
       }
     }
@@ -143,11 +143,13 @@
     if (changed) writePlatform(data);
 
     // Backendstatus ook bewaren zodat alle pagina's dezelfde status zien.
-    for (const conversationId of [...new Set(backendPatches)]) {
+    const uniquePatches = new Map();
+    for (const patch of backendPatches) uniquePatches.set(patch.conversationId, patch);
+    for (const patch of uniquePatches.values()) {
       fetch(CONVERSATIONS_API, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conversationId, status: "afgesloten", aiEnabled: false }),
+        body: JSON.stringify({ ...patch, status: "afgesloten", aiEnabled: false }),
       }).catch(() => {});
     }
   }
