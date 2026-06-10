@@ -695,17 +695,26 @@
   const typeBadge=c=>`<span class="contact-type ${c?.type==='Klant'?'customer':'lead'}">${esc(c?.type||'Lead')}</span>`;
   const stateBadge=status=>{const st=stateInfo(status);return `<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`};
   let remoteBookings=[]; let rendering=false; let lastHTML='';
-  async function fetchBookings(){try{const r=await fetch(API.bookings,{headers:{'Content-Type':'application/json'}});const j=await r.json();remoteBookings=Array.isArray(j.data)?j.data:[];}catch(e){remoteBookings=[];}}
-  function normalizedAppointments(d){
-    const local=d.appointments||[];
-    const cal=remoteBookings.filter(b=>['accepted','pending'].includes(String(b.status||'accepted').toLowerCase())).map((b,i)=>{const a=Array.isArray(b.attendees)?b.attendees[0]||{}:{};return{id:'cal_'+(b.uid||b.id||i),title:b.title||b.eventType?.title||b.eventType?.slug||'Afspraak',start:b.start,customer:a.name||b.bookingFieldsResponses?.name||'Klant'};});
-    const seen=new Set();return [...cal,...local].filter(a=>a&&a.start&&new Date(a.start)>=new Date()).filter(a=>{const k=String(a.id||a.calUid||a.start);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>new Date(a.start)-new Date(b.start));
+  async function fetchBookings(){
+    try{
+      const cached=window.ReactifyCalSync?.getCached?.()||[];
+      if(cached.length) remoteBookings=cached;
+      const r=await fetch(API.bookings,{headers:{'Content-Type':'application/json'},cache:'no-store'});
+      const j=await r.json();
+      remoteBookings=Array.isArray(j.data)?j.data:Array.isArray(j.bookings)?j.bookings:remoteBookings;
+    }catch(e){
+      remoteBookings=window.ReactifyCalSync?.getCached?.()||remoteBookings||[];
+    }
+  }
+  function normalizedAppointments(){
+    const cal=remoteBookings.filter(b=>['accepted','pending'].includes(String(b.status||'accepted').toLowerCase())).map((b,i)=>{const a=Array.isArray(b.attendees)?b.attendees[0]||{}:(b.attendee||{});return{id:'cal_'+(b.uid||b.id||i),title:b.title||b.eventType?.title||b.eventType?.slug||b.bookingFieldsResponses?.title||'Afspraak',start:b.start,customer:a.name||b.bookingFieldsResponses?.name||'Klant'};});
+    const seen=new Set();return cal.filter(a=>a&&a.start&&new Date(a.start)>=new Date()).filter(a=>{const k=String(a.id||a.start);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>new Date(a.start)-new Date(b.start));
   }
   function setHTML(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html;}
   function render(){
     if(rendering)return; rendering=true;
     try{
-      const d=read(), now=new Date(), appts=normalizedAppointments(d), open=d.conversations.filter(c=>!['afgesloten','closed'].includes(String(c.status||'').toLowerCase()));
+      const d=read(), now=new Date(), appts=normalizedAppointments(), open=d.conversations.filter(c=>!['afgesloten','closed'].includes(String(c.status||'').toLowerCase()));
       document.getElementById('statClients').textContent=d.clients.length;
       document.getElementById('statConversations').textContent=open.length;
       const monday=new Date(now);monday.setHours(0,0,0,0);monday.setDate(now.getDate()-((now.getDay()+6)%7));const weekEnd=new Date(monday);weekEnd.setDate(monday.getDate()+7);
@@ -727,5 +736,6 @@
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
 })();
 </script>
+<script src="/platform/assets/cal-sync.js"></script>
 </body>
 </html>
