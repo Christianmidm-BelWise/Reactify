@@ -55,7 +55,7 @@
     let convs = getConversations();
     let conv = convs.find(c=>c.contactId===contact.id);
     if(conv) return conv;
-    conv = { id: uid('conv'), contactId: contact.id, channel:'SMS', status:'ai-active', createdAt: nowIso(), updatedAt: nowIso(), messages:[] };
+    conv = { id: uid('conv'), contactId: contact.id, channel:'SMS', status:'inactive', createdAt: nowIso(), updatedAt: nowIso(), messages:[] };
     convs.unshift(conv); saveConversations(convs); return conv;
   }
   function addMessage(contactId, text, direction='outgoing'){
