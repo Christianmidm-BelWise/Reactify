@@ -1143,10 +1143,10 @@
       if(!conv) conv=d.conversations.find(x=>x.clientId===c.id&&!x.backendId);
       if(!conv&&!claimedClients.has(c.id)) conv=d.conversations.find(x=>x.clientId===c.id);
       if(claimedClients.has(c.id)&&(!conv||String(conv.backendId)!==backendId)){seen.add(backendId);continue}
-      if(!conv){conv={id:backendId,backendId,clientId:c.id,channel:'sms',messages:[],createdAt:row.created_at||now()};d.conversations.unshift(conv)}
+      if(!conv){conv={id:backendId,backendId,clientId:c.id,channel:(String(row.channel||'sms').toLowerCase()==='missed_call'?'sms':String(row.channel||'sms').toLowerCase()),messages:[],createdAt:row.created_at||now()};d.conversations.unshift(conv)}
       if(!conv.backendId){conv.backendId=backendId;conv.id=backendId}
       claimedClients.add(c.id);
-      const backendStatus=(String(row.status||'').toLowerCase()==='inactive'&&(row.last_message||conv.messages?.length))?'ai-active':(row.status||conv.status||'ai-active');Object.assign(conv,{clientId:c.id,status:backendStatus,summary:row.summary||conv.summary||'',lastMessage:row.last_message||conv.lastMessage||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||now(),ai:{intent:row.intent||'onbekend',urgency:row.urgency||'normaal',requiresHuman:!!row.requires_human,summary:row.summary||'',recommendedAction:row.recommended_action||'',suggestedReply:row.suggested_reply||''}});
+      conv.channel=(String(row.channel||conv.channel||'sms').toLowerCase()==='missed_call'?'sms':String(row.channel||conv.channel||'sms').toLowerCase());const backendStatus=(String(row.status||'').toLowerCase()==='inactive'&&(row.last_message||conv.messages?.length))?'ai-active':(row.status||conv.status||'ai-active');Object.assign(conv,{clientId:c.id,status:backendStatus,summary:row.summary||conv.summary||'',lastMessage:row.last_message||conv.lastMessage||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||now(),ai:{intent:row.intent||'onbekend',urgency:row.urgency||'normaal',requiresHuman:!!row.requires_human,summary:row.summary||'',recommendedAction:row.recommended_action||'',suggestedReply:row.suggested_reply||''}});
       c.sentiment=sentiment([conv.summary,conv.lastMessage].join(' '),conv.status);c.status=c.sentiment;c.description=description(c,conv);seen.add(backendId);
     }
     // Verwijder dubbele lokale gesprekken die naar dezelfde contactpersoon wijzen.
