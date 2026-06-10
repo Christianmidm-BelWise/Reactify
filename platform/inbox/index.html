@@ -1065,7 +1065,7 @@
   const fmt=d=>{try{return new Date(d).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch{return ''}};
   const colors=['#5B2E91','#F5A623','#16a34a','#2563eb','#7B52AB','#dc2626'];
   const toast=msg=>{const t=$('rfToast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2600)};
-  const headers=()=>({'Content-Type':'application/json','X-Tenant-Id':localStorage.getItem('reactify.tenantId')||'reactify'});
+  const headers=()=>{const h={'Content-Type':'application/json'};const tenantId=(localStorage.getItem('reactify.tenantId')||'').trim();if(tenantId)h['X-Tenant-Id']=tenantId;return h;};
   async function api(url,opts={}){const r=await fetch(url,{...opts,headers:{...headers(),...(opts.headers||{})}});const j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw new Error(j.error||j.message||'Request mislukt');return j}
 
   // One-time clean start: only contacts active after this deployment are imported.
@@ -1124,7 +1124,7 @@
   function clientMatch(d,row){const p=normPhone(row.contact_phone||row.phone),e=normEmail(row.contact_email||row.email);return d.clients.find(c=>(p&&normPhone(c.phone)===p)||(e&&normEmail(c.email)===e));}
   function phoneLikeName(value){const raw=String(value||'').trim();if(!raw)return true;const digits=raw.replace(/\D/g,'');return digits.length>=9&&normPhone(raw)!=='';}
   function betterContactName(current,incoming,phone){const cur=String(current||'').trim(),inc=String(incoming||'').trim();if(!inc||phoneLikeName(inc)||normPhone(inc)===normPhone(phone))return cur||phone||'Nieuwe lead';if(!cur||phoneLikeName(cur)||/^(nieuwe lead|onbekende klant|onbekend)$/i.test(cur))return inc;return cur;}
-  function validBackendRow(row){if(!row)return false;if(isDeleted({id:row.id,phone:row.contact_phone,email:row.contact_email}))return false;return true;}
+  function validBackendRow(row){if(!row)return false;const id=String(row.id||row.conversation_id||'');/* Alleen exact verwijderde gesprekken verbergen. Een nieuwe oproep van hetzelfde nummer moet opnieuw zichtbaar worden. */if(id&&tombstones().some(x=>String(x.backendId||'')===id))return false;return true;}
   function mergeBackend(rows){
     const d=load(); const seen=new Set(); const claimedClients=new Set();
     for(const row of rows.filter(validBackendRow)){
