@@ -10,7 +10,7 @@
   const write = (key, value) => { localStorage.setItem(key, JSON.stringify(value)); window.dispatchEvent(new CustomEvent('reactify:datachange', { detail:{ key } })); };
   const escapeHTML = (value) => String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const initials = (name='') => name.split(' ').filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase() || 'KL';
-  const normalizePhone = (phone='') => String(phone).replace(/\s+/g,'').trim();
+  const normalizePhone=v=>{let s=String(v||'').trim().replace(/[^0-9+]/g,'');if(!s)return '';if(s.startsWith('00'))s='+'+s.slice(2);let d=s.replace(/\D/g,'');if(d.startsWith('32'))return '+32'+d.slice(2);if(d.startsWith('0'))return '+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return '+32'+d;return s.startsWith('+')?'+'+d:d};
   const normalizeEmail = (email='') => String(email).trim().toLowerCase();
   const formatDateTime = (date) => new Date(date).toLocaleString('nl-BE',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'});
   const formatDate = (date) => new Date(date).toLocaleDateString('nl-BE',{weekday:'short',day:'numeric',month:'short',timeZone:'Europe/Brussels'});
@@ -37,10 +37,10 @@
     const contacts = getContacts();
     const existing = data.id ? contacts.find(c=>c.id===data.id) : findContactMatch(data, contacts);
     if(existing){
-      Object.assign(existing, { ...data, id: existing.id, name: data.name || existing.name, email: data.email || existing.email, phone: data.phone || existing.phone, updatedAt: nowIso(), lastActivity: data.lastActivity || existing.lastActivity || nowIso() });
+      Object.assign(existing, { ...data, id: existing.id, name: data.name || existing.name, email: data.email || existing.email, phone: normalizePhone(data.phone || existing.phone), updatedAt: nowIso(), lastActivity: data.lastActivity || existing.lastActivity || nowIso() });
       saveContacts(contacts); return existing;
     }
-    const newContact = { id: uid('contact'), name: data.name || 'Nieuwe klant', email: data.email || '', phone: data.phone || '', status: data.status || 'active', source: data.source || 'Reactify', createdAt: nowIso(), updatedAt: nowIso(), lastActivity: data.lastActivity || nowIso(), notes: data.notes || '' };
+    const newContact = { id: uid('contact'), name: data.name || 'Nieuwe klant', email: data.email || '', phone: normalizePhone(data.phone || ''), status: data.status || 'active', source: data.source || 'Reactify', createdAt: nowIso(), updatedAt: nowIso(), lastActivity: data.lastActivity || nowIso(), notes: data.notes || '' };
     contacts.unshift(newContact); saveContacts(contacts); return newContact;
   }
   function deleteContact(id){
@@ -106,7 +106,7 @@
       start: new Date(data.start).toISOString(),
       eventTypeId: data.eventTypeId ? Number(data.eventTypeId) : undefined,
       eventTypeSlug: data.eventTypeSlug || undefined,
-      attendee:{ name: contact.name, email: contact.email || data.email, phoneNumber: contact.phone || data.phone, timeZone:'Europe/Brussels', language:'nl' },
+      attendee:{ name: contact.name, email: contact.email || data.email, phoneNumber: normalizePhone(contact.phone || data.phone), timeZone:'Europe/Brussels', language:'nl' },
       bookingFieldsResponses:{ title:data.title || 'Klantafspraak', notes:data.notes || '', location:data.locationLabel || '' },
       metadata:{ source:'reactify-platform', contactId:contact.id, manualFollowUp:data.manualFollowUp ? 'true':'false' },
       locationType:data.locationType || 'cal_video', locationValue:data.locationValue || '',
