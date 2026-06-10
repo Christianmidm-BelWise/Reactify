@@ -1153,6 +1153,7 @@ function normalizeStatus(s){return STATUS_MAP[String(s||'').toLowerCase()]||'ai_
 
 const NOTIFICATION_KEY='reactify.notifications';
 const DELETED_CONVERSATIONS_KEY='reactify.deletedConversations';
+const DELETED_CONTACTS_KEY='reactify.deletedContactKeys';
 const SEEN_CAL_BOOKINGS_KEY='reactify.seenCalBookingIds';
 function readJSON(key,fallback=[]){try{return JSON.parse(localStorage.getItem(key)||'')||fallback}catch(e){return fallback}}
 function writeJSON(key,value){localStorage.setItem(key,JSON.stringify(value));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key}}));}
@@ -1181,7 +1182,11 @@ function renderNotificationsPanel(){
 }
 function markAllNotificationsRead(){const items=getNotifications().map(n=>({...n,read:true}));saveNotifications(items);renderNotificationsPanel();}
 function getDeletedConversationIds(){return readJSON(DELETED_CONVERSATIONS_KEY,[])}
-function addDeletedConversationId(id){const ids=new Set(getDeletedConversationIds());ids.add(id);writeJSON(DELETED_CONVERSATIONS_KEY,[...ids]);}
+function addDeletedConversationId(id){const ids=new Set(getDeletedConversationIds()); if(id) ids.add(id); writeJSON(DELETED_CONVERSATIONS_KEY,[...ids]);}
+function contactDeleteKeys(phone,email){const keys=[]; const p=normalizePhoneDigits(phone||''); const e=String(email||'').trim().toLowerCase(); if(p) keys.push('p:'+p); if(e) keys.push('e:'+e); return keys;}
+function getDeletedContactKeys(){return readJSON(DELETED_CONTACTS_KEY,[])}
+function addDeletedContactKeys(phone,email){const ids=new Set(getDeletedContactKeys()); contactDeleteKeys(phone,email).forEach(k=>ids.add(k)); writeJSON(DELETED_CONTACTS_KEY,[...ids]);}
+function isDeletedContactRow(row){const ids=new Set(getDeletedContactKeys()); return contactDeleteKeys(row.contact_phone||row.phone,row.contact_email||row.email).some(k=>ids.has(k));}
 function prettyIntent(value){
   const raw=String(value||'onbekend').trim();
   const map={afspraak_maken:'Afspraak maken',vraag_stellen:'Vraag stellen',klacht:'Klacht',prijs_vragen:'Prijs vragen',informatie_vragen:'Informatie vragen',menselijke_overname:'Menselijke overname',onbekend:'Onbekend'};
@@ -1320,7 +1325,7 @@ function saveBackendConversationsToLocal(convs){
     rows.push({...old,...c,status:preservedStatus,unread,lastReadAt:old.lastReadAt||'',messages:c.messages?.length?c.messages:(old.messages||[])});
   });
   d.conversations=rows.sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
-  d.clients=d.clients.filter(c=>allowedClientIds.has(c.id)||String(c.source||'').toLowerCase().includes('manueel'));
+  d.clients=d.clients.filter(c=>allowedClientIds.has(c.id)||!String(c.source||'').toLowerCase().includes('backend inbox')); // bewaar manueel aangemaakte klanten
   RF.save(d);
 }
 function getInboxSignature(){
@@ -1342,7 +1347,7 @@ async function loadInboxConversations({silent=false, notify=false}={}){
   if(!silent){conversationList.innerHTML='<div class="empty-state"><strong>Gesprekken laden...</strong>Reactify haalt de inbox op uit de backend.</div>';}
   try{
     const payload=await inboxApiFetch(INBOX_API.conversations);
-    const convs=backendRows(payload,'conversations').map(normalizeBackendConversation).filter(c=>c.id);
+    const convs=backendRows(payload,'conversations').filter(row=>!isDeletedContactRow(row)).map(normalizeBackendConversation).filter(c=>c.id);
     saveBackendConversationsToLocal(convs);
     inboxUsesBackend=true;
   }catch(error){console.warn('Backend inbox niet beschikbaar, fallback naar localStorage:',error.message); inboxUsesBackend=false; if(!silent) RF.toast('Backend inbox niet bereikbaar. Lokale inbox wordt getoond.');}
@@ -1435,7 +1440,7 @@ async function deleteActiveConversation(){
   if(!selectedConvId) return;
   const d=RF.load(); const conv=d.conversations.find(c=>c.id===selectedConvId); if(!conv) return;
   if(!confirm('Deze chat verwijderen uit Reactify?')) return;
-  addDeletedConversationId(conv.backendId||conv.id);
+  const contact=d.clients.find(c=>c.id===conv.clientId)||{}; addDeletedConversationId(conv.backendId||conv.id); addDeletedContactKeys(contact.phone,contact.email);
   if(conv.backendId&&inboxUsesBackend){try{await inboxApiFetch(`${INBOX_API.conversations}?conversationId=${encodeURIComponent(conv.backendId)}`,{method:'DELETE'});}catch(e){console.warn('Backend delete niet beschikbaar:',e.message);}}
   d.conversations=d.conversations.filter(c=>c.id!==selectedConvId);
   RF.save(d); selectedConvId=d.conversations[0]?.id||null; renderInbox(); RF.toast('Chat verwijderd.');
@@ -1443,7 +1448,26 @@ async function deleteActiveConversation(){
 async function refreshInbox(){await loadInboxConversations({silent:false})}
 function useSuggestedReply(){const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); const text=conv?.ai?.suggestedReply||''; if(text) document.getElementById('chatInput').value=text;}
 async function classifyActiveConversation(){const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); if(!conv?.backendId){RF.toast('Alleen backendgesprekken kunnen opnieuw geanalyseerd worden.');return;} try{const payload=await inboxApiFetch(INBOX_API.classify,{method:'POST',body:JSON.stringify({conversationId:conv.backendId})}); const ai=payload.data||payload; conv.ai={intent:ai.intent||conv.ai?.intent,urgency:ai.urgency||conv.ai?.urgency,requiresHuman:Boolean(ai.requiresHuman||ai.requires_human),summary:ai.summary||conv.ai?.summary,recommendedAction:ai.recommendedAction||ai.recommended_action||conv.ai?.recommendedAction,suggestedReply:ai.suggestedReply||ai.suggested_reply||conv.ai?.suggestedReply}; conv.status=normalizeStatus(ai.status||ai.conversationStatus||(conv.ai.requiresHuman?'menselijke_overname':'ai_actief')); RF.save(d); renderInbox(); RF.toast('AI-analyse bijgewerkt.');}catch(error){RF.toast(error.message||'AI-analyse mislukt.');}}
-async function sendMessage(){const input=document.getElementById('chatInput'); const text=input.value.trim(); if(!text||!selectedConvId)return; const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); conv.messages=conv.messages||[]; const optimistic={id:RF.uid('msg'),type:'outgoing',text,time:RF.nowISO()}; conv.messages.push(optimistic); conv.lastMessage=text; conv.updatedAt=optimistic.time; conv.status='manual_overname'; conv.ai=conv.ai||{}; conv.ai.requiresHuman=true; RF.save(d); input.value=''; renderInbox(); if(conv.backendId&&inboxUsesBackend){try{await inboxApiFetch(INBOX_API.sendSms,{method:'POST',body:JSON.stringify({conversationId:conv.backendId,message:text,manualTakeover:true})}); await loadConversationMessages(conv.id,{silent:true}); RF.toast('Bericht verzonden via SMSTools. AI staat uit voor dit gesprek.');}catch(error){optimistic.failed=true; RF.save(d); renderInbox(); RF.toast(error.message||'Bericht verzenden mislukt.');}}}
+
+async function ensureBackendConversation(conv){
+  if(!conv) return null;
+  if(conv.backendId) return conv.backendId;
+  const d=RF.load();
+  const c=d.clients.find(x=>x.id===conv.clientId)||{};
+  const phone=(c.phone||'').trim();
+  const email=(c.email||'').trim();
+  if(!phone){ throw new Error('Deze klant heeft geen telefoonnummer. Vul eerst een nummer in bij de klant.'); }
+  const payload=await inboxApiFetch(INBOX_API.conversations,{method:'POST',body:JSON.stringify({name:c.name||'Klant',phone,email,channel:'sms',manualTakeover:true,aiEnabled:false})});
+  const row=payload.data||payload;
+  conv.backendId=row.id||row.conversationId||row.backendId;
+  conv.id=conv.id||conv.backendId;
+  conv.status='manual_overname';
+  conv.channel='sms';
+  RF.save(d);
+  return conv.backendId;
+}
+
+async function sendMessage(){const input=document.getElementById('chatInput'); const text=input.value.trim(); if(!text||!selectedConvId)return; const d=RF.load(); const conv=d.conversations.find(x=>x.id===selectedConvId); if(!conv)return; const contact=d.clients.find(c=>c.id===conv.clientId)||{}; if(!contact.phone){RF.toast('Deze klant heeft geen telefoonnummer. Voeg eerst een nummer toe.');return;} conv.messages=conv.messages||[]; const optimistic={id:RF.uid('msg'),type:'outgoing',text,time:RF.nowISO()}; conv.messages.push(optimistic); conv.lastMessage=text; conv.updatedAt=optimistic.time; conv.status='manual_overname'; conv.ai=conv.ai||{}; conv.ai.requiresHuman=true; RF.save(d); input.value=''; renderInbox(); try{const backendId=await ensureBackendConversation(conv); const payload=await inboxApiFetch(INBOX_API.sendSms,{method:'POST',body:JSON.stringify({conversationId:backendId,phone:contact.phone,email:contact.email,name:contact.name,message:text,manualTakeover:true})}); const row=payload.data||payload; conv.backendId=row.backendId||row.conversationId||backendId; await loadConversationMessages(conv.id,{silent:true}); RF.toast('Bericht verzonden via SMSTools. AI staat uit voor dit gesprek.');}catch(error){optimistic.failed=true; RF.save(d); renderInbox(); RF.toast(error.message||'Bericht verzenden mislukt.');}}
 inboxSearch?.addEventListener('input',e=>{search=e.target.value;renderInbox()});
 document.getElementById('chatInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 RFUI.initSharedForms(()=>loadInboxConversations({silent:true}));
