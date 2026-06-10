@@ -1086,26 +1086,48 @@
   function statusInfo(status){const x=String(status||'inactive').toLowerCase().replaceAll('-','_').replaceAll(' ','_');if(['manual_overname','manual_takeover','overgenomen','taken_over'].includes(x))return{key:'taken-over',label:'Overgenomen'};if(['menselijke_overname','human_required','human_needed','overname_nodig'].includes(x))return{key:'needs-takeover',label:'Overname nodig'};if(['afgesloten','closed','completed'].includes(x))return{key:'completed',label:'Afgerond'};if(['ai_active','ai_actief'].includes(x))return{key:'ai-active',label:'AI actief'};return{key:'inactive',label:'Inactief'};}
   function stateBadge(status){const m=statusInfo(status);return `<span class="conversation-state ${m.key}"><span class="state-dot"></span>${m.label}</span>`;}
   function clientMatch(d,row){const p=normPhone(row.contact_phone||row.phone),e=normEmail(row.contact_email||row.email);return d.clients.find(c=>(p&&normPhone(c.phone)===p)||(e&&normEmail(c.email)===e));}
+  function phoneLikeName(value){const raw=String(value||'').trim();if(!raw)return true;const digits=raw.replace(/\D/g,'');return digits.length>=9&&normPhone(raw)!=='';}
+  function betterContactName(current,incoming,phone){const cur=String(current||'').trim(),inc=String(incoming||'').trim();if(!inc||phoneLikeName(inc)||normPhone(inc)===normPhone(phone))return cur||phone||'Nieuwe lead';if(!cur||phoneLikeName(cur)||/^(nieuwe lead|onbekende klant|onbekend)$/i.test(cur))return inc;return cur;}
   function validBackendRow(row){if(!row)return false;if(isDeleted({id:row.id,phone:row.contact_phone,email:row.contact_email}))return false;const activity=new Date(row.last_message_at||row.updated_at||row.created_at||0).getTime();return activity>=startedAt();}
   function mergeBackend(rows){
-    const d=load(); const seen=new Set();
+    const d=load(); const seen=new Set(); const claimedClients=new Set();
     for(const row of rows.filter(validBackendRow)){
       const backendId=String(row.id||row.conversation_id||''); if(!backendId)continue;
       let c=clientMatch(d,row);
       const combined=[row.last_message,row.summary,row.contact_name].filter(Boolean).join(' ');
-      if(!c){c={id:uid('client'),name:row.contact_name||row.contact_phone||'Nieuwe lead',email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:determineType(combined,'Lead'),status:'neutraal',sentiment:'neutraal',description:'',source:'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
-      c.name=row.contact_name||c.name;c.email=row.contact_email||c.email;c.phone=normPhone(row.contact_phone||c.phone);c.updatedAt=row.updated_at||c.updatedAt;c.type=determineType(combined,c.type);unmarkDeleted(c);
+      if(!c){c={id:uid('client'),name:betterContactName('',row.contact_name,row.contact_phone),email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:determineType(combined,'Lead'),status:'neutraal',sentiment:'neutraal',description:'',source:'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
+      c.name=betterContactName(c.name,row.contact_name,row.contact_phone);
+      c.email=row.contact_email||c.email;
+      c.phone=normPhone(row.contact_phone||c.phone);
+      c.updatedAt=row.updated_at||c.updatedAt;
+      c.type=determineType(combined,c.type);unmarkDeleted(c);
+
+      // Eén zichtbaar gesprek per contact. Een lokaal gesprek wordt gekoppeld aan het echte backendgesprek.
       let conv=d.conversations.find(x=>x.backendId===backendId||x.id===backendId);
+      if(!conv) conv=d.conversations.find(x=>x.clientId===c.id&&!x.backendId);
+      if(!conv&&!claimedClients.has(c.id)) conv=d.conversations.find(x=>x.clientId===c.id);
+      if(claimedClients.has(c.id)&&(!conv||String(conv.backendId)!==backendId)){seen.add(backendId);continue}
       if(!conv){conv={id:backendId,backendId,clientId:c.id,channel:'sms',messages:[],createdAt:row.created_at||now()};d.conversations.unshift(conv)}
+      if(!conv.backendId){conv.backendId=backendId;conv.id=backendId}
+      claimedClients.add(c.id);
       Object.assign(conv,{clientId:c.id,status:row.status||conv.status||'ai-active',summary:row.summary||conv.summary||'',lastMessage:row.last_message||conv.lastMessage||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||now(),ai:{intent:row.intent||'onbekend',urgency:row.urgency||'normaal',requiresHuman:!!row.requires_human,summary:row.summary||'',recommendedAction:row.recommended_action||'',suggestedReply:row.suggested_reply||''}});
       c.sentiment=sentiment([conv.summary,conv.lastMessage].join(' '),conv.status);c.status=c.sentiment;c.description=description(c,conv);seen.add(backendId);
     }
-    // Keep manual/local conversations and current backend conversations; remove stale pre-start imports.
-    d.conversations=d.conversations.filter(cv=>!cv.backendId||seen.has(String(cv.backendId)));
+    // Verwijder dubbele lokale gesprekken die naar dezelfde contactpersoon wijzen.
+    const byClient=new Map();
+    d.conversations=d.conversations.filter(cv=>{
+      if(cv.backendId&&!seen.has(String(cv.backendId)))return false;
+      const prev=byClient.get(cv.clientId);
+      if(!prev){byClient.set(cv.clientId,cv);return true}
+      const keepCurrent=!!cv.backendId&&!prev.backendId;
+      if(keepCurrent){const idx=d.conversations.indexOf(prev);if(idx>=0)d.conversations.splice(idx,1);byClient.set(cv.clientId,cv);return true}
+      return false;
+    });
     const used=new Set(d.conversations.map(x=>x.clientId));
     d.clients=d.clients.filter(c=>used.has(c.id)||c.source==='Manueel');
     save(d);
   }
+
 
   let selectedId=null,search='';
   function ensureSelection(){const d=load();const q=new URLSearchParams(location.search).get('client');if(q){let cv=d.conversations.find(x=>x.clientId===q);if(!cv){cv={id:uid('conv'),clientId:q,channel:'sms',status:'inactive',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(cv);save(d)}selectedId=cv.id;history.replaceState(null,'','/platform/inbox/')}if(!selectedId||!d.conversations.some(x=>x.id===selectedId))selectedId=d.conversations[0]?.id||null}
@@ -1118,14 +1140,14 @@
   async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineType(x.messages.map(m=>m.text).join(' '),c.type);c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
   function renderSelected(){const {conv,client}=current();if(!conv||!client){$('chatHeader').innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>';$('chatMessages').innerHTML='<div class="empty-state">Selecteer een gesprek.</div>';$('profilePanelContent').innerHTML='<div class="empty-state">Geen profiel geselecteerd.</div>';return}
     const statusMeta=statusInfo(conv.status);const isManual=statusMeta.key==='taken-over';
-    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details">SMS</div></div><div class="chat-header-actions">${stateBadge(conv.status)}<button class="ai-header-switch ${isManual?'off':'on'}" onclick="toggleTakeover()" title="${isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen'}" aria-label="AI aan of uit"><span class="ai-header-switch-track"></span><span>${isManual?'AI uit':'AI aan'}</span></button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
-    $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=outgoing?(origin==='ai'?'Verstuurd door AI':'Handmatig verstuurd'):'';return `<div class="chat-msg ${m.type||'incoming'}">${esc(m.text)}${label?`<div class="message-origin ${origin==='ai'?'ai':'manual'}">${label}</div>`:''}<div class="chat-msg-time">${fmt(m.time)}</div></div>`}).join('')||'<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste SMS-bericht.</div>';
+    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span>SMS</span>${stateBadge(conv.status)}</div></div><div class="chat-header-actions"><button class="ai-header-switch ${isManual?'off':'on'}" onclick="toggleTakeover()" title="${isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen'}" aria-label="AI aan of uit"><span class="ai-header-switch-track"></span><span>${isManual?'AI uit':'AI aan'}</span></button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
+    $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=!outgoing?'Klant':origin==='ai'?'AI':origin==='manual'?'Manueel':origin==='system'?'Systeem':'Manueel';return `<div class="chat-msg ${m.type||'incoming'}">${esc(m.text)}<div class="chat-msg-meta"><span class="message-origin ${origin==='ai'?'ai':origin==='manual'?'manual':'customer'}">${label}</span><span>${fmt(m.time)}</span></div></div>`}).join('')||'<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste SMS-bericht.</div>';
     const urgency=String(conv.ai?.urgency||'normaal').toLowerCase();const left=urgency.includes('hoog')?'88%':urgency.includes('medium')?'55%':'25%';
     $('profilePanelContent').innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="profile-name-row"><div class="profile-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="profile-phone">${esc(client.phone||'Geen telefoon')}</div><div class="profile-email">${esc(client.email||'Geen e-mail')}</div><div class="profile-description-label">Klantbeschrijving</div><div class="profile-description">${esc(client.description||description(client,conv))}</div><button class="btn-small" onclick="openProfile('${client.id}')">Profiel bekijken</button></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="intent-pill">${esc(conv.ai?.intent||'Onbekend')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Urgentie</span><span>${esc(conv.ai?.urgency||'Normaal')}</span></div><div class="urgency-meter"><span class="urgency-knob" style="left:${left}"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span>${stateBadge(conv.status)}</div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span>${fmt(conv.updatedAt)}</span></div></div><div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${esc(conv.ai?.summary||conv.summary||'Nog geen samenvatting.')}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${esc(conv.ai?.recommendedAction||'Bekijk het gesprek en volg persoonlijk op indien nodig.')}</div></div>`;
     $('chatMessages').scrollTop=$('chatMessages').scrollHeight;
   }
   window.selectConversation=id=>{selectedId=id;render();const {conv}=current();loadMessages(conv)};
-  window.sendMessage=async()=>{const input=$('chatInput'),text=input.value.trim();if(!text)return;const {d,conv,client}=current();if(!conv||!client)return;if(!client.phone){toast('Voeg eerst een telefoonnummer toe.');return}input.disabled=true;try{let backendId=conv.backendId;if(!backendId){const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel:'sms'})});backendId=(j.data||j).id;if(!backendId)throw new Error('Gesprek kon niet worden aangemaakt.');conv.backendId=backendId}await api(API.send,{method:'POST',body:JSON.stringify({conversationId:backendId,message:text,manualTakeover:true,name:client.name,phone:client.phone,email:client.email})});conv.messages=conv.messages||[];conv.messages.push({id:uid('msg'),type:'outgoing',text,time:now(),sender:'manual'});conv.lastMessage=text;conv.updatedAt=now();conv.status='manual_overname';client.description=description(client,conv);save(d);input.value='';render();toast('SMS verzonden.')}catch(e){toast(e.message)}finally{input.disabled=false;input.focus()}};
+  window.sendMessage=async()=>{const input=$('chatInput'),text=input.value.trim();if(!text)return;const {d,conv,client}=current();if(!conv||!client)return;if(!client.phone){toast('Voeg eerst een telefoonnummer toe.');return}input.disabled=true;try{let backendId=conv.backendId;if(!backendId){const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel:'sms'})});backendId=(j.data||j).id;if(!backendId)throw new Error('Gesprek kon niet worden aangemaakt.');conv.backendId=backendId}await api(API.send,{method:'POST',body:JSON.stringify({conversationId:backendId,message:text,manualTakeover:true,name:client.name,phone:client.phone,email:client.email})});conv.messages=conv.messages||[];conv.messages.push({id:uid('msg'),type:'outgoing',text,time:now(),sender:'manual'});conv.lastMessage=text;conv.updatedAt=now();conv.status='manual_overname';client.description=description(client,conv);save(d);input.value='';render();toast('SMS verzonden.');setTimeout(()=>sync({notify:false,forceMessages:true}),250)}catch(e){toast(e.message)}finally{input.disabled=false;input.focus()}};
   window.toggleTakeover=async()=>{const {d,conv}=current();if(!conv)return;const isTakenOver=statusInfo(conv.status).key==='taken-over';const next=isTakenOver?'ai-active':'manual_overname';conv.status=next;conv.ai=conv.ai||{};conv.ai.requiresHuman=!isTakenOver;save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:next,aiEnabled:isTakenOver})});toast(isTakenOver?'AI is opnieuw actief.':'Je hebt het gesprek overgenomen.');}catch(e){toast('Status lokaal aangepast, maar backend-update mislukte.');}};
   async function deleteBackend(client,conv){try{const q=new URLSearchParams();if(conv?.backendId)q.set('conversationId',conv.backendId);if(client?.phone)q.set('phone',client.phone);if(client?.email)q.set('email',client.email);await api(`${API.conversations}?${q}`,{method:'DELETE',body:JSON.stringify({conversationId:conv?.backendId||'',phone:client?.phone||'',email:client?.email||''})})}catch(e){console.warn(e)}}
   window.deleteCurrent=async()=>{const {d,conv,client}=current();if(!conv||!client||!confirm('Deze contactpersoon en alle gekoppelde gesprekken verwijderen?'))return;markDeleted(client,conv);await deleteBackend(client,conv);d.conversations=d.conversations.filter(x=>x.clientId!==client.id);d.clients=d.clients.filter(x=>x.id!==client.id);d.appointments=d.appointments.filter(x=>x.clientId!==client.id);save(d);selectedId=null;render();toast('Contactpersoon verwijderd.')};
@@ -1137,11 +1159,41 @@
   window.saveClientDrawer=()=>{const d=load(),c=d.clients.find(x=>x.id===$('drawerClientId').value);if(!c)return;Object.assign(c,{name:$('drawerName').value.trim(),email:normEmail($('drawerEmail').value),phone:normPhone($('drawerPhone').value),address:$('drawerAddress').value.trim(),description:$('drawerDescription').value.trim(),note:$('drawerNote').value.trim(),photo:editPhoto,updatedAt:now()});unmarkDeleted(c);save(d);closeClientDrawer();render();toast('Profiel opgeslagen.')};
   $('drawerPhotoInput')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{editPhoto=String(r.result);$('drawerAvatar').innerHTML=`<img src="${editPhoto}">`};r.readAsDataURL(f)});
 
-  async function sync({notify=false}={}){try{const j=await api(`${API.conversations}?limit=200`);const before=load().conversations.map(x=>x.id+':'+x.updatedAt).join('|');mergeBackend(Array.isArray(j.data)?j.data:[]);const after=load().conversations.map(x=>x.id+':'+x.updatedAt).join('|');render();if(notify&&before&&before!==after)showTopToast()}catch(e){console.warn('Inbox sync:',e.message);render()}}
+  let syncBusy=false;
+  async function sync({notify=false,forceMessages=false}={}){
+    if(syncBusy)return;
+    syncBusy=true;
+    try{
+      const beforeData=load();
+      const before=beforeData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
+      const j=await api(`${API.conversations}?limit=200&_=${Date.now()}`);
+      mergeBackend(Array.isArray(j.data)?j.data:[]);
+      const afterData=load();
+      const after=afterData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
+      render();
+
+      const {conv}=current();
+      if(conv?.backendId && (forceMessages || before!==after || document.visibilityState==='visible')){
+        await loadMessages(conv);
+      }
+
+      if(notify&&before&&before!==after)showTopToast();
+    }catch(e){
+      console.warn('Inbox sync:',e.message);
+      render();
+    }finally{
+      syncBusy=false;
+    }
+  }
   function showTopToast(){let t=document.querySelector('.rf-top-toast');if(!t){t=document.createElement('div');t.className='rf-top-toast';t.innerHTML='<div class="rf-top-toast-icon">💬</div><div><div class="rf-top-toast-title">Nieuw SMS-bericht</div><div class="rf-top-toast-body">Open de inbox om het gesprek te bekijken.</div></div>';t.onclick=()=>location.href='/platform/inbox/';document.body.appendChild(t)}t.classList.add('show');setTimeout(()=>t.classList.remove('show'),5000)}
   $('inboxSearch')?.addEventListener('input',e=>{search=e.target.value.toLowerCase();render()});$('chatInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()});$('sidebarToggle')?.addEventListener('click',()=>$('sidebar')?.classList.toggle('open'));
   window.RFUI={openClientModal(){},closeClientModal(){},openAppointmentModal(){},closeAppointmentModal(){}};
-  sync();setInterval(()=>sync({notify:true}),15000);
+  sync({forceMessages:true});
+  const livePoll=setInterval(()=>sync({notify:true,forceMessages:true}),2000);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible')sync({notify:false,forceMessages:true});
+  });
+  window.addEventListener('focus',()=>sync({notify:false,forceMessages:true}));
 })();
 </script>
 </body></html>
