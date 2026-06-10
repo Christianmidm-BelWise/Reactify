@@ -999,7 +999,7 @@
 <a class="sidebar-link" href="/platform/agenda/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>Agenda</a><div class="sidebar-spacer"></div><a class="sidebar-link" href="#">Instellingen</a><a class="sidebar-link" href="#">Help</a></nav><div class="sidebar-user"><div class="user-avatar">BD</div><div class="user-info"><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div></aside>
 <main class="main"><button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button><div class="top-bar"><div class="top-bar-left"><h1>Inbox</h1><p>Beheer al je klantgesprekken op één plaats.</p></div><div class="top-bar-right"><div class="top-search"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" fill-rule="evenodd"></path></svg><input id="inboxSearch" placeholder="Zoek klanten, berichten..." type="text"/></div><button class="notification-btn" id="notificationBtn" onclick="toggleNotificationsPanel()" title="Meldingen">🔔<span class="notification-badge" id="notificationBadge">0</span></button></div></div>
 <div class="stats-grid"><div class="stat-card"><div class="stat-icon purple">💬</div><div class="stat-info"><div class="stat-label">Open gesprekken</div><div class="stat-value" id="statOpen">0</div><div class="stat-change">Live uit inbox</div></div></div><div class="stat-card"><div class="stat-icon orange">✉</div><div class="stat-info"><div class="stat-label">Ongelezen</div><div class="stat-value" id="statUnread">0</div><div class="stat-change">Te verwerken</div></div></div><div class="stat-card"><div class="stat-icon green">✓</div><div class="stat-info"><div class="stat-label">% afgehandeld deze week</div><div class="stat-value" id="statHandled">0%</div><div class="stat-change">Op basis van status</div></div></div></div>
-<div class="inbox-layout"><div class="inbox-panel conv-panel"><div class="conv-tabs"><button class="conv-tab active">Alles</button><button class="conv-tab">SMS</button><button class="conv-tab">E-mail</button><button class="conv-tab">Chat</button></div><div class="conv-list" id="conversationList"></div><div class="conv-footer"><a href="/platform/klantenlijst/">Contactpersonen beheren</a></div></div><div class="inbox-panel chat-panel"><div class="chat-header" id="chatHeader"></div><div class="chat-messages" id="chatMessages"></div><div class="chat-input"><input id="chatInput" placeholder="Typ een bericht..." type="text"/><button class="chat-send-btn" onclick="sendMessage()">➤</button></div></div><div class="inbox-panel profile-panel"><div class="profile-header-section"><h2>Klantprofiel</h2></div><div id="profilePanelContent"></div></div></div></main>
+<div class="inbox-layout"><div class="inbox-panel conv-panel"><div class="conv-tabs"><button class="conv-tab active" data-channel="all">Alles</button><button class="conv-tab" data-channel="sms">SMS</button><button class="conv-tab" data-channel="email">E-mail</button><button class="conv-tab" data-channel="chat">Chat</button></div><div class="conv-list" id="conversationList"></div><div class="conv-footer"><a href="/platform/klantenlijst/">Contactpersonen beheren</a></div></div><div class="inbox-panel chat-panel"><div class="chat-header" id="chatHeader"></div><div class="chat-messages" id="chatMessages"></div><div class="chat-input"><input id="chatInput" placeholder="Typ een bericht..." type="text"/><button class="chat-send-btn" onclick="sendMessage()">➤</button></div></div><div class="inbox-panel profile-panel"><div class="profile-header-section"><h2>Klantprofiel</h2></div><div id="profilePanelContent"></div></div></div></main>
 <div class="notification-panel" id="notificationPanel">
 <div class="notification-panel-header"><h3>Meldingen</h3><button class="btn-small" onclick="markAllNotificationsRead()" type="button">Markeer gelezen</button></div>
 <div class="notification-list" id="notificationList"></div>
@@ -1160,17 +1160,32 @@
       return false;
     });
     const used=new Set(d.conversations.map(x=>x.clientId));
-    d.clients=d.clients.filter(c=>used.has(c.id)||c.source==='Manueel');
+    d.clients=d.clients.filter(c=>used.has(c.id)||['Manueel','Cal.com'].includes(c.source));
     save(d);
   }
 
 
-  let selectedId=null,search='';
+  let selectedId=null,search='',activeChannel='all';
   function ensureSelection(){const d=load();const q=new URLSearchParams(location.search).get('client');if(q){let cv=d.conversations.find(x=>x.clientId===q);if(!cv){cv={id:uid('conv'),clientId:q,channel:'sms',status:'inactive',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(cv);save(d)}selectedId=cv.id;history.replaceState(null,'','/platform/inbox/')}if(!selectedId||!d.conversations.some(x=>x.id===selectedId))selectedId=d.conversations[0]?.id||null}
   function current(){const d=load(),conv=d.conversations.find(x=>x.id===selectedId),client=conv?d.clients.find(c=>c.id===conv.clientId):null;return{d,conv,client}}
-  function render(){ensureSelection();const d=load();const list=d.conversations.filter(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};return [c.name,c.phone,c.email,cv.lastMessage,cv.summary].join(' ').toLowerCase().includes(search)}).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
+  function applyLifecycle(d){
+    const cutoff=Date.now()-30*60*1000;
+    let changed=false;
+    for(const cv of d.conversations){
+      const state=statusInfo(cv.status).key;
+      if(['completed','taken-over','needs-takeover'].includes(state))continue;
+      const messages=Array.isArray(cv.messages)?cv.messages:[];
+      const lastTime=new Date(messages.at(-1)?.time||cv.updatedAt||cv.createdAt||0).getTime();
+      const next=messages.length===0?'inactive':(lastTime&&lastTime<cutoff?'inactive':'ai-active');
+      if(String(cv.status)!==next){cv.status=next;changed=true;}
+    }
+    if(changed)save(d);
+  }
+  function render(){ensureSelection();const d=load();applyLifecycle(d);const unavailable=activeChannel==='email'||activeChannel==='chat';const list=unavailable?[]:d.conversations.filter(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};const channel=String(cv.channel||'sms').toLowerCase();const channelOk=activeChannel==='all'||channel===activeChannel;return channelOk&&[c.name,c.phone,c.email,cv.lastMessage,cv.summary].join(' ').toLowerCase().includes(search)}).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
     $('statOpen').textContent=d.conversations.filter(x=>!String(x.status).includes('afgesloten')).length;$('statUnread').textContent=d.conversations.reduce((n,x)=>n+Number(x.unread||0),0);$('statHandled').textContent=d.conversations.length?Math.round(100*d.conversations.filter(x=>String(x.status).includes('afgesloten')).length/d.conversations.length)+'%':'0%';
-    $('conversationList').innerHTML=list.map(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};return `<div class="conv-item ${cv.id===selectedId?'active':''}" onclick="selectConversation('${cv.id}')"><div class="conv-avatar" style="background:${c.color||'#5B2E91'}">${initials(c.name)}</div><div class="conv-content"><div class="conv-header"><div class="conv-name">${esc(c.name||'Onbekend')} <span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${esc(c.type||'Lead')}</span>${stateBadge(cv.status)}</div><div class="conv-time">${fmt(cv.updatedAt)}</div></div><div class="conv-preview">${esc(cv.lastMessage||cv.summary||'Nog geen berichten')}</div></div></div>`}).join('')||'<div class="empty-state"><strong>Geen gesprekken</strong>Nieuwe SMS-gesprekken verschijnen hier automatisch.</div>';
+    $('conversationList').innerHTML=unavailable
+      ? `<div class="empty-state"><strong>${activeChannel==='email'?'E-mail':'Chat'} nog niet beschikbaar</strong>Dit kanaal wordt later aan Reactify toegevoegd.</div>`
+      : (list.map(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};return `<div class="conv-item ${cv.id===selectedId?'active':''}" onclick="selectConversation('${cv.id}')"><div class="conv-avatar" style="background:${c.color||'#5B2E91'}">${initials(c.name)}</div><div class="conv-content"><div class="conv-header"><div class="conv-name">${esc(c.name||'Onbekend')} <span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${esc(c.type||'Lead')}</span>${stateBadge(cv.status)}</div><div class="conv-time">${fmt(cv.updatedAt)}</div></div><div class="conv-preview">${esc(cv.lastMessage||cv.summary||'Nog geen berichten')}</div></div></div>`}).join('')||'<div class="empty-state"><strong>Geen gesprekken</strong>Nieuwe SMS-gesprekken verschijnen hier automatisch.</div>');
     renderSelected();
   }
   async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineTypeFromMessages(x.messages,c.type||'Lead');c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
@@ -1238,6 +1253,12 @@
     }
   }
   function showTopToast(){let t=document.querySelector('.rf-top-toast');if(!t){t=document.createElement('div');t.className='rf-top-toast';t.innerHTML='<div class="rf-top-toast-icon">💬</div><div><div class="rf-top-toast-title">Nieuw SMS-bericht</div><div class="rf-top-toast-body">Open de inbox om het gesprek te bekijken.</div></div>';t.onclick=()=>location.href='/platform/inbox/';document.body.appendChild(t)}t.classList.add('show');setTimeout(()=>t.classList.remove('show'),5000)}
+  document.querySelectorAll('.conv-tab').forEach(tab=>tab.addEventListener('click',()=>{
+    activeChannel=tab.dataset.channel||'all';
+    document.querySelectorAll('.conv-tab').forEach(x=>x.classList.toggle('active',x===tab));
+    render();
+  }));
+  window.addEventListener('reactify:calbookings',()=>{render();});
   $('inboxSearch')?.addEventListener('input',e=>{search=e.target.value.toLowerCase();render()});$('chatInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()});$('sidebarToggle')?.addEventListener('click',()=>$('sidebar')?.classList.toggle('open'));
   window.RFUI={
     openClientModal(){ $('rfClientModal')?.classList.add('open'); },
