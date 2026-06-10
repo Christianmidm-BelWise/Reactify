@@ -946,7 +946,13 @@
 /* Inbox final controls */
 .ai-toggle-btn{display:none!important}.chat-delete-btn{display:none!important}.btn-row{align-items:center}.ai-switch{display:inline-flex;align-items:center;gap:.45rem;border:1px solid transparent;border-radius:999px;padding:.25rem .65rem .25rem .28rem;font-size:.72rem;font-weight:900;cursor:pointer;white-space:nowrap;min-height:32px}.ai-switch.on{background:var(--green-light);color:var(--green);border-color:var(--green-light)}.ai-switch.off{background:var(--orange-light);color:var(--orange-dark);border-color:var(--orange-light)}.ai-switch-knob{width:22px;height:22px;border-radius:999px;background:currentColor;display:inline-block;box-shadow:0 2px 7px rgba(17,24,39,.16)}.ai-switch-text{line-height:1}.icon-danger-btn{width:34px;height:34px;border:0;border-radius:9px;background:var(--red-light);color:var(--red);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:.92rem}.icon-danger-btn:hover{filter:brightness(.96)}.profile-footer{display:none!important}.urgency-meter{position:relative!important;width:100%!important;height:12px!important;border-radius:999px!important;background:linear-gradient(90deg,#facc15,#f97316,#dc2626)!important;overflow:visible!important;margin-top:.35rem}.urgency-meter-fill{display:none!important}.urgency-knob{position:absolute!important;top:50%!important;width:18px!important;height:18px!important;border-radius:50%!important;background:#fff!important;border:3px solid #f97316!important;box-shadow:0 3px 10px rgba(17,24,39,.22)!important;transform:translate(-50%,-50%);transition:left .25s ease;animation:urgencyRingWiggle 1.15s ease-in-out infinite alternate}.urgency-meter[data-level="low"] .urgency-knob{border-color:#facc15!important}.urgency-meter[data-level="medium"] .urgency-knob{border-color:#f97316!important}.urgency-meter[data-level="high"] .urgency-knob{border-color:#dc2626!important}@keyframes urgencyRingWiggle{0%{box-shadow:0 0 0 0 rgba(249,115,22,.0),0 3px 10px rgba(17,24,39,.20);transform:translate(-50%,-50%) scale(1)}100%{box-shadow:0 0 0 6px rgba(249,115,22,.18),0 3px 12px rgba(17,24,39,.24);transform:translate(-50%,-50%) scale(1.08)}}
 
-</style></head><body>
+</style><style id="reactify-inbox-layout-v2">
+.inbox-layout{grid-template-columns:270px minmax(360px,.82fr) minmax(390px,1.18fr)!important;align-items:stretch}
+.profile-panel{min-width:0;max-height:calc(100vh - 190px);overflow:hidden}.profile-panel #profilePanelContent{overflow-y:auto;min-height:0}
+.chat-panel{min-width:0}.chat-messages{padding:1rem}.profile-card{align-items:flex-start!important;padding:1.1rem 1.25rem!important}.profile-card .profile-avatar{align-self:center}.profile-card .profile-name,.profile-card .profile-phone,.profile-card .profile-email,.profile-card .profile-actions{align-self:center}.customer-description-inline{width:100%;margin-top:.9rem}.customer-description-inline .conv-summary-text{font-size:.78rem}.profile-header-section h2::after{content:''}
+@media(max-width:1400px){.inbox-layout{grid-template-columns:250px minmax(330px,.9fr) minmax(360px,1.1fr)!important}}
+@media(max-width:1150px){.inbox-layout{grid-template-columns:260px 1fr!important}.profile-panel{display:none!important}}
+</style></head><body><script id="reactify-clean-start-v1">(function(){try{const FLAG='reactify.cleanStart.v1';const STORE='reactify_platform_data_v3';if(!localStorage.getItem(FLAG)){let d={clients:[],conversations:[],appointments:[],settings:{ownerName:'Bob Demo'}};try{const old=JSON.parse(localStorage.getItem(STORE)||'{}');if(Array.isArray(old.appointments))d.appointments=old.appointments;}catch(e){}localStorage.setItem(STORE,JSON.stringify(d));localStorage.setItem('reactify.contactRegistrationStartAt',new Date().toISOString());localStorage.setItem(FLAG,'1');localStorage.removeItem('reactify.contacts');localStorage.removeItem('reactify.conversations');} }catch(e){console.warn(e)}})();</script>
 <aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img alt="Reactify" src="/logo.png" style="height:28px;width:auto;filter:brightness(1.8);"/></div><nav class="sidebar-nav"><a class="sidebar-link" href="/platform/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Dashboard</a>
 <a class="sidebar-link" href="/platform/klantenlijst/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Klanten</a>
 <a class="sidebar-link active" href="/platform/inbox/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>Inbox</a>
@@ -1797,4 +1803,30 @@ const toggle=document.getElementById('sidebarToggle');const sidebar=document.get
  window.addEventListener('reactify:data',()=>{clean();ensureLocalConversations()});window.addEventListener('storage',e=>{if(e.key===STORE||e.key===DEL){clean();ensureLocalConversations();try{renderInbox()}catch(_){}}});
 })();
 </script>
-</body></html>
+<script id="reactify-inbox-final-v2">(function(){
+const CUTOFF_KEY='reactify.contactRegistrationStartAt';
+const cutoff=()=>new Date(localStorage.getItem(CUTOFF_KEY)||0).getTime();
+const newer=v=>{const t=new Date(v||0).getTime();return Number.isFinite(t)&&t>=cutoff()};
+// Only conversations after the clean-start moment may create customers.
+if(typeof saveBackendConversationsToLocal==='function'){
+ const original=saveBackendConversationsToLocal;
+ window.saveBackendConversationsToLocal=function(convs){return original((convs||[]).filter(c=>newer(c.updatedAt||c.createdAt)));};
+}
+// Appointments never auto-create a customer. Unknown attendees remain Leads.
+if(window.RF){
+ RF.addAppointment=function(appt){const d=RF.load();const existing=d.clients.find(x=>x.id===appt.clientId);const a={id:RF.uid('appt'),clientId:existing?.id||null,leadName:existing?'':(appt.clientName||appt.name||'Lead'),leadEmail:existing?'':(appt.clientEmail||appt.email||''),leadPhone:existing?'':(appt.clientPhone||appt.phone||''),title:appt.title||'Afspraak',start:appt.start,end:appt.end||appt.start,location:appt.location||'',type:appt.type||'Reactify afspraak',status:'planned',source:appt.source||'Reactify',notes:appt.notes||'',createdAt:RF.nowISO()};d.appointments.push(a);RF.save(d);return a;};
+}
+function rearrangeProfile(){
+ const d=window.RF?.load?.(); const conv=d?.conversations?.find(x=>x.id===window.selectedConvId); const c=d?.clients?.find(x=>x.id===(conv?.clientId||conv?.contactId)); const target=document.getElementById('profilePanelContent'); if(!target||!c)return;
+ const card=target.querySelector('.profile-card'); if(!card)return;
+ target.querySelectorAll('.customer-intel-box').forEach(x=>x.remove());
+ const text=(window.ReactifyCustomerIntel?.descriptionFor?.(c,d))||`${c.name||'Deze klant'} gebruikt SMS als contactkanaal.`;
+ const sentiment=(typeof customerSentimentBadge==='function'?customerSentimentBadge(c):'');
+ const box=document.createElement('div');box.className='customer-description-inline';box.innerHTML=`<div class="conv-summary-title">Klantbeschrijving</div><div class="conv-summary-text">${window.ReactifyCustomerIntel?.esc?.(text)||text}</div><div style="margin-top:.55rem">${sentiment}</div>`;card.appendChild(box);
+ const h=document.querySelector('.profile-header-section h2');if(h)h.textContent=(String(c.type||'').toLowerCase()==='lead'?'Leadprofiel':'Klantprofiel');
+}
+if(typeof renderSelected==='function'){const old=renderSelected;window.renderSelected=function(){old();requestAnimationFrame(rearrangeProfile)}}
+// Do not manufacture empty chats for manually created contacts.
+window.addEventListener('reactify:data',()=>requestAnimationFrame(rearrangeProfile));
+requestAnimationFrame(()=>{try{renderInbox();rearrangeProfile()}catch(e){console.warn(e)}});
+})();</script></body></html>
