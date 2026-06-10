@@ -985,13 +985,6 @@
 .conversation-state.inactive{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
 .profile-description-label{width:100%;text-align:left;font-size:.72rem;font-weight:800;color:var(--gray-800);margin-top:.7rem;margin-bottom:.3rem}
 .chat-header-actions .conversation-state{margin-right:.15rem}
-
-/* Compact message metadata */
-.chat-msg-meta{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-top:.28rem;font-size:.61rem;line-height:1.15;opacity:.82;font-weight:600}
-.chat-msg.incoming .chat-msg-meta{color:#4B5563}
-.chat-msg.outgoing .chat-msg-meta{color:rgba(255,255,255,.88)}
-.message-origin{font-size:.61rem;font-weight:700;letter-spacing:.01em}
-.message-origin.ai{color:inherit}.message-origin.manual{color:inherit}.message-origin.customer{color:inherit}
 </style></head><body>
 <aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img alt="Reactify" src="/logo.png" style="height:28px;width:auto;filter:brightness(1.8);"/></div><nav class="sidebar-nav"><a class="sidebar-link" href="/platform/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Dashboard</a>
 <a class="sidebar-link" href="/platform/klantenlijst/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Klanten</a>
@@ -1055,7 +1048,6 @@
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?';
   const normPhone=v=>{let s=String(v||'').trim().replace(/[^0-9+]/g,'');if(!s)return '';if(s.startsWith('00'))s='+'+s.slice(2);let d=s.replace(/\D/g,'');if(d.startsWith('32'))return '+32'+d.slice(2);if(d.startsWith('0'))return '+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return '+32'+d;return s.startsWith('+')?'+'+d:d};
-  const phoneKey=v=>{const n=normPhone(v),d=String(n||'').replace(/\D/g,'');if(!d)return '';return d.startsWith('32')?d.slice(2):d.startsWith('0')?d.slice(1):d;};
   const normEmail=v=>String(v||'').trim().toLowerCase();
   const read=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch{return f}};
   const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
@@ -1091,16 +1083,15 @@
     return 'neutraal';
   }
   function description(client,conv){const text=[conv?.summary,conv?.lastMessage,...(conv?.messages||[]).map(m=>m.text)].filter(Boolean).join(' ').toLowerCase();let reason='een algemene vraag';if(/afspraak|boeken|inplannen|reserv/.test(text))reason='een afspraak';else if(/prijs|kost|tarief|offerte|euro/.test(text))reason='prijzen of een offerte';else if(/klacht|probleem|fout|ontevreden/.test(text))reason='een probleem of klacht';else if(/informatie|info|vraag|wanneer|hoe/.test(text))reason='informatie';return `${client.name||'Deze persoon'} neemt via SMS contact op over ${reason}.`;}
+  function localConversationAnalysis(conv){const text=(conv?.messages||[]).map(m=>m.text||'').join(' ').toLowerCase();const human=/medewerker|persoon spreken|mens spreken|iemand spreken|klantendienst|manager|zaakvoerder/.test(text);const negative=/klacht|ontevreden|niet tevreden|probleem|fout|slecht|teleurgesteld|annuleren/.test(text);const urgent=/dringend|spoed|asap|meteen|onmiddellijk|zo snel mogelijk/.test(text);const booking=/afspraak|boeken|inplannen|reservatie|beschikbaar|welke dag|welk uur/.test(text);if(human)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt expliciet om een medewerker of menselijke opvolging.',action:'Neem het gesprek over en reageer persoonlijk.'};if(negative)return{requiresHuman:true,urgency:'hoog',summary:'De klant meldt een klacht of probleem en heeft menselijke opvolging nodig.',action:'Neem het gesprek over, erken het probleem en stel een concrete oplossing voor.'};if(urgent)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt dringende opvolging.',action:'Neem het gesprek over en reageer zo snel mogelijk.'};if(booking)return{requiresHuman:false,urgency:'normaal',summary:'De klant wil een afspraak maken of een beschikbaar moment vinden.',action:'Laat AI twee concrete momenten voorstellen of plan de afspraak in.'};return{requiresHuman:false,urgency:'normaal',summary:'De klant heeft een vraag en verwacht verdere opvolging.',action:'Laat AI antwoorden en volg op wanneer het gesprek niet verdergaat.'};}
   function statusInfo(status){const x=String(status||'inactive').toLowerCase().replaceAll('-','_').replaceAll(' ','_');if(['manual_overname','manual_takeover','overgenomen','taken_over'].includes(x))return{key:'taken-over',label:'Overgenomen'};if(['menselijke_overname','human_required','human_needed','overname_nodig'].includes(x))return{key:'needs-takeover',label:'Overname nodig'};if(['afgesloten','closed','completed'].includes(x))return{key:'completed',label:'Afgerond'};if(['ai_active','ai_actief'].includes(x))return{key:'ai-active',label:'AI actief'};return{key:'inactive',label:'Inactief'};}
   function stateBadge(status){const m=statusInfo(status);return `<span class="conversation-state ${m.key}"><span class="state-dot"></span>${m.label}</span>`;}
-  function clientMatch(d,row){const p=phoneKey(row.contact_phone||row.phone),e=normEmail(row.contact_email||row.email);return d.clients.find(c=>(p&&phoneKey(c.phone)===p)||(e&&normEmail(c.email)===e));}
+  function clientMatch(d,row){const p=normPhone(row.contact_phone||row.phone),e=normEmail(row.contact_email||row.email);return d.clients.find(c=>(p&&normPhone(c.phone)===p)||(e&&normEmail(c.email)===e));}
   function phoneLikeName(value){const raw=String(value||'').trim();if(!raw)return true;const digits=raw.replace(/\D/g,'');return digits.length>=9&&normPhone(raw)!=='';}
   function betterContactName(current,incoming,phone){const cur=String(current||'').trim(),inc=String(incoming||'').trim();if(!inc||phoneLikeName(inc)||normPhone(inc)===normPhone(phone))return cur||phone||'Nieuwe lead';if(!cur||phoneLikeName(cur)||/^(nieuwe lead|onbekende klant|onbekend)$/i.test(cur))return inc;return cur;}
   function validBackendRow(row){if(!row)return false;if(isDeleted({id:row.id,phone:row.contact_phone,email:row.contact_email}))return false;const activity=new Date(row.last_message_at||row.updated_at||row.created_at||0).getTime();return activity>=startedAt();}
   function mergeBackend(rows){
     const d=load(); const seen=new Set(); const claimedClients=new Set();
-    const canonicalByPhone=new Map();
-    d.clients=[...d.clients].filter(c=>{const k=phoneKey(c.phone);if(!k)return true;const existing=canonicalByPhone.get(k);if(!existing){canonicalByPhone.set(k,c);return true;}const keep=(!phoneLikeName(c.name)&&phoneLikeName(existing.name))?c:existing;const drop=keep===c?existing:c;Object.assign(keep,{email:keep.email||drop.email,description:keep.description||drop.description,note:keep.note||drop.note,type:keep.type||drop.type,color:keep.color||drop.color});d.conversations.forEach(cv=>{if(cv.clientId===drop.id)cv.clientId=keep.id});canonicalByPhone.set(k,keep);return keep!==c;});
     for(const row of rows.filter(validBackendRow)){
       const backendId=String(row.id||row.conversation_id||''); if(!backendId)continue;
       let c=clientMatch(d,row);
@@ -1120,7 +1111,7 @@
       if(!conv){conv={id:backendId,backendId,clientId:c.id,channel:'sms',messages:[],createdAt:row.created_at||now()};d.conversations.unshift(conv)}
       if(!conv.backendId){conv.backendId=backendId;conv.id=backendId}
       claimedClients.add(c.id);
-      Object.assign(conv,{clientId:c.id,status:row.status||conv.status||'ai-active',summary:row.summary||conv.summary||'',lastMessage:row.last_message||conv.lastMessage||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||now(),ai:{intent:row.intent||'onbekend',urgency:row.urgency||'normaal',requiresHuman:!!row.requires_human,summary:row.summary||'',recommendedAction:row.recommended_action||'',suggestedReply:row.suggested_reply||''}});
+      const backendStatus=(String(row.status||'').toLowerCase()==='inactive'&&(row.last_message||conv.messages?.length))?'ai-active':(row.status||conv.status||'ai-active');Object.assign(conv,{clientId:c.id,status:backendStatus,summary:row.summary||conv.summary||'',lastMessage:row.last_message||conv.lastMessage||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||now(),ai:{intent:row.intent||'onbekend',urgency:row.urgency||'normaal',requiresHuman:!!row.requires_human,summary:row.summary||'',recommendedAction:row.recommended_action||'',suggestedReply:row.suggested_reply||''}});
       c.sentiment=sentiment([conv.summary,conv.lastMessage].join(' '),conv.status);c.status=c.sentiment;c.description=description(c,conv);seen.add(backendId);
     }
     // Verwijder dubbele lokale gesprekken die naar dezelfde contactpersoon wijzen.
@@ -1152,8 +1143,8 @@
     const statusMeta=statusInfo(conv.status);const isManual=statusMeta.key==='taken-over';
     $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span>SMS</span>${stateBadge(conv.status)}</div></div><div class="chat-header-actions"><button class="ai-header-switch ${isManual?'off':'on'}" onclick="toggleTakeover()" title="${isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen'}" aria-label="AI aan of uit"><span class="ai-header-switch-track"></span><span>${isManual?'AI uit':'AI aan'}</span></button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
     $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=!outgoing?'Klant':origin==='ai'?'AI':origin==='manual'?'Manueel':origin==='system'?'Systeem':'Manueel';return `<div class="chat-msg ${m.type||'incoming'}">${esc(m.text)}<div class="chat-msg-meta"><span class="message-origin ${origin==='ai'?'ai':origin==='manual'?'manual':'customer'}">${label}</span><span>${fmt(m.time)}</span></div></div>`}).join('')||'<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste SMS-bericht.</div>';
-    const urgency=String(conv.ai?.urgency||'normaal').toLowerCase();const left=urgency.includes('hoog')?'88%':urgency.includes('medium')?'55%':'25%';
-    $('profilePanelContent').innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="profile-name-row"><div class="profile-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="profile-phone">${esc(client.phone||'Geen telefoon')}</div><div class="profile-email">${esc(client.email||'Geen e-mail')}</div><div class="profile-description-label">Klantbeschrijving</div><div class="profile-description">${esc(client.description||description(client,conv))}</div><button class="btn-small" onclick="openProfile('${client.id}')">Profiel bekijken</button></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="intent-pill">${esc(conv.ai?.intent||'Onbekend')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Urgentie</span><span>${esc(conv.ai?.urgency||'Normaal')}</span></div><div class="urgency-meter"><span class="urgency-knob" style="left:${left}"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span>${stateBadge(conv.status)}</div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span>${fmt(conv.updatedAt)}</span></div></div><div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${esc(conv.ai?.summary||conv.summary||'Nog geen samenvatting.')}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${esc(conv.ai?.recommendedAction||'Bekijk het gesprek en volg persoonlijk op indien nodig.')}</div></div>`;
+    const fallbackAI=localConversationAnalysis(conv);const backendSummary=String(conv.ai?.summary||conv.summary||'').trim();const aiSummary=(!backendSummary||/nieuw gesprek aangemaakt/i.test(backendSummary))?fallbackAI.summary:backendSummary;const recommended=String(conv.ai?.recommendedAction||'').trim()||fallbackAI.action;const urgency=String((conv.ai?.urgency&&conv.ai.urgency!=='normaal')?conv.ai.urgency:fallbackAI.urgency).toLowerCase();const left=urgency.includes('hoog')?'88%':urgency.includes('medium')?'55%':'25%';
+    $('profilePanelContent').innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="profile-name-row"><div class="profile-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="profile-phone">${esc(client.phone||'Geen telefoon')}</div><div class="profile-email">${esc(client.email||'Geen e-mail')}</div><div class="profile-description-label">Klantbeschrijving</div><div class="profile-description">${esc(client.description||description(client,conv))}</div><button class="btn-small" onclick="openProfile('${client.id}')">Profiel bekijken</button></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="intent-pill">${esc(conv.ai?.intent||'Onbekend')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Urgentie</span><span>${esc(conv.ai?.urgency||'Normaal')}</span></div><div class="urgency-meter"><span class="urgency-knob" style="left:${left}"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span>${stateBadge(conv.status)}</div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span>${fmt(conv.updatedAt)}</span></div></div><div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${esc(aiSummary)}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${esc(recommended)}</div></div>`;
     $('chatMessages').scrollTop=$('chatMessages').scrollHeight;
   }
   window.selectConversation=id=>{selectedId=id;render();const {conv}=current();loadMessages(conv)};
@@ -1166,7 +1157,7 @@
   let editPhoto='';
   window.openProfile=id=>{const d=load(),c=d.clients.find(x=>x.id===id);if(!c)return;$('drawerClientId').value=c.id;$('drawerName').value=c.name||'';$('drawerEmail').value=c.email||'';$('drawerPhone').value=c.phone||'';$('drawerAddress').value=c.address||'';$('drawerType').value=c.type||'Lead';$('drawerStatus').value=c.status||'neutraal';$('drawerDescription').value=c.description||'';$('drawerNote').value=c.note||'';editPhoto=c.photo||'';$('drawerAvatar').innerHTML=editPhoto?`<img src="${editPhoto}">`:initials(c.name);$('drawerAvatar').style.background=c.color||'#5B2E91';$('clientDrawerOverlay').classList.add('open');$('clientDrawer').classList.add('open')};
   window.closeClientDrawer=()=>{$('clientDrawerOverlay').classList.remove('open');$('clientDrawer').classList.remove('open')};
-  window.saveClientDrawer=async()=>{const d=load(),c=d.clients.find(x=>x.id===$('drawerClientId').value);if(!c)return;Object.assign(c,{name:$('drawerName').value.trim()||c.name,email:normEmail($('drawerEmail').value),phone:normPhone($('drawerPhone').value),address:$('drawerAddress').value.trim(),description:$('drawerDescription').value.trim(),note:$('drawerNote').value.trim(),photo:editPhoto,updatedAt:now()});unmarkDeleted(c);save(d);const conv=d.conversations.find(x=>x.clientId===c.id&&x.backendId);try{if(conv?.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,contact_name:c.name,contact_email:c.email,contact_phone:c.phone})})}catch(e){console.warn('Backend profielupdate mislukt:',e.message)}closeClientDrawer();render();toast('Profiel opgeslagen.')};
+  window.saveClientDrawer=()=>{const d=load(),c=d.clients.find(x=>x.id===$('drawerClientId').value);if(!c)return;Object.assign(c,{name:$('drawerName').value.trim(),email:normEmail($('drawerEmail').value),phone:normPhone($('drawerPhone').value),address:$('drawerAddress').value.trim(),description:$('drawerDescription').value.trim(),note:$('drawerNote').value.trim(),photo:editPhoto,updatedAt:now()});unmarkDeleted(c);save(d);closeClientDrawer();render();toast('Profiel opgeslagen.')};
   $('drawerPhotoInput')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{editPhoto=String(r.result);$('drawerAvatar').innerHTML=`<img src="${editPhoto}">`};r.readAsDataURL(f)});
 
   let syncBusy=false;
@@ -1177,15 +1168,7 @@
       const beforeData=load();
       const before=beforeData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
       const j=await api(`${API.conversations}?limit=200&_=${Date.now()}`);
-      const rows=Array.isArray(j.data)?j.data:[];
-      const seenKey='reactify.inboxSeenIncomingV2';
-      let seenIncoming=[];try{seenIncoming=JSON.parse(localStorage.getItem(seenKey)||'[]')}catch(e){seenIncoming=[]}
-      const seenSet=new Set(seenIncoming);
-      const incomingSignatures=rows.filter(r=>String(r.last_message_direction||'').toLowerCase()==='incoming'&&r.last_message_at).map(r=>`${r.id}:${r.last_message_at}:${r.last_message||''}`);
-      const newIncoming=notify?incomingSignatures.filter(sig=>!seenSet.has(sig)):[];
-      incomingSignatures.forEach(sig=>seenSet.add(sig));
-      localStorage.setItem(seenKey,JSON.stringify(Array.from(seenSet).slice(-500)));
-      mergeBackend(rows);
+      mergeBackend(Array.isArray(j.data)?j.data:[]);
       const afterData=load();
       const after=afterData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
       render();
@@ -1195,7 +1178,7 @@
         await loadMessages(conv);
       }
 
-      if(newIncoming.length)showTopToast();
+      if(notify&&before&&before!==after)showTopToast();
     }catch(e){
       console.warn('Inbox sync:',e.message);
       render();
