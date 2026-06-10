@@ -66,11 +66,11 @@
     return conv;
   }
 
-  function getLocalAppointments(){ return read(KEYS.localAppointments, []); }
-  function saveLocalAppointments(items){ write(KEYS.localAppointments, items); }
-  function addLocalAppointment(appt){ const items = getLocalAppointments(); const item = { id: appt.id || uid('appt'), ...appt, createdAt: appt.createdAt || nowIso(), updatedAt: nowIso() }; items.unshift(item); saveLocalAppointments(items); return item; }
-  function updateLocalAppointment(id, patch){ const items=getLocalAppointments(); const item=items.find(a=>a.id===id); if(item) Object.assign(item, patch, {updatedAt:nowIso()}); saveLocalAppointments(items); return item; }
-  function removeLocalAppointment(id){ saveLocalAppointments(getLocalAppointments().filter(a=>a.id!==id)); }
+  function getLocalAppointments(){ return []; }
+  function saveLocalAppointments(){ localStorage.removeItem(KEYS.localAppointments); }
+  function addLocalAppointment(appt){ return appt || null; }
+  function updateLocalAppointment(){ return null; }
+  function removeLocalAppointment(){ localStorage.removeItem(KEYS.localAppointments); }
 
   function normalizeBookings(payload){
     const raw = Array.isArray(payload?.data) ? payload.data : Array.isArray(payload?.bookings) ? payload.bookings : [];
@@ -79,8 +79,8 @@
       const name = attendee?.name || b.bookingFieldsResponses?.name || 'Klant';
       const email = attendee?.email || b.bookingFieldsResponses?.email || '';
       const phone = attendee?.phoneNumber || b.bookingFieldsResponses?.phone || b.bookingFieldsResponses?.phoneNumber || '';
-      const contact = upsertContact({ name, email, phone, source:'Cal.com', lastActivity:b.start || nowIso() });
-      return { id:`cal_${b.uid || b.id || i}`, calUid:b.uid || b.id, contactId:contact.id, title:b.bookingFieldsResponses?.title || b.title || b.eventType?.title || b.eventType?.slug || 'Afspraak', customer:contact.name, email:contact.email, phone:contact.phone, start:b.start, end:b.end, status:b.status || 'accepted', meetingUrl:b.meetingUrl || b.location || 'https://app.cal.com/bookings', location:b.bookingFieldsResponses?.location || b.metadata?.locationLabel || b.location || b.meetingUrl || '', type:b.eventType?.title || b.eventType?.slug || 'Cal.com', source:'Cal.com', external:true, raw:b };
+      const contact = findContactMatch({ name, email, phone });
+      return { id:`cal_${b.uid || b.id || i}`, calUid:b.uid || b.id, contactId:contact?.id || '', title:b.bookingFieldsResponses?.title || b.title || b.eventType?.title || b.eventType?.slug || 'Afspraak', customer:contact?.name || name, email:contact?.email || email, phone:contact?.phone || phone, start:b.start, end:b.end, status:b.status || 'accepted', meetingUrl:b.meetingUrl || b.location || 'https://app.cal.com/bookings', location:b.bookingFieldsResponses?.location || b.metadata?.locationLabel || b.location || b.meetingUrl || '', type:b.eventType?.title || b.eventType?.slug || 'Cal.com', source:'Cal.com', external:true, raw:b };
     }).sort((a,b)=>new Date(a.start)-new Date(b.start));
   }
 
@@ -91,12 +91,8 @@
   function getSchedulesCache(){ return read(KEYS.schedules, []); }
 
   async function getAllAppointments(){
-    let cal = [];
-    try { cal = await fetchCalBookings(); } catch(e) { console.warn('Cal.com bookings niet geladen:', e.message); }
-    const local = getLocalAppointments().filter(a=>a.status !== 'cancelled');
-    const calIds = new Set(cal.map(a=>String(a.calUid || a.id)));
-    const localOnly = local.filter(a => !a.calUid || !calIds.has(String(a.calUid)));
-    return [...cal, ...localOnly].sort((a,b)=>new Date(a.start)-new Date(b.start));
+    try { return (await fetchCalBookings()).sort((a,b)=>new Date(a.start)-new Date(b.start)); }
+    catch(e) { console.warn('Cal.com bookings niet geladen:', e.message); return []; }
   }
 
   async function createAppointment(data){
@@ -133,9 +129,7 @@
     if(appt.calUid || (appt.external && appt.id)){
       try { await apiFetch(API.cancelBooking, { method:'POST', body: JSON.stringify({ uid: appt.calUid || String(appt.id).replace(/^cal_/,''), reason:'Geannuleerd via Reactify' }) }); } catch(e){ console.warn(e); }
     }
-    if(appt.id && String(appt.id).startsWith('appt_')) updateLocalAppointment(appt.id, {status:'cancelled'});
-    const contactId = appt.contactId;
-    if(contactId) addMessage(contactId, `Afspraak van ${formatDateTime(appt.start)} werd geannuleerd.`, 'outgoing');
+    localStorage.removeItem(KEYS.localAppointments);
   }
 
   async function createSchedule(data){ return apiFetch(API.schedules, { method:'POST', body:JSON.stringify(data) }); }
