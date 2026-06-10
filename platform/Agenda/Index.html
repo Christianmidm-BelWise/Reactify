@@ -225,17 +225,8 @@ const NOTIFICATION_KEY="reactify.notifications";
       c={id:uid("contact"),name:data.name||"Nieuwe klant",email:data.email||"",phone:data.phone||"",status:data.status||"active",source:data.source||"Reactify",notes:data.notes||"",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),lastActivity:data.lastActivity||new Date().toISOString()};
       contacts.unshift(c); saveContacts(contacts); return c;
     }
-    function saveLocalAppointment(item){
-      const list=readJSON(LOCAL_APPT_KEY,[]);
-      const appt={id:item.id||uid("appt"),...item,updatedAt:new Date().toISOString()};
-      const key=appt.calUid||appt.id;
-      if(key && list.some(a=>(a.calUid||a.id)===key)) return appt;
-      list.unshift(appt); writeJSON(LOCAL_APPT_KEY,list);
-      if(!item.silentNotification){
-        pushNotification("appointment",`Nieuwe afspraak: ${appt.customer||"Klant"}`,`${appt.title||"Afspraak"} staat ingepland op ${formatDate(appt.start)} om ${formatTime(appt.start)}.`,{contactName:appt.customer||"",appointmentType:appt.title||appt.type||"Afspraak",appointmentMoment:`${formatDate(appt.start)} ${formatTime(appt.start)}`});
-      }
-      return appt;
-    }
+    function saveLocalAppointment(item){ return item; }
+
 
     function normalizeBookings(payload){
       const raw=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:(payload?.data?[payload.data]:payload?.uid?[payload]:[]);
@@ -244,21 +235,18 @@ const NOTIFICATION_KEY="reactify.notifications";
         const name=attendee?.name || b.bookingFieldsResponses?.name || b.responses?.name || "Klant";
         const email=attendee?.email || b.bookingFieldsResponses?.email || b.responses?.email || "";
         const phone=attendee?.phoneNumber || attendee?.phone || b.bookingFieldsResponses?.phone || b.bookingFieldsResponses?.phoneNumber || "";
-        const contact=email||phone||name!=="Klant" ? upsertContact({name,email,phone,source:"Cal.com",lastActivity:b.start||new Date().toISOString()}) : null;
+        const existing=contactForBooking({customer:name,email,phone});
         return {
           id:b.id||b.uid||i, uid:b.uid||b.id, title:b.bookingFieldsResponses?.title || b.responses?.title || b.title || b.eventType?.title || b.eventType?.slug || "Afspraak",
-          customer:contact?.name || name, contactId:contact?.id || "", email:contact?.email || email, phone:contact?.phone || phone,
+          customer:existing?.name || name, contactId:existing?.id || "", email:existing?.email || email, phone:existing?.phone || phone,
           start:new Date(b.start), end:new Date(b.end || b.start), status:b.status||"accepted", meetingUrl:b.meetingUrl || b.location || "https://app.cal.com/bookings",
           location:b.bookingFieldsResponses?.location || b.responses?.location || b.metadata?.locationLabel || b.location || b.meetingUrl || "", type:b.eventType?.title || b.eventType?.slug || "Cal.com", duration:b.duration || b.lengthInMinutes || 0, raw:b, source:"Cal.com"
         }
       }).sort((a,b)=>a.start-b.start);
     }
 
-    function normalizeLocalAppointments(){
-      return readJSON(LOCAL_APPT_KEY,[]).filter(a=>a.status!=="cancelled").map(a=>({
-        ...a, uid:a.calUid||a.id, start:new Date(a.start), end:new Date(a.end||a.start), customer:a.customer||getContacts().find(c=>c.id===a.contactId)?.name||"Klant", source:a.source||"Reactify"
-      }));
-    }
+    function normalizeLocalAppointments(){ return []; }
+
 
     async function loadAll(){
       setSync("laden","Cal.com data laden...");
@@ -266,19 +254,16 @@ const NOTIFICATION_KEY="reactify.notifications";
         const [bookingPayload, typePayload, schedulePayload] = await Promise.allSettled([
           apiFetch(API.bookings), apiFetch(API.eventTypes), apiFetch(API.schedules)
         ]);
-        const local=normalizeLocalAppointments();
         if(bookingPayload.status==="fulfilled"){
-          const cal=normalizeBookings(bookingPayload.value);
-          const calIds=new Set(cal.map(b=>String(b.uid||b.id)));
-          bookings=[...cal, ...local.filter(a=>!a.calUid || !calIds.has(String(a.calUid)))].sort((a,b)=>a.start-b.start);
-        } else { bookings=local; throw bookingPayload.reason; }
+          bookings=normalizeBookings(bookingPayload.value);
+        } else { bookings=[]; throw bookingPayload.reason; }
         if(typePayload.status==="fulfilled") eventTypes=Array.isArray(typePayload.value.data)?typePayload.value.data:[];
         if(schedulePayload.status==="fulfilled") schedules=Array.isArray(schedulePayload.value.data)?schedulePayload.value.data:[];
         renderAll(); fillContactSelect(); fillEventTypeSelects(); fillScheduleSelect(); renderEventTypeList();
         setSync("ok",`Verbonden met Cal.com · ${bookings.length} afspraken · ${eventTypes.length} afspraaktypes · ${schedules.length} schema's`);
       }catch(error){
         console.error(error); renderAll(); fillContactSelect(); fillEventTypeSelects(); fillScheduleSelect(); renderEventTypeList();
-        setSync("error",error.message || "Kon Cal.com niet laden. Lokale Reactify data blijft zichtbaar.");
+        setSync("error",error.message || "Kon Cal.com-afspraken niet laden.");
       }
     }
 
@@ -535,5 +520,6 @@ const NOTIFICATION_KEY="reactify.notifications";
 })();
 </script>
 
+<script src="/platform/assets/cal-sync.js"></script>
 </body>
 </html>
