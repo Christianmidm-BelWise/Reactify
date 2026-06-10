@@ -1212,4 +1212,39 @@ const toggle=document.getElementById('sidebarToggle');const sidebar=document.get
 })();
 </script>
 
+
+<script>
+/* Reactify fix: klanten blijven weg na verwijderen + manuele klanten kunnen sms'en vanuit inbox */
+(function(){
+  const DELETED_CONTACTS_KEY='reactify.deletedContactKeys';
+  const REACTIFY_TENANT_ID=(localStorage.getItem('reactify.tenantId')||localStorage.getItem('reactify.currentTenantId')||'').trim();
+  const headers=()=>{const h={'Content-Type':'application/json'}; if(REACTIFY_TENANT_ID) h['X-Tenant-Id']=REACTIFY_TENANT_ID; return h;};
+  const read=(k,f=[])=>{try{return JSON.parse(localStorage.getItem(k)||'')||f}catch(e){return f}};
+  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));};
+  const digits=v=>String(v||'').replace(/\D+/g,'');
+  const keys=(phone,email)=>{const out=[]; const p=digits(phone); const e=String(email||'').trim().toLowerCase(); if(p) out.push('p:'+p); if(e) out.push('e:'+e); return out;};
+  function rememberDeletedContact(c){const set=new Set(read(DELETED_CONTACTS_KEY,[])); keys(c?.phone,c?.email).forEach(k=>set.add(k)); write(DELETED_CONTACTS_KEY,[...set]);}
+  async function deleteBackendContactConversations(c){
+    if(!c) return;
+    try{await fetch('/.netlify/functions/conversations',{method:'DELETE',headers:headers(),body:JSON.stringify({phone:c.phone||'',email:c.email||''})});}catch(e){console.warn('Backendgesprekken verwijderen mislukt:',e.message);}
+  }
+  window.removeClient=async function(id){
+    const d=RF.load(); const c=d.clients.find(x=>x.id===id);
+    if(!c) return;
+    if(!confirm('Deze klant definitief verwijderen uit Reactify?')) return;
+    rememberDeletedContact(c);
+    await deleteBackendContactConversations(c);
+    RF.deleteClient(id);
+    closeClientDrawer?.();
+    renderClients();
+    RF.toast('Klant verwijderd');
+  };
+  window.openInbox=function(id){
+    const d=RF.load(); const client=d.clients.find(c=>c.id===id);
+    if(!client){location.href='/platform/inbox/';return;}
+    RF.addConversation(client);
+    location.href='/platform/inbox/?client='+encodeURIComponent(id);
+  };
+})();
+</script>
 </body></html>
