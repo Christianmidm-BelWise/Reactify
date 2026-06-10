@@ -31,7 +31,7 @@
 
 <style id="reactify-final-agenda-time-style">.appt-time{width:72px!important;line-height:1.2}.appt-day-label{display:block;font-size:.66rem;color:var(--gray-500);font-weight:800;margin-top:.15rem}.appt-sub{margin-top:.1rem}</style>
 </head>
-<body><script id="reactify-clean-start-v1">(function(){try{const FLAG='reactify.cleanStart.v1';const STORE='reactify_platform_data_v3';if(!localStorage.getItem(FLAG)){let d={clients:[],conversations:[],appointments:[],settings:{ownerName:'Bob Demo'}};try{const old=JSON.parse(localStorage.getItem(STORE)||'{}');if(Array.isArray(old.appointments))d.appointments=old.appointments;}catch(e){}localStorage.setItem(STORE,JSON.stringify(d));localStorage.setItem('reactify.contactRegistrationStartAt',new Date().toISOString());localStorage.setItem(FLAG,'1');localStorage.removeItem('reactify.contacts');localStorage.removeItem('reactify.conversations');} }catch(e){console.warn(e)}})();</script>
+<body>
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo"><img src="/logo.png" alt="Reactify" /></div>
     <nav class="sidebar-nav">
@@ -234,7 +234,7 @@ const NOTIFICATION_KEY="reactify.notifications";
         const name=attendee?.name || b.bookingFieldsResponses?.name || b.responses?.name || "Klant";
         const email=attendee?.email || b.bookingFieldsResponses?.email || b.responses?.email || "";
         const phone=attendee?.phoneNumber || attendee?.phone || b.bookingFieldsResponses?.phone || b.bookingFieldsResponses?.phoneNumber || "";
-        const contact=getContacts().find(c=>(email&&String(c.email||'').toLowerCase()===String(email).toLowerCase())||(phone&&String(c.phone||'').replace(/\D/g,'')===String(phone).replace(/\D/g,'')))||null;
+        const contact=email||phone||name!=="Klant" ? upsertContact({name,email,phone,source:"Cal.com",lastActivity:b.start||new Date().toISOString()}) : null;
         return {
           id:b.id||b.uid||i, uid:b.uid||b.id, title:b.bookingFieldsResponses?.title || b.responses?.title || b.title || b.eventType?.title || b.eventType?.slug || "Afspraak",
           customer:contact?.name || name, contactId:contact?.id || "", email:contact?.email || email, phone:contact?.phone || phone,
@@ -365,7 +365,7 @@ const NOTIFICATION_KEY="reactify.notifications";
       try{
         showAlert("bookingAlert","info","Afspraak aanmaken in Cal.com..."); const opt=$("bookingEventType").selectedOptions[0]; const contactId=$("bookingContact").value; let contact=null;
         if(contactId && contactId!=="__new__") contact=getContacts().find(c=>c.id===contactId);
-        if(!contact){ contact={id:null,name:$("bookingName").value||'Lead',email:$("bookingEmail").value||'',phone:$("bookingPhone").value||'',type:'Lead'}; }
+        if(!contact){ contact=upsertContact({name:$("bookingName").value,email:$("bookingEmail").value,phone:$("bookingPhone").value,source:"Reactify agenda",lastActivity:localToUTCISO($("bookingStart").value)}); }
         if(!contact.email && !$("bookingEmail").value) throw new Error("Cal.com heeft een e-mailadres nodig om een afspraak te maken.");
         const locationType=$("bookingLocationType").value; const locationValue=$("bookingLocationValue").value.trim(); const locationLabel=locationType==="cal_video"?"Cal.com video":locationValue;
         const length=Number($("bookingLength").value||opt?.dataset.length||30); const startISO=localToUTCISO($("bookingStart").value);
@@ -525,5 +525,5 @@ const NOTIFICATION_KEY="reactify.notifications";
 })();
 </script>
 
-<script id="reactify-agenda-lead-v1">(function(){function tag(){document.querySelectorAll('.appt-item').forEach(el=>{const sub=el.querySelector('.appt-sub');if(!sub)return;const txt=(sub.textContent||'').trim();if(txt&&!/^(Klant|Lead)/.test(txt)){const d=window.ReactifyStore?.getContacts?.()||[];const isClient=d.some(c=>txt.includes(c.name));sub.textContent=(isClient?'Klant · ':'Lead · ')+txt;}})}new MutationObserver(tag).observe(document.body,{childList:true,subtree:true});tag();})();</script></body>
+</body>
 </html>
