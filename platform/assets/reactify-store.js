@@ -79,8 +79,8 @@
       const name = attendee?.name || b.bookingFieldsResponses?.name || 'Klant';
       const email = attendee?.email || b.bookingFieldsResponses?.email || '';
       const phone = attendee?.phoneNumber || b.bookingFieldsResponses?.phone || b.bookingFieldsResponses?.phoneNumber || '';
-      const contact = getContacts().find(c => (email && normalizeEmail(c.email)===normalizeEmail(email)) || (phone && normalizePhone(c.phone)===normalizePhone(phone))) || null;
-      return { id:`cal_${b.uid || b.id || i}`, calUid:b.uid || b.id, contactId:contact?.id || null, title:b.bookingFieldsResponses?.title || b.title || b.eventType?.title || b.eventType?.slug || 'Afspraak', customer:contact?.name || name || 'Lead', customerType:contact ? 'Klant' : 'Lead', email:contact?.email || email, phone:contact?.phone || phone, start:b.start, end:b.end, status:b.status || 'accepted', meetingUrl:b.meetingUrl || b.location || 'https://app.cal.com/bookings', location:b.bookingFieldsResponses?.location || b.metadata?.locationLabel || b.location || b.meetingUrl || '', type:b.eventType?.title || b.eventType?.slug || 'Cal.com', source:'Cal.com', external:true, raw:b };
+      const contact = upsertContact({ name, email, phone, source:'Cal.com', lastActivity:b.start || nowIso() });
+      return { id:`cal_${b.uid || b.id || i}`, calUid:b.uid || b.id, contactId:contact.id, title:b.bookingFieldsResponses?.title || b.title || b.eventType?.title || b.eventType?.slug || 'Afspraak', customer:contact.name, email:contact.email, phone:contact.phone, start:b.start, end:b.end, status:b.status || 'accepted', meetingUrl:b.meetingUrl || b.location || 'https://app.cal.com/bookings', location:b.bookingFieldsResponses?.location || b.metadata?.locationLabel || b.location || b.meetingUrl || '', type:b.eventType?.title || b.eventType?.slug || 'Cal.com', source:'Cal.com', external:true, raw:b };
     }).sort((a,b)=>new Date(a.start)-new Date(b.start));
   }
 
@@ -108,7 +108,7 @@
       eventTypeSlug: data.eventTypeSlug || undefined,
       attendee:{ name: contact.name, email: contact.email || data.email, phoneNumber: contact.phone || data.phone, timeZone:'Europe/Brussels', language:'nl' },
       bookingFieldsResponses:{ title:data.title || 'Klantafspraak', notes:data.notes || '', location:data.locationLabel || '' },
-      metadata:{ source:'reactify-platform', contactId:contact?.id || null, manualFollowUp:data.manualFollowUp ? 'true':'false' },
+      metadata:{ source:'reactify-platform', contactId:contact.id, manualFollowUp:data.manualFollowUp ? 'true':'false' },
       locationType:data.locationType || 'cal_video', locationValue:data.locationValue || '',
       allowConflicts: !!data.allowConflicts, allowBookingOutOfBounds: !!data.allowBookingOutOfBounds,
     };
@@ -120,11 +120,11 @@
       meetingUrl = booking?.meetingUrl || response?.meetingUrl || '';
     } catch(error){
       // Save locally as concept so pages stay in sync, but show warning to the user.
-      const local = addLocalAppointment({ contactId:contact?.id || null, title:data.title || 'Klantafspraak', customer:contact.name, start:data.start, end:addMinutes(data.start, data.length || 30).toISOString(), status:'pending', type:data.type || 'Reactify', source:'Reactify lokaal', location:data.locationLabel || data.locationValue || '', error:error.message });
+      const local = addLocalAppointment({ contactId:contact.id, title:data.title || 'Klantafspraak', customer:contact.name, start:data.start, end:addMinutes(data.start, data.length || 30).toISOString(), status:'pending', type:data.type || 'Reactify', source:'Reactify lokaal', location:data.locationLabel || data.locationValue || '', error:error.message });
       addMessage(contact.id, `Afspraak lokaal toegevoegd, maar Cal.com gaf een fout: ${error.message}`, 'outgoing');
       throw Object.assign(error, { localAppointment: local, contact });
     }
-    const local = addLocalAppointment({ contactId:contact?.id || null, title:data.title || 'Klantafspraak', customer:contact.name, start:data.start, end:addMinutes(data.start, data.length || 30).toISOString(), status:'accepted', type:data.type || 'Cal.com', source:'Reactify', location:data.locationLabel || data.locationValue || '', calUid, meetingUrl });
+    const local = addLocalAppointment({ contactId:contact.id, title:data.title || 'Klantafspraak', customer:contact.name, start:data.start, end:addMinutes(data.start, data.length || 30).toISOString(), status:'accepted', type:data.type || 'Cal.com', source:'Reactify', location:data.locationLabel || data.locationValue || '', calUid, meetingUrl });
     addMessage(contact.id, `Afspraak ingepland op ${formatDateTime(data.start)}.`, 'outgoing');
     return { appointment: local, contact };
   }
