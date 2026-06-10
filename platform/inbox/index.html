@@ -1048,6 +1048,7 @@
   const STORE='reactify_platform_data_v3';
   const DELETED='reactify.deletedClients.v3';
   const START='reactify.inboxStartedAt.v3';
+  const NOTIFY_SEEN='reactify.inboxNotificationSeen.v1';
   const API={conversations:'/.netlify/functions/conversations',messages:'/.netlify/functions/conversation-messages',send:'/.netlify/functions/send-sms',classify:'/.netlify/functions/classify-conversation',eventTypes:'/.netlify/functions/cal-event-types',booking:'/.netlify/functions/conversation-booking'};
   const $=id=>document.getElementById(id);
   const now=()=>new Date().toISOString();
@@ -1078,10 +1079,24 @@
   function markDeleted(client,conv){const list=tombstones();const item={id:String(client?.id||''),backendId:String(conv?.backendId||conv?.id||''),phone:normPhone(client?.phone),email:normEmail(client?.email),deletedAt:now()};if(!list.some(x=>(item.backendId&&x.backendId===item.backendId)||(item.phone&&x.phone===item.phone)||(item.email&&x.email===item.email)))list.unshift(item);write(DELETED,list.slice(0,2000));}
   function unmarkDeleted(client){const p=normPhone(client.phone),e=normEmail(client.email);write(DELETED,tombstones().filter(x=>!((p&&x.phone===p)||(e&&x.email===e))))}
   function determineType(text,current='Lead'){
-    const t=String(text||'').toLowerCase();
-    if(/geen klant|nog geen klant|ik ben geen klant|nee[, ]+ik ben geen klant|nieuwe klant|eerste keer/.test(t)) return 'Lead';
-    if(/ik ben klant|bestaande klant|reeds klant|al klant|ja[, ]+ik ben klant/.test(t)) return 'Klant';
+    const t=String(text||'').toLowerCase().trim();
+    if(/\b(geen|nog geen|niet) klant\b|\bik ben geen klant\b|\b(nee|neen),? ik ben geen klant\b|\bnieuwe klant\b|\beerste keer\b/.test(t)) return 'Lead';
+    if(/\bik ben( al)? klant\b|\bik ben een bestaande klant\b|\breeds klant\b|\bja,? ik ben( al)? klant\b/.test(t)) return 'Klant';
     return current||'Lead';
+  }
+  function determineTypeFromMessages(messages,current='Lead'){
+    const items=(messages||[]).filter(m=>m&&String(m.text||'').trim());
+    let type=current||'Lead';
+    for(let i=0;i<items.length;i++){
+      const m=items[i];
+      if((m.type||'incoming')!=='incoming') continue;
+      const text=String(m.text||'').toLowerCase().trim().replace(/[.!?]+$/,'');
+      const previousOutgoing=items.slice(0,i).reverse().find(x=>(x.type||'incoming')==='outgoing');
+      const askedCustomer=/ben je( al)? klant|bent u( al)? klant|ben jij( al)? klant|bestaande klant/.test(String(previousOutgoing?.text||'').toLowerCase());
+      if(/\bgeen klant\b|\bik ben geen klant\b|\bnog geen klant\b|\beerste keer\b/.test(text) || (askedCustomer && /^(nee|neen|nope|nog niet)\b/.test(text))){type='Lead';continue;}
+      if(/\bik ben( al)? klant\b|\bik ben een bestaande klant\b|\breeds klant\b/.test(text) || (askedCustomer && /^(ja|jazeker|zeker|inderdaad|klopt|yes)\b/.test(text))){type='Klant';continue;}
+    }
+    return type;
   }
   function sentiment(text,status=''){
     const t=(String(text||'')+' '+String(status||'')).toLowerCase();
@@ -1116,12 +1131,12 @@
       const backendId=String(row.id||row.conversation_id||''); if(!backendId)continue;
       let c=clientMatch(d,row);
       const combined=[row.last_message,row.summary,row.contact_name].filter(Boolean).join(' ');
-      if(!c){c={id:uid('client'),name:betterContactName('',row.contact_name,row.contact_phone),email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:determineType(combined,'Lead'),status:'neutraal',sentiment:'neutraal',description:'',source:'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
+      if(!c){c={id:uid('client'),name:betterContactName('',row.contact_name,row.contact_phone),email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:'Lead',status:'neutraal',sentiment:'neutraal',description:'',source:'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
       c.name=betterContactName(c.name,row.contact_name,row.contact_phone);
       c.email=row.contact_email||c.email;
       c.phone=normPhone(row.contact_phone||c.phone);
       c.updatedAt=row.updated_at||c.updatedAt;
-      c.type=determineType(combined,c.type);unmarkDeleted(c);
+      c.type=c.type||'Lead';unmarkDeleted(c);
 
       // Eén zichtbaar gesprek per contact. Een lokaal gesprek wordt gekoppeld aan het echte backendgesprek.
       let conv=d.conversations.find(x=>x.backendId===backendId||x.id===backendId);
@@ -1158,7 +1173,7 @@
     $('conversationList').innerHTML=list.map(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};return `<div class="conv-item ${cv.id===selectedId?'active':''}" onclick="selectConversation('${cv.id}')"><div class="conv-avatar" style="background:${c.color||'#5B2E91'}">${initials(c.name)}</div><div class="conv-content"><div class="conv-header"><div class="conv-name">${esc(c.name||'Onbekend')} <span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${esc(c.type||'Lead')}</span>${stateBadge(cv.status)}</div><div class="conv-time">${fmt(cv.updatedAt)}</div></div><div class="conv-preview">${esc(cv.lastMessage||cv.summary||'Nog geen berichten')}</div></div></div>`}).join('')||'<div class="empty-state"><strong>Geen gesprekken</strong>Nieuwe SMS-gesprekken verschijnen hier automatisch.</div>';
     renderSelected();
   }
-  async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineType(x.messages.map(m=>m.text).join(' '),c.type);c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
+  async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineTypeFromMessages(x.messages,c.type||'Lead');c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
   function renderSelected(){const {conv,client}=current();if(!conv||!client){$('chatHeader').innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>';$('chatMessages').innerHTML='<div class="empty-state">Selecteer een gesprek.</div>';$('profilePanelContent').innerHTML='<div class="empty-state">Geen profiel geselecteerd.</div>';return}
     const statusMeta=statusInfo(conv.status);const isManual=statusMeta.key==='taken-over';
     $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span>SMS</span>${stateBadge(conv.status)}</div></div><div class="chat-header-actions"><button class="ai-header-switch ${isManual?'off':'on'}" onclick="toggleTakeover()" title="${isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen'}" aria-label="AI aan of uit"><span class="ai-header-switch-track"></span><span>${isManual?'AI uit':'AI aan'}</span></button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
@@ -1198,7 +1213,23 @@
         await loadMessages(conv);
       }
 
-      if(notify&&before&&before!==after)showTopToast();
+      if(notify){
+        const rows=Array.isArray(j.data)?j.data:[];
+        const signatures=rows.filter(validBackendRow).map(row=>{
+          const id=String(row.id||row.conversation_id||'');
+          const stamp=String(row.last_message_at||row.updated_at||'');
+          const body=String(row.last_message||'').trim();
+          return id&&body?`${id}|${stamp}|${body}`:'';
+        }).filter(Boolean);
+        const seen=new Set(read(NOTIFY_SEEN,[]));
+        const fresh=signatures.filter(sig=>!seen.has(sig));
+        if(!localStorage.getItem(NOTIFY_SEEN)){
+          write(NOTIFY_SEEN,signatures.slice(0,300));
+        }else if(fresh.length){
+          write(NOTIFY_SEEN,[...fresh,...seen].slice(0,300));
+          showTopToast();
+        }
+      }
     }catch(e){
       console.warn('Inbox sync:',e.message);
       render();
