@@ -1181,9 +1181,18 @@
     let changed=false;
     for(const cv of d.conversations){
       const state=statusInfo(cv.status).key;
-      
       const messages=Array.isArray(cv.messages)?cv.messages:[];
       const lastTime=new Date(messages.at(-1)?.time||cv.updatedAt||cv.createdAt||0).getTime();
+
+      // Handmatige overname, overname nodig en afgeronde gesprekken mogen nooit
+      // door de lokale 30-minutenlogica opnieuw naar AI actief worden gezet.
+      if(['taken-over','needs-takeover','completed'].includes(state)){
+        if(lastTime&&lastTime<cutoff&&state!=='taken-over'){
+          if(cv.status!=='inactive'){cv.status='inactive';changed=true;}
+        }
+        continue;
+      }
+
       const next=messages.length===0?'inactive':(lastTime&&lastTime<cutoff?'inactive':'ai-active');
       if(String(cv.status)!==next){cv.status=next;changed=true;}
     }
