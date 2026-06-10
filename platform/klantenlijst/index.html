@@ -926,6 +926,8 @@
 .rf-global-notification{top:1.25rem!important;right:1.25rem!important;z-index:2100!important}
 .rf-top-toast{position:fixed;top:1.1rem;left:50%;transform:translate(-50%,-130%);z-index:2400;width:min(560px,calc(100vw - 2rem));background:#fff;border:1px solid var(--purple-light,#E8DCF5);border-left:5px solid var(--orange,#F5A623);border-radius:14px;box-shadow:0 18px 50px rgba(17,24,39,.18);padding:.9rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;opacity:0;pointer-events:none;transition:transform .28s ease,opacity .28s ease}.rf-top-toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.rf-top-toast-icon{width:34px;height:34px;border-radius:999px;background:var(--orange-light,#FFF3DC);color:var(--orange-dark,#E0941A);display:flex;align-items:center;justify-content:center;flex-shrink:0}.rf-top-toast-title{font-size:.86rem;font-weight:900;color:var(--gray-900,#111827)}.rf-top-toast-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:768px){.rf-global-notification{top:.85rem!important;right:.85rem!important}.rf-top-toast{top:.75rem;width:calc(100vw - 1.5rem)}}
 
+
+.contact-type{display:inline-flex;padding:.18rem .55rem;border-radius:999px;font-size:.7rem;font-weight:800}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:var(--green-light);color:var(--green)}.status-badge.neutraal{background:var(--orange-light);color:var(--orange-dark)}.status-badge.neutraal .dot{background:var(--orange)}.status-badge.positief{background:var(--green-light);color:var(--green)}.status-badge.positief .dot{background:var(--green)}.status-badge.negatief{background:var(--red-light);color:var(--red)}.status-badge.negatief .dot{background:var(--red)}.client-drawer{width:520px!important}.client-drawer-body{scrollbar-width:thin}
 </style></head><body>
 <aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img alt="Reactify" src="/logo.png" style="height:28px;width:auto;filter:brightness(1.8);"/></div><nav class="sidebar-nav"><a class="sidebar-link" href="/platform/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Dashboard</a>
 <a class="sidebar-link active" href="/platform/klantenlijst/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Klanten</a>
@@ -980,407 +982,47 @@
 <div class="drawer-input"><label>Naam</label><input id="drawerName" required=""/></div>
 <div class="drawer-row"><div class="drawer-input"><label>E-mail</label><input id="drawerEmail" type="email"/></div><div class="drawer-input"><label>Telefoon</label><input id="drawerPhone" type="tel"/></div></div>
 <div class="drawer-input"><label>Adres</label><input id="drawerAddress"/></div>
-<div class="drawer-row"><div class="drawer-input"><label>Status</label><select id="drawerStatus"><option value="active">Actief</option><option value="vip">VIP</option><option value="new">Nieuw</option><option value="inactive">Inactief</option></select></div><div class="drawer-input"><label>Type</label><select id="drawerType"><option>Klant</option><option>Lead</option><option>Particulier</option><option>Zakelijk</option><option>VIP</option></select></div></div>
-<div class="drawer-section-title">Notities</div><div class="drawer-input"><label>Klantnotitie</label><textarea id="drawerNote" rows="4"></textarea></div>
+<div class="drawer-row"><div class="drawer-input"><label>Status</label><select id="drawerStatus"><option value="neutraal">Neutraal</option><option value="positief">Positief</option><option value="negatief">Negatief</option></select></div><div class="drawer-input"><label>Type</label><select id="drawerType"><option>Lead</option><option>Klant</option></select></div></div>
+<div class="drawer-section-title">Klantbeeld</div><div class="drawer-input"><label>Klantbeschrijving</label><textarea id="drawerDescription" rows="4"></textarea></div><div class="drawer-section-title">Notities</div><div class="drawer-input"><label>Klantnotitie</label><textarea id="drawerNote" rows="4"></textarea></div>
 </form>
 <div class="client-drawer-footer"><button class="btn-cancel" onclick="closeClientDrawer()" type="button">Annuleren</button><button class="btn-save" onclick="saveClientDrawer()" type="button">Opslaan</button></div>
 </aside>
 <div class="toast" id="rfToast"></div><script>
-(function(){
-  const STORE_KEY='reactify_platform_data_v3';
-  const nowISO=()=>new Date().toISOString();
-  const uid=(prefix='id')=>prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
-  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  const initials=name=>String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?';
-  const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb','var(--purple-medium, #7B52AB)','#dc2626'];
-  const parse=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))||null}catch(e){return null}};
-  const blank=()=>({clients:[], conversations:[], appointments:[], settings:{ownerName:'Bob Demo'}});
-  const save=data=>{localStorage.setItem(STORE_KEY,JSON.stringify(data)); window.dispatchEvent(new CustomEvent('reactify:data',{detail:data}));};
-  function mergeExternalData(d){
-    const readArr=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return []}};
-    // Belangrijk: oude localStorage-contacten van vorige bots niet automatisch importeren.
-    // De klantenlijst toont enkel contacten die in het huidige Reactify platform zitten
-    // of die via de huidige backend/agenda opnieuw worden aangemaakt.
-    const extContacts=[];
-    const extAppts=readArr('reactify.localAppointments');
-    extAppts.forEach(a=>{
-      const key=a.calUid||a.id; if(key && d.appointments.some(x=>(x.calUid||x.id)===key)) return;
-      d.appointments.push({id:a.id||uid('appt'),calUid:a.calUid||'',clientId:a.contactId||a.clientId||null,title:a.title||'Klantafspraak',start:a.start,end:a.end||a.start,location:a.location||'',type:a.type||'Reactify afspraak',status:a.status||'planned',source:a.source||'Reactify',notes:a.notes||'',createdAt:a.createdAt||nowISO()});
-    });
-    return d;
-  }
-  const load=()=>{let d=parse(); if(!d){d=blank(); save(d)}; d.clients ||= []; d.conversations ||= []; d.appointments ||= []; d.settings ||= {ownerName:'Bob Demo'}; d=mergeExternalData(d); return d;};
-  const byId=id=>document.getElementById(id);
-  const toast=(msg)=>{let t=byId('rfToast'); if(!t){t=document.createElement('div');t.id='rfToast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)};
-  function addClient(client){const d=load(); const name=(client.name||`${client.firstName||''} ${client.lastName||''}`).trim(); const phone=(client.phone||'').trim(); const email=(client.email||'').trim().toLowerCase(); const existing=d.clients.find(c=>(email&&String(c.email||'').toLowerCase()===email)||(phone&&c.phone===phone)); if(existing){Object.assign(existing,{...client,name:name||existing.name,email:email||existing.email,phone:phone||existing.phone,updatedAt:nowISO()}); save(d); return existing;} const c={id:uid('client'), name:name||'Nieuwe contactpersoon', email, phone, status:client.status||'new', type:client.type||'Klant', address:client.address||'', note:client.note||'', source:client.source||'Manueel', createdAt:nowISO(), updatedAt:nowISO(), color:colors[d.clients.length%colors.length]}; d.clients.unshift(c); save(d); return c;}
-  function deleteClient(id){
-    const d=load();
-    d.clients=d.clients.filter(c=>c.id!==id);
-    d.conversations=d.conversations.filter(x=>x.clientId!==id);
-    d.appointments=d.appointments.filter(a=>a.clientId!==id && a.contactId!==id);
-    save(d);
-    try{
-      const contacts=JSON.parse(localStorage.getItem('reactify.contacts')||'[]').filter(c=>c.id!==id);
-      localStorage.setItem('reactify.contacts',JSON.stringify(contacts));
-      const conversations=JSON.parse(localStorage.getItem('reactify.conversations')||'[]').filter(c=>c.contactId!==id&&c.clientId!==id);
-      localStorage.setItem('reactify.conversations',JSON.stringify(conversations));
-      const appts=JSON.parse(localStorage.getItem('reactify.localAppointments')||'[]').filter(a=>a.contactId!==id&&a.clientId!==id);
-      localStorage.setItem('reactify.localAppointments',JSON.stringify(appts));
-    }catch(e){}
-  }
-  function updateClient(id, fields){const d=load(); const c=d.clients.find(x=>x.id===id); if(!c) return null; Object.assign(c,fields,{updatedAt:nowISO()}); save(d); return c;}
-  function addConversation(client, message){const d=load(); let c=client?.id?client:addClient(client||{}); let conv=d.conversations.find(x=>x.clientId===c.id); if(!conv){conv={id:uid('conv'),clientId:c.id,status:'ai_actief',channel:'sms',messages:[],summary:'Gesprek aangemaakt via Reactify.',createdAt:nowISO(),updatedAt:nowISO()};d.conversations.unshift(conv)} if(message){conv.messages.push({id:uid('msg'),type:'incoming',text:message,time:nowISO()});conv.updatedAt=nowISO();} save(d); return conv;}
-  function addAppointment(appt){const d=load(); let c=d.clients.find(x=>x.id===appt.clientId); if(!c && appt.newClient){c=addClient(appt.newClient); appt.clientId=c.id} if(!c && (appt.clientName||appt.clientEmail||appt.clientPhone)){c=addClient({name:appt.clientName,email:appt.clientEmail,phone:appt.clientPhone,source:'Afspraak'});appt.clientId=c.id} const a={id:uid('appt'),clientId:appt.clientId||c?.id||null,title:appt.title||'Klantafspraak',start:appt.start,end:appt.end||appt.start,location:appt.location||'',type:appt.type||'Reactify afspraak',status:'planned',source:appt.source||'Reactify',notes:appt.notes||'',createdAt:nowISO()}; d.appointments.push(a); if(c) addConversation(c,`Afspraak ingepland: ${a.title}`); else save(d); return a;}
-  function deleteAppointment(id){const d=load();d.appointments=d.appointments.filter(a=>a.id!==id);save(d)}
-  function clientName(id){const c=load().clients.find(c=>c.id===id);return c?.name||'Onbekende klant'}
-  function formatDateTime(iso){if(!iso)return ''; const d=new Date(iso); return d.toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
-  function weekRange(){const n=new Date(); const s=new Date(n); const day=s.getDay()||7; s.setDate(s.getDate()-day+1); s.setHours(0,0,0,0); const e=new Date(s);e.setDate(s.getDate()+7);return {s,e};}
-  function todayRange(){const s=new Date();s.setHours(0,0,0,0);const e=new Date(s);e.setDate(e.getDate()+1);return{s,e}}
-  function matchesRange(iso,s,e){const d=new Date(iso);return d>=s&&d<e}
-  window.RF={load,save,addClient,updateClient,deleteClient,addConversation,addAppointment,deleteAppointment,clientName,formatDateTime,weekRange,todayRange,matchesRange,esc,initials,toast,colors,uid,nowISO};
-})();
-
-
-(function(){
-  function openClientModal(){document.getElementById('rfClientForm')?.reset();document.getElementById('rfClientModal')?.classList.add('open')}
-  function closeClientModal(){document.getElementById('rfClientModal')?.classList.remove('open')}
-  function fillClientSelect(selectedId){const s=document.getElementById('rfApptClient'); if(!s)return; const data=RF.load(); s.innerHTML='<option value="">Kies klant...</option>'+data.clients.map(c=>`<option value="${c.id}">${RF.esc(c.name)}${c.phone?' · '+RF.esc(c.phone):''}</option>`).join('')+'<option value="__new">+ Nieuwe contactpersoon aanmaken</option>'; if(selectedId)s.value=selectedId; toggleNewClientFields();}
-  function toggleNewClientFields(){const isNew=document.getElementById('rfApptClient')?.value==='__new'; ['rfNewClientNameWrap','rfNewClientEmailWrap','rfNewClientPhoneWrap'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',!isNew));}
-  function openAppointmentModal(clientId, source){fillClientSelect(clientId); const f=document.getElementById('rfAppointmentForm'); if(f) f.reset(); fillClientSelect(clientId); const start=document.getElementById('rfApptStart'); if(start){const d=new Date();d.setHours(d.getHours()+1,0,0,0);start.value=d.toISOString().slice(0,16);} const src=document.getElementById('rfApptSource'); if(src&&source)src.value=source; document.getElementById('rfAppointmentModal')?.classList.add('open')}
-  function closeAppointmentModal(){document.getElementById('rfAppointmentModal')?.classList.remove('open')}
-  function initSharedForms(afterSave){
-    document.getElementById('rfClientForm')?.addEventListener('submit',e=>{e.preventDefault(); RF.addClient({name:rfClientName.value,email:rfClientEmail.value,phone:rfClientPhone.value,note:rfClientNote.value,source:'Klantenpagina'}); closeClientModal(); RF.toast('Contactpersoon opgeslagen'); afterSave&&afterSave();});
-    document.getElementById('rfApptClient')?.addEventListener('change',toggleNewClientFields);
-    document.getElementById('rfAppointmentForm')?.addEventListener('submit',e=>{e.preventDefault(); const clientVal=rfApptClient.value; let newClient=null; if(clientVal==='__new'){ if(!rfApptNewName.value.trim()){alert('Vul een naam in voor de nieuwe klant.');return;} newClient={name:rfApptNewName.value,email:rfApptNewEmail.value,phone:rfApptNewPhone.value,source:'Afspraakflow'}; }
-      RF.addAppointment({clientId:clientVal&&clientVal!=='__new'?clientVal:null,newClient,title:rfApptTitle.value,start:new Date(rfApptStart.value).toISOString(),location:rfApptLocation.value,source:rfApptSource.value,notes:rfApptNotes.value}); closeAppointmentModal(); RF.toast('Afspraak opgeslagen'); afterSave&&afterSave();});
-  }
-  window.RFUI={openClientModal,closeClientModal,openAppointmentModal,closeAppointmentModal,fillClientSelect,initSharedForms};
-})();
-
-
-let clientFilter='';
-function statusLabel(s){return s==='active'?'Actief':s==='vip'?'VIP':s==='inactive'?'Inactief':'Nieuw'}
-function renderClients(){const d=RF.load(); const now=new Date(); const monthStart=new Date(now.getFullYear(),now.getMonth(),1); statTotalClients.textContent=d.clients.length; statNewMonth.textContent=d.clients.filter(c=>new Date(c.createdAt)>=monthStart).length; statActiveConvs.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statPlannedAppts.textContent=d.appointments.length; const q=clientFilter.toLowerCase(); const rows=d.clients.filter(c=>[c.name,c.email,c.phone].join(' ').toLowerCase().includes(q)); clientTableBody.innerHTML=rows.map(c=>`<tr onclick="openClientDrawer('${c.id}')"><td><div class="table-client"><div class="table-avatar" style="background:${c.color||'var(--purple)'}">${c.photo?`<img src="${c.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:RF.initials(c.name)}</div><div class="table-client-info"><div class="table-client-name">${RF.esc(c.name)}</div><div class="table-client-email">${RF.esc(c.email||'Geen e-mail')}</div></div></div></td><td class="table-phone">${RF.esc(c.phone||'Geen telefoon')}</td><td class="table-activity">${RF.formatDateTime(c.updatedAt||c.createdAt)}</td><td><span class="status-badge ${c.status||'new'}"><span class="dot"></span>${statusLabel(c.status)}</span></td><td><div class="action-btns" onclick="event.stopPropagation()"><button class="btn-small" onclick="openInbox('${c.id}')">Inbox</button><button class="btn-small" onclick="openClientDrawer('${c.id}')">Aanpassen</button><button class="btn-small btn-danger-small" onclick="removeClient('${c.id}')">Verwijder</button></div></td></tr>`).join('')||`<tr><td colspan="5"><div class="empty-state"><strong>Geen klanten gevonden</strong>Maak een nieuwe klant aan of pas je zoekopdracht aan.</div></td></tr>`; paginationInfo.textContent=`${rows.length} van ${d.clients.length} klanten`;}
-function removeClient(id){if(confirm('Deze klant definitief verwijderen uit Reactify?')){RF.deleteClient(id);closeClientDrawer?.();renderClients();RF.toast('Klant verwijderd')}}
-function openInbox(id){RF.addConversation(RF.load().clients.find(c=>c.id===id)); location.href='/platform/inbox/?client='+id}
-function exportClients(){const d=RF.load(); const csv=['Naam,E-mail,Telefoon,Status'].concat(d.clients.map(c=>`"${c.name||''}","${c.email||''}","${c.phone||''}","${c.status||''}"`)).join('\n'); const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='reactify-klanten.csv';a.click();}
-clientSearch?.addEventListener('input',e=>{clientFilter=e.target.value;renderClients()}); RFUI.initSharedForms(renderClients); renderClients();
-
-
-let drawerPhotoData='';
-function openClientDrawer(id){
-  const c=RF.load().clients.find(x=>x.id===id); if(!c)return;
-  drawerClientId.value=c.id; drawerName.value=c.name||''; drawerEmail.value=c.email||''; drawerPhone.value=c.phone||''; drawerAddress.value=c.address||''; drawerStatus.value=c.status||'new'; drawerType.value=c.type||'Klant'; drawerNote.value=c.note||''; drawerPhotoData=c.photo||'';
-  renderDrawerAvatar(c);
-  clientDrawer.classList.add('open'); clientDrawerOverlay.classList.add('open');
-}
-function closeClientDrawer(){clientDrawer.classList.remove('open'); clientDrawerOverlay.classList.remove('open')}
-function renderDrawerAvatar(c){const av=document.getElementById('drawerAvatar'); if(drawerPhotoData){av.innerHTML=`<img src="${drawerPhotoData}">`;av.style.background=c.color||'var(--purple)'}else{av.textContent=RF.initials(c.name||drawerName.value);av.style.background=c.color||'var(--purple)'}}
-drawerPhotoInput?.addEventListener('change',function(){const file=this.files?.[0]; if(!file)return; const r=new FileReader(); r.onload=e=>{drawerPhotoData=e.target.result; renderDrawerAvatar({name:drawerName.value,color:'var(--purple)'})}; r.readAsDataURL(file)});
-function saveClientDrawer(){
-  const id=drawerClientId.value; RF.updateClient(id,{name:drawerName.value,email:drawerEmail.value,phone:drawerPhone.value,address:drawerAddress.value,status:drawerStatus.value,type:drawerType.value,note:drawerNote.value,photo:drawerPhotoData}); closeClientDrawer(); RF.toast('Klant aangepast'); renderClients();
-}
-window.openClientDrawer=openClientDrawer; window.closeClientDrawer=closeClientDrawer; window.saveClientDrawer=saveClientDrawer;
-
-const toggle=document.getElementById('sidebarToggle');const sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));</script>
-<script>
-(function(){
-  if(window.ReactifyGlobalNotificationsLoaded) return;
-  window.ReactifyGlobalNotificationsLoaded=true;
-  const NOTIFICATION_KEY='reactify.notifications';
-  const SEEN_MSG_KEY='reactify.globalSeenMessages';
-  const SEEN_APPT_KEY='reactify.globalSeenAppointments';
-  const INIT_KEY='reactify.globalNotificationsInitialized';
-  const uid=(p='note')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
-  const read=(k,f=[])=>{try{const raw=localStorage.getItem(k);return raw?JSON.parse(raw):f}catch(e){return f}};
-  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));};
-  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  const fmt=iso=>{try{return new Date(iso).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'})}catch(e){return ''}};
-  const pathForType=t=>t==='appointment'?'/platform/agenda/':'/platform/inbox/';
-  function showTopToast(note){
-    let el=document.getElementById('rfTopToast');
-    if(!el){el=document.createElement('div');el.id='rfTopToast';el.className='rf-top-toast';document.body.appendChild(el);}
-    const target=note.link||pathForType(note.type);
-    el.innerHTML=`<div class="rf-top-toast-icon">${note.type==='appointment'?'📅':'💬'}</div><div style="min-width:0;flex:1"><div class="rf-top-toast-title">${esc(note.title||'Reactify melding')}</div><div class="rf-top-toast-body">${esc(note.body||note.message||'Nieuwe melding in Reactify')}</div></div>`;
-    el.onclick=()=>{ saveNotes(notes().map(n=>n.id===note.id?{...n,read:true}:n)); location.href=target; };
-    el.classList.add('show');
-    clearTimeout(window.__rfTopToastTimer);
-    window.__rfTopToastTimer=setTimeout(()=>el.classList.remove('show'),5000);
-  }
-  function notes(){return read(NOTIFICATION_KEY,[])}
-  function saveNotes(items){write(NOTIFICATION_KEY,items.slice(0,120));renderBadges();}
-  function pushNote(note){
-    const items=notes();
-    const dedupe=note.dedupeKey||`${note.type}:${note.title}:${note.body}`;
-    if(items.some(n=>n.dedupeKey===dedupe)) return;
-    const item={id:uid(),type:note.type||'message',title:note.title||'Reactify melding',body:note.body||'',contactName:note.contactName||'',message:note.message||'',appointmentType:note.appointmentType||'',appointmentMoment:note.appointmentMoment||'',link:note.link||pathForType(note.type),dedupeKey:dedupe,createdAt:new Date().toISOString(),read:false};
-    items.unshift(item);saveNotes(items);showTopToast(item);
-    if('Notification' in window && Notification.permission==='granted'){try{new Notification(item.title,{body:item.body||'Nieuwe melding in Reactify'});}catch(e){}}
-  }
-  window.ReactifyPushNotification=pushNote;
-  function unread(type){return notes().filter(n=>!n.read && (!type || n.type===type)).length;}
-  function markTypeRead(type){const items=notes().map(n=>n.type===type?{...n,read:true}:n);saveNotes(items);}
-  window.ReactifyMarkNotificationsReadByType=markTypeRead;
-  function renderBadges(){
-    const total=unread();
-    const btn=document.getElementById('rfGlobalBell')||document.getElementById('notificationBtn');
-    const badge=document.getElementById('rfGlobalCount')||document.getElementById('notificationBadge');
-    if(btn) btn.classList.toggle('has-items',total>0), btn.classList.toggle('has-notifications',total>0);
-    if(badge) badge.textContent=total>99?'99+':String(total);
-    document.querySelectorAll('a.sidebar-link').forEach(a=>{
-      const href=a.getAttribute('href')||'';
-      const type=href.includes('/agenda')?'appointment':href.includes('/inbox')?'message':'';
-      if(!type) return;
-      let b=a.querySelector('.rf-sidebar-badge'); if(!b){b=document.createElement('span');b.className='rf-sidebar-badge';a.appendChild(b);}
-      const c=unread(type); b.textContent=c>99?'99+':String(c); a.classList.toggle('has-rf-badge',c>0);
-      if(!a.dataset.rfReadHook){a.dataset.rfReadHook='1';a.addEventListener('click',()=>markTypeRead(type));}
-    });
-  }
-  function ensureWidget(){
-    if(document.getElementById('rfGlobalNotifications')) return;
-    if(document.getElementById('notificationBtn')) return; // inbox has its own top-right button
-    const box=document.createElement('div');box.id='rfGlobalNotifications';box.className='rf-global-notification';
-    box.innerHTML=`<button class="rf-global-bell" id="rfGlobalBell" type="button" title="Meldingen">🔔<span class="rf-global-count" id="rfGlobalCount">0</span></button><div class="rf-global-panel" id="rfGlobalPanel"><div class="rf-global-head"><strong>Meldingen</strong><button type="button" id="rfGlobalReadAll">Alles gelezen</button></div><div class="rf-global-list" id="rfGlobalList"></div></div>`;
-    document.body.appendChild(box);
-    document.getElementById('rfGlobalBell')?.addEventListener('click',()=>{renderPanel();document.getElementById('rfGlobalPanel')?.classList.toggle('open');});
-    document.getElementById('rfGlobalReadAll')?.addEventListener('click',e=>{e.stopPropagation();saveNotes(notes().map(n=>({...n,read:true})));renderPanel();});
-  }
-  function renderPanel(){
-    const list=document.getElementById('rfGlobalList')||document.getElementById('notificationList'); if(!list) return;
-    const items=notes();
-    list.innerHTML=items.length?items.map(n=>`<button class="rf-global-item notification-item ${n.read?'':'unread'}" data-id="${esc(n.id)}"><div class="rf-global-title notification-title">${esc(n.title)}</div><div class="rf-global-body notification-body">${esc(n.body||n.message||'')}</div>${n.contactName?`<div class="rf-global-meta notification-meta">Contact: ${esc(n.contactName)}</div>`:''}${n.appointmentType?`<div class="rf-global-meta notification-meta">Afspraak: ${esc(n.appointmentType)} · ${esc(n.appointmentMoment||'')}</div>`:''}<div class="rf-global-meta notification-meta">${fmt(n.createdAt)}</div></button>`).join(''):'<div class="rf-global-empty notification-empty">Nog geen meldingen.</div>';
-    list.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('click',()=>{const id=el.dataset.id;let target='/platform/inbox/';saveNotes(notes().map(n=>{if(n.id===id){target=n.link||pathForType(n.type);return {...n,read:true};}return n;}));location.href=target;}));
-  }
-  window.toggleNotificationsPanel=function(){ensureWidget();renderPanel();(document.getElementById('rfGlobalPanel')||document.getElementById('notificationPanel'))?.classList.toggle('open');};
-  window.markAllNotificationsRead=function(){saveNotes(notes().map(n=>({...n,read:true})));renderPanel();};
-  async function pollConversations(){
-    try{
-      const payload=await fetch('/.netlify/functions/conversations').then(r=>r.json());
-      const rows=Array.isArray(payload?.data)?payload.data:[];
-      const seen=read(SEEN_MSG_KEY,{}), next={...seen};
-      const initialized=localStorage.getItem(INIT_KEY)==='1';
-      rows.forEach(r=>{
-        const id=r.id||r.conversation_id; if(!id) return;
-        const key=`${r.last_message_at||r.updated_at||''}:${r.last_message||''}`;
-        const direction=String(r.last_message_direction||'').toLowerCase();
-        if(!key.trim()) return;
-        if(seen[id] && seen[id]!==key && direction!=='outgoing'){
-          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
-        } else if(!seen[id] && initialized && direction!=='outgoing') {
-          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
-        }
-        next[id]=key;
-      });
-      write(SEEN_MSG_KEY,next);
-    }catch(e){}
-  }
-  async function pollBookings(){
-    try{
-      const payload=await fetch('/.netlify/functions/cal-bookings').then(r=>r.json());
-      const rows=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:[];
-      const seen=read(SEEN_APPT_KEY,{}), next={...seen};
-      const initialized=localStorage.getItem(INIT_KEY)==='1';
-      rows.forEach((b,i)=>{
-        const attendee=Array.isArray(b.attendees)?b.attendees[0]:(b.attendee||{});
-        const id=String(b.uid||b.id||`${b.start}_${attendee?.email||i}`);
-        const start=b.start||b.startTime||'';
-        const title=b.eventType?.title||b.title||b.bookingFieldsResponses?.title||'Afspraak';
-        const contact=attendee?.name||b.bookingFieldsResponses?.name||'Klant';
-        const key=`${start}:${title}:${contact}`;
-        if(seen[id] && seen[id]!==key || (!seen[id] && initialized)){
-          pushNote({type:'appointment',title:`Nieuwe afspraak: ${contact}`,body:`${title} staat ingepland op ${fmt(start)}.`,contactName:contact,appointmentType:title,appointmentMoment:fmt(start),link:'/platform/agenda/',dedupeKey:`appt:${id}:${key}`});
-        }
-        next[id]=key;
-      });
-      write(SEEN_APPT_KEY,next);
-    }catch(e){}
-  }
-  function boot(){
-    ensureWidget();renderBadges();renderPanel();
-    if('Notification' in window && Notification.permission==='default') Notification.requestPermission().catch(()=>{});
-    pollConversations();pollBookings();
-    setTimeout(()=>localStorage.setItem(INIT_KEY,'1'),1500);
-    setInterval(()=>{pollConversations();pollBookings();renderBadges();},12000);
-  }
-  window.addEventListener('storage',e=>{if(e.key===NOTIFICATION_KEY) renderBadges();});
-  window.addEventListener('reactify:datachange',renderBadges);
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
-})();
-</script>
-<script id="reactify-customer-fixes">
-(function(){
-  const STORE='reactify_platform_data_v3';
-  const DEL='reactify.deletedClients';
-  const normPhone=v=>String(v||'').replace(/\D+/g,'');
-  const normEmail=v=>String(v||'').trim().toLowerCase();
-  const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k)||'')||f}catch(e){return f}};
-  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));};
-  const uid=(p='id')=>p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
-  const now=()=>new Date().toISOString();
-  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  function blank(){return {clients:[],conversations:[],appointments:[],settings:{ownerName:'Bob Demo'}}}
-  function loadRaw(){const d=read(STORE,blank()); d.clients ||= []; d.conversations ||= []; d.appointments ||= []; d.settings ||= {ownerName:'Bob Demo'}; return d;}
-  function save(d){write(STORE,d)}
-  function deleted(){return read(DEL,[])}
-  function isDeletedClient(c){const p=normPhone(c?.phone), e=normEmail(c?.email), id=String(c?.id||''); return deleted().some(x=>(id&&x.id===id)||(p&&x.phone===p)||(e&&x.email===e));}
-  function markDeletedClient(c){const list=deleted(); const item={id:String(c?.id||''),phone:normPhone(c?.phone),email:normEmail(c?.email),name:c?.name||'',deletedAt:now()}; if(!list.some(x=>(item.id&&x.id===item.id)||(item.phone&&x.phone===item.phone)||(item.email&&x.email===item.email))){list.unshift(item);write(DEL,list.slice(0,1000));}}
-  function clientMessages(d,client){return (d.conversations||[]).filter(cv=>cv.clientId===client.id||cv.contactId===client.id).flatMap(cv=>(cv.messages||[]).map(m=>String(m.text||m.body||m.message||''))).filter(Boolean);}
-  function lastConv(d,client){return [...(d.conversations||[])].filter(cv=>cv.clientId===client.id||cv.contactId===client.id).sort((a,b)=>new Date(b.updatedAt||b.createdAt||0)-new Date(a.updatedAt||a.createdAt||0))[0]||null;}
-  function sentimentFor(client,d=loadRaw()){
-    const conv=lastConv(d,client); const text=[...(clientMessages(d,client)),conv?.lastMessage||'',client.note||client.notes||''].join(' ').toLowerCase();
-    const status=String(conv?.status||client.status||'').toLowerCase();
-    if(/klacht|boos|ontevreden|slecht|probleem|fout|dringend|spoed|niet geholpen|geen antwoord|geen reactie|niet opgevolg|opvolging nodig|annuleer|annuleren|teleurgesteld/.test(text) || /menselijke|manual|overname/.test(status)) return 'negatief';
-    if(/bedankt|merci|dank u|top|prima|perfect|in orde|opgelost|geholpen|afgesproken|tot dan|bevestigd|afspraak bevestigd/.test(text) || /afgesloten|closed/.test(status)) return 'positief';
-    return 'neutraal';
-  }
-  function sentimentLabel(s){return s==='positief'?'Positief':s==='negatief'?'Negatief':'Neutraal'}
-  function channelFor(client,d=loadRaw()){const convs=(d.conversations||[]).filter(cv=>cv.clientId===client.id||cv.contactId===client.id); const count={}; convs.forEach(c=>{const ch=(c.channel||'sms').toLowerCase(); count[ch]=(count[ch]||0)+1}); return Object.entries(count).sort((a,b)=>b[1]-a[1])[0]?.[0] || (client.phone?'sms':client.email?'e-mail':'onbekend');}
-  function descriptionFor(client,d=loadRaw()){
-    const msgs=clientMessages(d,client); const conv=lastConv(d,client); const channel=channelFor(client,d); const name=client.name||'Deze klant';
-    const text=[...msgs,conv?.lastMessage||''].join(' ').toLowerCase();
-    let need='algemene opvolging';
-    if(/afspraak|boeken|inplannen|reserv/.test(text)) need='afspraken of reservaties';
-    else if(/prijs|kost|tarief|euro|offerte/.test(text)) need='prijzen of offertes';
-    else if(/klacht|probleem|niet tevreden|fout|slecht/.test(text)) need='een probleem of klacht';
-    else if(/vraag|info|informatie|wanneer|hoe/.test(text)) need='informatievragen';
-    const status=sentimentLabel(sentimentFor(client,d)).toLowerCase();
-    const last=conv?.lastMessage ? ` Laatste bericht: “${String(conv.lastMessage).slice(0,120)}”.` : '';
-    return `${name} gebruikt vooral ${channel.toUpperCase()} en komt vooral binnen voor ${need}. Laatste gesprekseinde/status: ${status}.${last}`;
-  }
-  function enrich(d){d.clients=d.clients.filter(c=>!isDeletedClient(c)); d.conversations=d.conversations.filter(cv=>{const c=d.clients.find(x=>x.id===cv.clientId||x.id===cv.contactId); return c ? !isDeletedClient(c) : true;}); d.appointments=d.appointments.filter(a=>{const c=d.clients.find(x=>x.id===a.clientId||x.id===a.contactId); return c ? !isDeletedClient(c) : true;}); d.clients.forEach(c=>{c.sentiment=sentimentFor(c,d); c.status=c.sentiment; c.customerSummary=descriptionFor(c,d);}); return d;}
-  function loadClean(){const d=enrich(loadRaw()); save(d); return d;}
-  async function deleteBackendForClient(client,d=loadRaw()){
-    const ids=(d.conversations||[]).filter(cv=>cv.clientId===client.id||cv.contactId===client.id).map(cv=>cv.backendId||cv.id).filter(Boolean);
-    const qs=[]; if(client.phone) qs.push('phone='+encodeURIComponent(client.phone)); if(client.email) qs.push('email='+encodeURIComponent(client.email));
-    for(const id of ids){try{await fetch('/.netlify/functions/conversations?conversationId='+encodeURIComponent(id),{method:'DELETE',headers:(typeof reactifyApiHeaders==='function'?reactifyApiHeaders():{'Content-Type':'application/json'})});}catch(e){}}
-    if(qs.length){try{await fetch('/.netlify/functions/conversations?'+qs.join('&'),{method:'DELETE',headers:(typeof reactifyApiHeaders==='function'?reactifyApiHeaders():{'Content-Type':'application/json'})});}catch(e){}}
-  }
-  window.ReactifyCustomerIntel={loadRaw,loadClean,save,deleted,isDeletedClient,markDeletedClient,sentimentFor,sentimentLabel,descriptionFor,channelFor,enrich,deleteBackendForClient,esc,normPhone,normEmail};
-  if(window.RF){
-    const oldAdd=RF.addClient?.bind(RF); const oldUpdate=RF.updateClient?.bind(RF);
-    RF.load=loadClean; RF.save=(d)=>save(enrich(d));
-    RF.deleteClient=function(id){const d=loadRaw(); const c=d.clients.find(x=>x.id===id); if(c) markDeletedClient(c); if(c) deleteBackendForClient(c,d); d.clients=d.clients.filter(x=>x.id!==id); d.conversations=d.conversations.filter(x=>x.clientId!==id&&x.contactId!==id); d.appointments=d.appointments.filter(a=>a.clientId!==id&&a.contactId!==id); save(enrich(d)); ['reactify.contacts','reactify.conversations','reactify.localAppointments'].forEach(k=>{try{let arr=JSON.parse(localStorage.getItem(k)||'[]'); arr=arr.filter(x=>x.id!==id&&x.clientId!==id&&x.contactId!==id); localStorage.setItem(k,JSON.stringify(arr));}catch(e){}});};
-    RF.addClient=function(client){const c=oldAdd?oldAdd(client):null; const d=loadRaw(); if(c){const found=d.clients.find(x=>x.id===c.id); if(found){found.status=sentimentFor(found,d); found.sentiment=found.status; found.customerSummary=descriptionFor(found,d); save(enrich(d));}} return c;};
-    if(oldUpdate){RF.updateClient=function(id,fields){const res=oldUpdate(id,fields); const d=loadRaw(); save(enrich(d)); return res;};}
-  }
-})();
-</script>
-<script id="reactify-klanten-final-fixes">
-(function(){
-  const style=document.createElement('style');style.textContent=`.status-badge.positief{background:var(--green-light);color:var(--green)}.status-badge.positief .dot{background:var(--green)}.status-badge.neutraal{background:var(--orange-light);color:var(--orange-dark)}.status-badge.neutraal .dot{background:var(--orange)}.status-badge.negatief{background:var(--red-light);color:var(--red)}.status-badge.negatief .dot{background:var(--red)}.client-summary-small{font-size:.74rem;color:var(--gray-600);line-height:1.35;max-width:360px}.client-table{min-width:960px}`;document.head.appendChild(style);
-  window.statusLabel=function(s){return ReactifyCustomerIntel.sentimentLabel(String(s||'neutraal'))};
-  window.renderClients=function(){const d=RF.load(); const now=new Date(); const monthStart=new Date(now.getFullYear(),now.getMonth(),1); statTotalClients.textContent=d.clients.length; statNewMonth.textContent=d.clients.filter(c=>new Date(c.createdAt)>=monthStart).length; statActiveConvs.textContent=d.conversations.filter(c=>c.status!=='afgesloten').length; statPlannedAppts.textContent=d.appointments.length; const q=(clientFilter||'').toLowerCase(); const rows=d.clients.filter(c=>[c.name,c.email,c.phone,c.customerSummary].join(' ').toLowerCase().includes(q)); const head=document.querySelector('.client-table thead tr'); if(head) head.innerHTML='<th>Naam</th><th>Contactgegevens</th><th>Klantbeschrijving</th><th>Laatste activiteit</th><th>Status</th><th>Acties</th>'; clientTableBody.innerHTML=rows.map(c=>{const sentiment=ReactifyCustomerIntel.sentimentFor(c,d); const summary=c.customerSummary||ReactifyCustomerIntel.descriptionFor(c,d); return `<tr onclick="openClientDrawer('${c.id}')"><td><div class="table-client"><div class="table-avatar" style="background:${c.color||'var(--purple)'}">${c.photo?`<img src="${c.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:RF.initials(c.name)}</div><div class="table-client-info"><div class="table-client-name">${RF.esc(c.name)}</div><div class="table-client-email">${RF.esc(c.email||'Geen e-mail')}</div></div></div></td><td class="table-phone">${RF.esc(c.phone||'Geen telefoon')}</td><td><div class="client-summary-small">${RF.esc(summary)}</div></td><td class="table-activity">${RF.formatDateTime(c.updatedAt||c.createdAt)}</td><td><span class="status-badge ${sentiment}"><span class="dot"></span>${ReactifyCustomerIntel.sentimentLabel(sentiment)}</span></td><td><div class="action-btns" onclick="event.stopPropagation()"><button class="btn-small" onclick="openInbox('${c.id}')">Inbox</button><button class="btn-small" onclick="openClientDrawer('${c.id}')">Aanpassen</button><button class="btn-small btn-danger-small" onclick="removeClient('${c.id}')">Verwijder</button></div></td></tr>`}).join('')||`<tr><td colspan="6"><div class="empty-state"><strong>Geen klanten gevonden</strong>Maak een nieuwe klant aan of pas je zoekopdracht aan.</div></td></tr>`; paginationInfo.textContent=`${rows.length} van ${d.clients.length} klanten`;};
-  window.removeClient=function(id){if(confirm('Deze klant definitief verwijderen uit Reactify?')){RF.deleteClient(id);closeClientDrawer?.();renderClients();RF.toast('Klant verwijderd')}};
-  try{renderClients();}catch(e){console.warn(e)}
-})();
-</script>
-<script id="reactify-final-data-and-summary-fix">
-(function(){
-  const STORE='reactify_platform_data_v3';
-  const DEL='reactify.deletedClients';
-  const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb','var(--purple-medium, #7B52AB)','#dc2626'];
-  const uid=(p='id')=>p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
-  const now=()=>new Date().toISOString();
-  const normPhone=v=>String(v||'').replace(/\D+/g,'');
-  const normEmail=v=>String(v||'').trim().toLowerCase();
-  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  const read=(k,f)=>{try{const raw=localStorage.getItem(k);return raw?JSON.parse(raw):f}catch(e){return f}};
-  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));window.dispatchEvent(new CustomEvent('reactify:data',{detail:v}));};
-  function blank(){return {clients:[],conversations:[],appointments:[],settings:{ownerName:'Bob Demo'}}}
-  function loadRaw(){const d=read(STORE,blank())||blank(); d.clients ||= []; d.conversations ||= []; d.appointments ||= []; d.settings ||= {ownerName:'Bob Demo'}; return d;}
-  function deleted(){return read(DEL,[])||[]}
-  function saveDeleted(list){localStorage.setItem(DEL,JSON.stringify(list.slice(0,1000)));}
-  function isDeletedClient(c){const p=normPhone(c?.phone), e=normEmail(c?.email), id=String(c?.id||''); return deleted().some(x=>(id&&x.id===id)||(p&&x.phone===p)||(e&&x.email===e));}
-  function markDeletedClient(c){const list=deleted(); const item={id:String(c?.id||''),phone:normPhone(c?.phone),email:normEmail(c?.email),name:c?.name||'',deletedAt:now()}; if(!list.some(x=>(item.id&&x.id===item.id)||(item.phone&&x.phone===item.phone)||(item.email&&x.email===item.email))){list.unshift(item);saveDeleted(list);}}
-  function unmarkDeletedClient(c){const p=normPhone(c?.phone), e=normEmail(c?.email), id=String(c?.id||''); const next=deleted().filter(x=>!((id&&x.id===id)||(p&&x.phone===p)||(e&&x.email===e))); saveDeleted(next);}
-  function clientMessages(d,client){return (d.conversations||[]).filter(cv=>cv.clientId===client.id||cv.contactId===client.id).flatMap(cv=>(cv.messages||[]).map(m=>String(m.text||m.body||m.message||''))).filter(Boolean);}
-  function lastConv(d,client){return [...(d.conversations||[])].filter(cv=>cv.clientId===client.id||cv.contactId===client.id).sort((a,b)=>new Date(b.updatedAt||b.createdAt||0)-new Date(a.updatedAt||a.createdAt||0))[0]||null;}
-  function sentimentFor(client,d=loadRaw()){
-    const conv=lastConv(d,client); const text=[...(clientMessages(d,client)),conv?.lastMessage||'',client.note||client.notes||''].join(' ').toLowerCase();
-    const status=String(conv?.status||client.status||'').toLowerCase();
-    if(/klacht|boos|ontevreden|slecht|probleem|fout|dringend|spoed|niet geholpen|geen antwoord|geen reactie|niet opgevolg|opvolging nodig|annuleer|annuleren|teleurgesteld/.test(text) || /menselijke|manual|overname/.test(status)) return 'negatief';
-    if(/bedankt|merci|dank u|top|prima|perfect|in orde|opgelost|geholpen|afgesproken|tot dan|bevestigd|afspraak bevestigd/.test(text) || /afgesloten|closed/.test(status)) return 'positief';
-    return 'neutraal';
-  }
-  function sentimentLabel(s){return s==='positief'?'Positief':s==='negatief'?'Negatief':'Neutraal'}
-  function channelFor(){return 'sms'}
-  function descriptionFor(client,d=loadRaw()){
-    const msgs=clientMessages(d,client); const conv=lastConv(d,client); const name=client.name||'Deze klant';
-    const text=[...msgs,conv?.lastMessage||'',client.note||client.notes||''].join(' ').toLowerCase();
-    let need='algemene opvolging';
-    if(/afspraak|boeken|inplannen|reserv/.test(text)) need='afspraken of reservaties';
-    else if(/prijs|kost|tarief|euro|offerte/.test(text)) need='prijzen of offertes';
-    else if(/klacht|probleem|niet tevreden|fout|slecht/.test(text)) need='een probleem of klacht';
-    else if(/vraag|info|informatie|wanneer|hoe/.test(text)) need='informatievragen';
-    const status=sentimentLabel(sentimentFor(client,d)).toLowerCase();
-    const last=conv?.lastMessage ? ` Laatste bericht: “${String(conv.lastMessage).slice(0,120)}”.` : '';
-    return `${name} gebruikt SMS als contactkanaal en komt vooral binnen voor ${need}. Laatste gesprekseinde/status: ${status}.${last}`;
-  }
-  function enrich(d){
-    d=Object.assign(blank(),d||{}); d.clients ||= []; d.conversations ||= []; d.appointments ||= [];
-    d.clients=d.clients.filter(c=>!isDeletedClient(c));
-    d.conversations=d.conversations.filter(cv=>{const c=d.clients.find(x=>x.id===cv.clientId||x.id===cv.contactId); return c ? !isDeletedClient(c) : true;});
-    d.appointments=d.appointments.filter(a=>{const c=d.clients.find(x=>x.id===a.clientId||x.id===a.contactId); return c ? !isDeletedClient(c) : true;});
-    d.clients.forEach(c=>{c.sentiment=sentimentFor(c,d); c.status=c.sentiment; c.customerSummary=descriptionFor(c,d); c.updatedAt=c.updatedAt||c.createdAt||now();});
-    return d;
-  }
-  function save(d){write(STORE,enrich(d));}
-  function loadClean(){return enrich(loadRaw());}
-  async function deleteBackendForClient(client,d=loadRaw()){
-    const ids=(d.conversations||[]).filter(cv=>cv.clientId===client.id||cv.contactId===client.id).map(cv=>cv.backendId||cv.id).filter(Boolean);
-    const qs=[]; if(client.phone) qs.push('phone='+encodeURIComponent(client.phone)); if(client.email) qs.push('email='+encodeURIComponent(client.email));
-    for(const id of ids){try{await fetch('/.netlify/functions/conversations?conversationId='+encodeURIComponent(id),{method:'DELETE',headers:(typeof reactifyApiHeaders==='function'?reactifyApiHeaders():{'Content-Type':'application/json'})});}catch(e){}}
-    if(qs.length){try{await fetch('/.netlify/functions/conversations?'+qs.join('&'),{method:'DELETE',headers:(typeof reactifyApiHeaders==='function'?reactifyApiHeaders():{'Content-Type':'application/json'})});}catch(e){}}
-  }
-  function addClientFixed(client={}){
-    const d=loadRaw();
-    const name=(client.name||`${client.firstName||''} ${client.lastName||''}`).trim()||'Nieuwe contactpersoon';
-    const phone=String(client.phone||'').trim();
-    const email=String(client.email||'').trim().toLowerCase();
-    unmarkDeletedClient({id:client.id,phone,email});
-    let existing=d.clients.find(c=>(client.id&&c.id===client.id)||(email&&normEmail(c.email)===email)||(phone&&normPhone(c.phone)===normPhone(phone)));
-    if(existing){Object.assign(existing,{...client,name,email:email||existing.email,phone:phone||existing.phone,updatedAt:now(),source:client.source||existing.source||'Manueel'}); save(d); return existing;}
-    const c={id:client.id||uid('client'),name,email,phone,status:client.status||'neutraal',sentiment:client.sentiment||'neutraal',type:client.type||'Klant',address:client.address||'',note:client.note||client.notes||'',source:client.source||'Manueel',createdAt:now(),updatedAt:now(),color:client.color||colors[d.clients.length%colors.length]};
-    d.clients.unshift(c); save(d); return c;
-  }
-  function deleteClientFixed(id){
-    const d=loadRaw(); const c=d.clients.find(x=>x.id===id); if(c){markDeletedClient(c); deleteBackendForClient(c,d);}
-    d.clients=d.clients.filter(x=>x.id!==id); d.conversations=d.conversations.filter(x=>x.clientId!==id&&x.contactId!==id); d.appointments=d.appointments.filter(a=>a.clientId!==id&&a.contactId!==id); save(d);
-    ['reactify.contacts','reactify.conversations','reactify.localAppointments'].forEach(k=>{try{let arr=JSON.parse(localStorage.getItem(k)||'[]'); arr=arr.filter(x=>x.id!==id&&x.clientId!==id&&x.contactId!==id); localStorage.setItem(k,JSON.stringify(arr));}catch(e){}});
-  }
-  window.ReactifyCustomerIntel={...(window.ReactifyCustomerIntel||{}),loadRaw,loadClean,save,deleted,isDeletedClient,markDeletedClient,unmarkDeletedClient,sentimentFor,sentimentLabel,descriptionFor,channelFor,enrich,deleteBackendForClient,esc,normPhone,normEmail};
-  if(window.RF){RF.load=loadClean; RF.save=save; RF.addClient=addClientFixed; RF.deleteClient=deleteClientFixed;}
-  try{save(loadRaw());}catch(e){}
-})();
-</script>
-<script id="reactify-final-klanten-render-fix">
-(function(){
-  function boot(){
-    if(typeof renderClients==='function') renderClients();
-    const form=document.getElementById('rfClientForm');
-    if(form && !form.dataset.finalClientSubmit){
-      form.dataset.finalClientSubmit='1';
-      form.addEventListener('submit',function(){setTimeout(()=>{try{renderClients()}catch(e){}},50);},true);
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
-  window.addEventListener('reactify:datachange',()=>{try{renderClients()}catch(e){}});
-  window.addEventListener('reactify:data',()=>{try{renderClients()}catch(e){}});
-})();
-</script>
-
-<script>
-(function(){
- const STORE='reactify_platform_data_v3',DEL='reactify.deletedClients';
- const normPhone=v=>String(v||'').replace(/\D/g,''); const normEmail=v=>String(v||'').trim().toLowerCase();
- const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f))}catch(e){return f}};
- const tombstones=()=>read(DEL,[]); const saveT=x=>localStorage.setItem(DEL,JSON.stringify(x));
- const markDeleted=c=>{const arr=tombstones();const item={id:c.id||'',phone:normPhone(c.phone),email:normEmail(c.email),deletedAt:new Date().toISOString()};if(!arr.some(x=>(item.id&&x.id===item.id)||(item.phone&&x.phone===item.phone)||(item.email&&x.email===item.email)))arr.push(item);saveT(arr)};
- const unmark=c=>{saveT(tombstones().filter(x=>!((c.id&&x.id===c.id)||(normPhone(c.phone)&&x.phone===normPhone(c.phone))||(normEmail(c.email)&&x.email===normEmail(c.email)))))};
- async function backendDelete(c){const qs=new URLSearchParams();if(c.phone)qs.set('phone',c.phone);if(c.email)qs.set('email',c.email);try{await fetch('/.netlify/functions/conversations?'+qs.toString(),{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:c.phone||'',email:c.email||''})})}catch(e){console.warn(e)}}
- window.removeClient=async function(id){if(!confirm('Deze klant definitief verwijderen uit Reactify?'))return;const d=RF.load();const c=d.clients.find(x=>x.id===id);if(c){markDeleted(c);await backendDelete(c)}d.clients=d.clients.filter(x=>x.id!==id);d.conversations=d.conversations.filter(x=>(x.clientId||x.contactId)!==id);d.appointments=d.appointments.filter(x=>(x.clientId||x.contactId)!==id);RF.save(d);try{closeClientDrawer()}catch(e){};try{renderClients()}catch(e){};RF.toast('Klant definitief verwijderd.');};
- function installForm(){const old=document.getElementById('rfClientForm');if(!old||old.dataset.robust)return;const form=old.cloneNode(true);form.dataset.robust='1';old.replaceWith(form);form.addEventListener('submit',e=>{e.preventDefault();const c=RF.addClient({name:form.querySelector('#rfClientName').value.trim(),email:form.querySelector('#rfClientEmail').value.trim(),phone:form.querySelector('#rfClientPhone').value.trim(),note:form.querySelector('#rfClientNote').value.trim(),source:'Klantenpagina'});unmark(c);const d=RF.load();if(!d.conversations.some(x=>(x.clientId||x.contactId)===c.id)){d.conversations.unshift({id:RF.uid('conv'),clientId:c.id,contactId:c.id,channel:'sms',status:'ai_actief',messages:[],summary:'Nieuw SMS-gesprek.',createdAt:RF.nowISO(),updatedAt:RF.nowISO()});RF.save(d)}document.getElementById('rfClientModal')?.classList.remove('open');form.reset();try{renderClients()}catch(e){};RF.toast('Contactpersoon opgeslagen. Je kan nu een SMS sturen via de inbox.');});}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installForm);else installForm();
+(() => {
+ 'use strict';
+ const STORE='reactify_platform_data_v3',DELETED='reactify.deletedClients.v3';
+ const $=id=>document.getElementById(id),now=()=>new Date().toISOString(),uid=(p='id')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+ const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+ const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?';
+ const normPhone=v=>String(v||'').replace(/\D/g,''),normEmail=v=>String(v||'').trim().toLowerCase();
+ const read=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch{return f}},write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+ const blank=()=>({clients:[],conversations:[],appointments:[],settings:{}}),load=()=>{const d=read(STORE,blank());d.clients||=[];d.conversations||=[];d.appointments||=[];return d},save=d=>{write(STORE,d);window.dispatchEvent(new CustomEvent('reactify:data',{detail:d}))};
+ const fmt=d=>{try{return new Date(d).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}catch{return ''}};
+ const colors=['#5B2E91','#F5A623','#16a34a','#2563eb','#7B52AB','#dc2626'];
+ const tombstones=()=>read(DELETED,[]),isDeleted=c=>tombstones().some(x=>(c.id&&x.id===c.id)||(normPhone(c.phone)&&x.phone===normPhone(c.phone))||(normEmail(c.email)&&x.email===normEmail(c.email)));
+ const markDeleted=c=>{const a=tombstones(),i={id:c.id||'',phone:normPhone(c.phone),email:normEmail(c.email),deletedAt:now()};if(!a.some(x=>(i.id&&x.id===i.id)||(i.phone&&x.phone===i.phone)||(i.email&&x.email===i.email)))a.unshift(i);write(DELETED,a.slice(0,2000))};
+ const unmark=c=>write(DELETED,tombstones().filter(x=>!((normPhone(c.phone)&&x.phone===normPhone(c.phone))||(normEmail(c.email)&&x.email===normEmail(c.email)))));
+ const toast=m=>{const t=$('rfToast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)};
+ const headers=()=>({'Content-Type':'application/json',...(localStorage.getItem('reactify.tenantId')?{'X-Tenant-Id':localStorage.getItem('reactify.tenantId')}:{})});
+ let filter='',editPhoto='';
+ function statusLabel(s){return s==='positief'?'Positief':s==='negatief'?'Negatief':'Neutraal'}
+ function render(){const d=load();d.clients=d.clients.filter(c=>!isDeleted(c));saveSilent(d);const rows=d.clients.filter(c=>[c.name,c.email,c.phone,c.type,c.note].join(' ').toLowerCase().includes(filter));$('statTotalClients').textContent=d.clients.length;const month=new Date();month.setDate(1);month.setHours(0,0,0,0);$('statNewMonth').textContent=d.clients.filter(c=>new Date(c.createdAt||0)>=month).length;$('statActiveConvs').textContent=d.conversations.filter(c=>!String(c.status).includes('afgesloten')).length;$('statPlannedAppts').textContent=d.appointments.length;
+   document.querySelector('.client-table thead tr').innerHTML='<th>Naam</th><th>Contactgegevens</th><th>Type</th><th>Laatste activiteit</th><th>Status</th><th>Acties</th>';
+   $('clientTableBody').innerHTML=rows.map(c=>`<tr onclick="openClientDrawer('${c.id}')"><td><div class="table-client"><div class="table-avatar" style="background:${c.color||'#5B2E91'}">${c.photo?`<img src="${c.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:initials(c.name)}</div><div class="table-client-info"><div class="table-client-name">${esc(c.name)}</div><div class="table-client-email">${esc(c.email||'Geen e-mail')}</div></div></div></td><td class="table-phone">${esc(c.phone||'Geen telefoon')}</td><td><span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${esc(c.type||'Lead')}</span></td><td class="table-activity">${fmt(c.updatedAt||c.createdAt)}</td><td><span class="status-badge ${c.status||'neutraal'}"><span class="dot"></span>${statusLabel(c.status)}</span></td><td onclick="event.stopPropagation()"><div class="action-btns"><button class="btn-small" onclick="location.href='/platform/inbox/?client=${c.id}'">Inbox</button><button class="btn-small" onclick="openClientDrawer('${c.id}')">Profiel</button><button class="btn-small btn-danger-small" onclick="removeClient('${c.id}')">Verwijder</button></div></td></tr>`).join('')||'<tr><td colspan="6"><div class="empty-state"><strong>Geen contactpersonen</strong>Nieuwe SMS-gesprekken en manueel toegevoegde contacten verschijnen hier.</div></td></tr>';$('paginationInfo').textContent=`${rows.length} contactpersonen`}
+ function saveSilent(d){localStorage.setItem(STORE,JSON.stringify(d))}
+ function addClient(data){const d=load(),p=normPhone(data.phone),e=normEmail(data.email);let c=d.clients.find(x=>(p&&normPhone(x.phone)===p)||(e&&normEmail(x.email)===e));if(c){Object.assign(c,data,{updatedAt:now()})}else{c={id:uid('client'),name:data.name||'Nieuwe contactpersoon',email:e,phone:data.phone||'',type:data.type||'Klant',status:'neutraal',sentiment:'neutraal',description:data.description||'',note:data.note||'',source:'Manueel',createdAt:now(),updatedAt:now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}unmark(c);save(d);return c}
+ async function backendDelete(c,d){const convs=d.conversations.filter(x=>x.clientId===c.id);for(const cv of convs){try{await fetch(`/.netlify/functions/conversations?conversationId=${encodeURIComponent(cv.backendId||cv.id)}`,{method:'DELETE',headers:headers()})}catch{}}try{const q=new URLSearchParams();if(c.phone)q.set('phone',c.phone);if(c.email)q.set('email',c.email);await fetch('/.netlify/functions/conversations?'+q,{method:'DELETE',headers:headers(),body:JSON.stringify({phone:c.phone,email:c.email})})}catch{}}
+ window.removeClient=async id=>{if(!confirm('Deze contactpersoon overal definitief verwijderen?'))return;const d=load(),c=d.clients.find(x=>x.id===id);if(!c)return;markDeleted(c);await backendDelete(c,d);d.clients=d.clients.filter(x=>x.id!==id);d.conversations=d.conversations.filter(x=>x.clientId!==id);d.appointments=d.appointments.filter(x=>x.clientId!==id);save(d);closeClientDrawer();render();toast('Contactpersoon verwijderd.')};
+ window.openClientDrawer=id=>{const c=load().clients.find(x=>x.id===id);if(!c)return;$('drawerClientId').value=c.id;$('drawerName').value=c.name||'';$('drawerEmail').value=c.email||'';$('drawerPhone').value=c.phone||'';$('drawerAddress').value=c.address||'';$('drawerStatus').value=c.status||'neutraal';$('drawerType').value=c.type||'Lead';$('drawerDescription').value=c.description||'';$('drawerNote').value=c.note||'';editPhoto=c.photo||'';$('drawerAvatar').innerHTML=editPhoto?`<img src="${editPhoto}">`:initials(c.name);$('drawerAvatar').style.background=c.color||'#5B2E91';$('clientDrawerOverlay').classList.add('open');$('clientDrawer').classList.add('open')};
+ window.closeClientDrawer=()=>{$('clientDrawerOverlay').classList.remove('open');$('clientDrawer').classList.remove('open')};
+ window.saveClientDrawer=()=>{const d=load(),c=d.clients.find(x=>x.id===$('drawerClientId').value);if(!c)return;Object.assign(c,{name:$('drawerName').value.trim(),email:normEmail($('drawerEmail').value),phone:$('drawerPhone').value.trim(),address:$('drawerAddress').value.trim(),status:$('drawerStatus').value,sentiment:$('drawerStatus').value,type:$('drawerType').value,description:$('drawerDescription').value.trim(),note:$('drawerNote').value.trim(),photo:editPhoto,updatedAt:now()});unmark(c);save(d);closeClientDrawer();render();toast('Profiel opgeslagen.')};
+ $('drawerPhotoInput')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{editPhoto=String(r.result);$('drawerAvatar').innerHTML=`<img src="${editPhoto}">`};r.readAsDataURL(f)});
+ window.RFUI={openClientModal:()=>$('rfClientModal').classList.add('open'),closeClientModal:()=>$('rfClientModal').classList.remove('open'),openAppointmentModal(){},closeAppointmentModal(){}};
+ $('rfClientForm')?.addEventListener('submit',e=>{e.preventDefault();const c=addClient({name:$('rfClientName').value.trim(),email:$('rfClientEmail').value.trim(),phone:$('rfClientPhone').value.trim(),note:$('rfClientNote').value.trim(),type:'Klant'});const d=load();if(!d.conversations.some(x=>x.clientId===c.id)){d.conversations.unshift({id:uid('conv'),clientId:c.id,channel:'sms',status:'ai-active',messages:[],createdAt:now(),updatedAt:now()});save(d)}e.target.reset();RFUI.closeClientModal();render();toast('Contactpersoon opgeslagen.')});
+ $('clientSearch')?.addEventListener('input',e=>{filter=e.target.value.toLowerCase();render()});$('sidebarToggle')?.addEventListener('click',()=>$('sidebar')?.classList.toggle('open'));
+ window.exportClients=()=>{const d=load();const rows=[['Naam','E-mail','Telefoon','Type','Status'],...d.clients.map(c=>[c.name,c.email,c.phone,c.type,c.status])];const csv=rows.map(r=>r.map(v=>`"${String(v||'').replaceAll('"','""')}"`).join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='reactify-contacten.csv';a.click()};
+ window.addEventListener('storage',e=>{if(e.key===STORE||e.key===DELETED)render()});window.addEventListener('reactify:data',render);render();
+ const q=new URLSearchParams(location.search).get('client');if(q)setTimeout(()=>openClientDrawer(q),50);
 })();
 </script>
 </body></html>
