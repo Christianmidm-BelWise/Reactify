@@ -422,7 +422,7 @@
 
 </style>
 </head>
-<body>
+<body><script id="reactify-clean-start-v1">(function(){try{const FLAG='reactify.cleanStart.v1';const STORE='reactify_platform_data_v3';if(!localStorage.getItem(FLAG)){let d={clients:[],conversations:[],appointments:[],settings:{ownerName:'Bob Demo'}};try{const old=JSON.parse(localStorage.getItem(STORE)||'{}');if(Array.isArray(old.appointments))d.appointments=old.appointments;}catch(e){}localStorage.setItem(STORE,JSON.stringify(d));localStorage.setItem('reactify.contactRegistrationStartAt',new Date().toISOString());localStorage.setItem(FLAG,'1');localStorage.removeItem('reactify.contacts');localStorage.removeItem('reactify.conversations');} }catch(e){console.warn(e)}})();</script>
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo">
@@ -718,5 +718,5 @@
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
 })();
 </script>
-</body>
+<script id="reactify-dashboard-leads-v1">(function(){function mark(){let d={clients:[]};try{d=JSON.parse(localStorage.getItem('reactify_platform_data_v3')||'{}')}catch(e){};const names=new Set((d.clients||[]).map(c=>String(c.name||'').toLowerCase()));document.querySelectorAll('#upcomingAppointments .agenda-item').forEach(el=>{const sub=el.querySelector('.agenda-sub');if(!sub)return;const name=(sub.textContent||'').replace(/^(Klant|Lead)\s*·\s*/,'').trim();sub.textContent=(names.has(name.toLowerCase())?'Klant · ':'Lead · ')+name;});}new MutationObserver(mark).observe(document.getElementById('upcomingAppointments')||document.body,{childList:true,subtree:true});mark();})();</script></body>
 </html>
