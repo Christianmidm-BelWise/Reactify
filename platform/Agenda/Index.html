@@ -59,7 +59,6 @@
     <div class="main-header">
       <div class="page-header"><h1>Agenda</h1><p>Afspraken, beschikbaarheid en afspraaktypes beheren via Cal.com.</p></div>
       <div class="header-actions">
-        <button id="openBookingBtn" class="btn-primary" type="button">＋ Afspraak maken</button>
         <button id="openAvailabilityBtn" class="btn-secondary" type="button">Beschikbaarheid instellen</button>
         <button id="openEventTypeBtn" class="btn-secondary" type="button">Afspraaktypes beheren</button>
         
@@ -290,9 +289,26 @@ const NOTIFICATION_KEY="reactify.notifications";
       return{s,e,period};
     }
     function hmMinutes(value){const m=String(value||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0;}
+    function activeSchedule(){
+      if(!Array.isArray(schedules)||!schedules.length)return null;
+      // Gebruik één werkelijk actief schema. Meerdere Cal.com-schema's mogen
+      // niet bij elkaar worden opgeteld, anders wordt 1 werkdag bv. 40 uur.
+      const referencedIds=new Set((eventTypes||[]).map(t=>String(t.scheduleId||t.schedule?.id||'')).filter(Boolean));
+      return schedules.find(s=>s.isDefault===true||s.is_default===true)
+        || schedules.find(s=>referencedIds.has(String(s.id||s.scheduleId||'')))
+        || schedules[0];
+    }
     function scheduleBlocks(){
-      const blocks=[];for(const schedule of schedules){const rows=Array.isArray(schedule.availability)?schedule.availability:Array.isArray(schedule.availabilities)?schedule.availabilities:[];for(const row of rows){const days=Array.isArray(row.days)?row.days:[];const start=hmMinutes(row.startTime||row.start);const end=hmMinutes(row.endTime||row.end);if(end>start)blocks.push({days,start,end});}}
-      if(!blocks.length)blocks.push({days:['Monday','Tuesday','Wednesday','Thursday','Friday'],start:9*60,end:17*60});return blocks;
+      const schedule=activeSchedule();
+      const rows=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
+      const blocks=[];
+      for(const row of rows){
+        const days=Array.isArray(row.days)?row.days:[];
+        const start=hmMinutes(row.startTime||row.start);
+        const end=hmMinutes(row.endTime||row.end);
+        if(days.length&&end>start)blocks.push({days,start,end});
+      }
+      return blocks;
     }
     function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const index=date.getDay();return days.some(d=>{if(typeof d==='number')return d===index||d===((index+6)%7);const v=String(d).trim().toLowerCase();return v===names[index].toLowerCase()||v===short[index].toLowerCase()||v===String(index)||v===String((index+6)%7);});}
     function availableMinutesInRange(s,e){let total=0;const blocks=scheduleBlocks();for(let d=new Date(s);d<e;d.setDate(d.getDate()+1)){for(const block of blocks){if(dayMatches(block.days,d))total+=Math.max(0,block.end-block.start);}}return total;}
@@ -410,7 +426,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     $("prevBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()-1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()-7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()-1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("nextBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()+7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()+1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("todayBtn").onclick=()=>{selectedDate=new Date();visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll()};
-    $("openBookingBtn").onclick=()=>openModal("bookingModal");$("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");$("occupancyPeriod").onchange=renderStats;
+    $("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");$("occupancyPeriod").onchange=renderStats;
     $("sidebarToggle")?.addEventListener("click",()=>$("sidebar").classList.toggle("open"));
     document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id))});
     const startDefault=new Date();startDefault.setDate(startDefault.getDate()+1);startDefault.setHours(10,0,0,0);$("bookingStart").value=toLocalInputValue(startDefault);
