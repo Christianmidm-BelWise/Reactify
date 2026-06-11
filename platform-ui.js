@@ -32,10 +32,10 @@
           ["Wanneer antwoordt de AI?","De AI antwoordt wanneer de schakelaar op AI aan staat. Bij menselijke overname stopt de AI tot je ze opnieuw inschakelt."],
           ["Wat betekent ‘Overname nodig’?","De klant vraagt om persoonlijke hulp, meldt een klacht of het gesprek loopt vast. Klik op Overnemen om zelf verder te antwoorden."],
           ["Wanneer wordt een gesprek inactief?","Een gesprek wordt na 30 minuten zonder nieuwe activiteit automatisch inactief."],
-          ["Hoe worden afspraken verwerkt?","Afspraken worden rechtstreeks uit Cal.com geladen. Na een succesvolle boeking wordt het gekoppelde gesprek afgerond."],
+          ["Hoe worden afspraken verwerkt?","Afspraken worden rechtstreeks uit de agenda geladen. Na een succesvolle boeking wordt het gekoppelde gesprek afgerond."],
           ["Kan ik klantgegevens aanpassen?","Ja. Open het klantprofiel vanuit de inbox of klantenlijst en pas naam, e-mail of andere gegevens aan."],
           ["Hoe lang worden berichten bewaard?","Dit stel je in onder Instellingen. Je kunt automatische verwijdering na 60 of 90 dagen activeren, of alle gesprekken onmiddellijk verwijderen."],
-          ["Wat gebeurt er bij het verwijderen van berichten?","De gesprekken en bijbehorende berichten worden definitief verwijderd. Klantprofielen en Cal.com-afspraken blijven behouden."],
+          ["Wat gebeurt er bij het verwijderen van berichten?","De gesprekken en bijbehorende berichten worden definitief verwijderd. Klantprofielen en agenda-afspraken blijven behouden."],
           ["Waarom zie ik een nieuw bericht niet meteen?","De inbox werkt met live updates. Vernieuw de pagina alleen wanneer je internetverbinding tijdelijk onderbroken was."]
         ].map((x,i)=>`<div class="rf-faq"><button type="button">${x[0]}<span>+</span></button><div class="rf-faq-answer">${x[1]}</div></div>`).join("")}
         <div class="rf-help-contact">Nog hulp nodig? Mail naar <a href="mailto:support@reactify.be">support@reactify.be</a>.</div>
