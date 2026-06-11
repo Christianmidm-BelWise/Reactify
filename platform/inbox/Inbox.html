@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+
+<html lang="nl"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="Reactify Platform" name="description"/><link href="/favicon.svg" rel="icon" type="image/svg+xml"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><title>Inbox | Reactify</title><style>
+    :root {
+      --purple-dark: #3D1D72;
+      --purple: #5B2E91;
+      --purple-medium: #7B52AB;
+      --purple-light: #E8DCF5;
+      --purple-bg: #F5F0FA;
+      --orange: #F5A623;
+      --orange-dark: #E0941A;
+      --orange-light: #FFF3DC;
+      --white: #FFFFFF;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --blue: #2563eb;
+      --blue-light: #dbeafe;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    *, *:before, *:after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      line-height: 1.6;
+      background: var(--gray-50);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: var(--purple-dark);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-logo svg { width: 32px; height: 32px; flex-shrink: 0; }
+    .sidebar-logo span { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 0 8px 8px 0;
+      margin-right: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-link:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+    .sidebar-link.active { color: var(--white); background: var(--purple); }
+    .sidebar-link svg { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.8; }
+    .sidebar-link.active svg { opacity: 1; }
+    .sidebar-spacer { flex: 1; }
+
+    .sidebar-user {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .user-info { line-height: 1.3; }
+    .user-name { font-weight: 600; font-size: 0.9rem; }
+    .user-role { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      margin-left: 240px;
+      padding: 1.5rem 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .top-bar-left h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.125rem;
+    }
+
+    .top-bar-left p {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .top-search {
+      position: relative;
+    }
+
+    .top-search svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--gray-400);
+    }
+
+    .top-search input {
+      width: 240px;
+      padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .top-search input::placeholder { color: var(--gray-400); }
+    .top-search input:focus { border-color: var(--purple); }
+
+    .notification-btn {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .notification-btn:hover { border-color: var(--gray-300); color: var(--gray-700); }
+    .notification-btn svg { width: 18px; height: 18px; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.purple { background: var(--purple-light); color: var(--purple); }
+    .stat-icon.orange { background: var(--orange-light); color: var(--orange-dark); }
+    .stat-icon.green { background: var(--green-light); color: var(--green); }
+    .stat-icon.blue { background: var(--blue-light); color: var(--blue); }
+
+    .stat-info { line-height: 1.3; }
+    .stat-label { font-size: 0.75rem; color: var(--gray-600); font-weight: 500; }
+    .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--gray-900); }
+    .stat-change { font-size: 0.7rem; color: var(--green); font-weight: 500; }
+
+    /* Inbox Layout */
+    .inbox-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr 280px;
+      gap: 1.25rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .inbox-panel {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+
+    .email-message-body{white-space:pre-wrap;word-break:break-word;line-height:1.65}
+    .email-message{padding:1rem 1.1rem}.email-message .chat-msg-subject{font-weight:800;margin-bottom:.55rem;padding-bottom:.45rem;border-bottom:1px solid rgba(156,163,175,.28)}
+
+    /* Conversation List */
+    .conv-tabs {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: .1rem;
+      border-bottom: 1px solid var(--gray-100);
+      padding: 0 .65rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: var(--purple-light) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .conv-tabs::-webkit-scrollbar { height: 7px; }
+    .conv-tabs::-webkit-scrollbar-track { background: var(--gray-50); }
+    .conv-tabs::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 999px; }
+    .conv-tabs:hover::-webkit-scrollbar-thumb { background: var(--purple-medium); }
+
+    .conv-tab {
+      padding: 0.75rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gray-500);
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
+
+    .conv-tab:hover { color: var(--gray-700); }
+    .conv-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .conv-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid var(--gray-50);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .conv-item:hover { background: var(--gray-50); }
+    .conv-item.active { background: var(--purple-bg); }
+
+    .conv-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .conv-content { flex: 1; min-width: 0; }
+
+    .conv-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.125rem;
+    }
+
+    .conv-name { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
+    .conv-time { font-size: 0.7rem; color: var(--gray-400); white-space: nowrap; flex-shrink: 0; }
+
+    .conv-preview {
+      font-size: 0.78rem;
+      color: var(--gray-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    .conv-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .conv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    .conv-badge.online { background: var(--green-light); color: var(--green); }
+
+    .conv-footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--gray-100);
+      text-align: center;
+    }
+
+    .conv-footer a {
+      font-size: 0.8rem;
+      color: var(--purple);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .conv-footer a:hover { color: var(--orange); }
+
+    /* Chat Panel */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .chat-header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 600; font-size: 0.95rem; color: var(--gray-900); }
+
+    .chat-header-details {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .chat-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .chat-date {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--gray-400);
+      font-weight: 500;
+      padding: 0.5rem 0;
+    }
+
+    .chat-msg {
+      max-width: 75%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .chat-msg.incoming {
+      background: var(--gray-100);
+      color: var(--gray-800);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-msg.outgoing {
+      background: var(--purple);
+      color: var(--white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-msg-time {
+      font-size: 0.65rem;
+      margin-top: 0.375rem;
+      opacity: 0.6;
+    }
+
+    .chat-msg.outgoing .chat-msg-time { text-align: right; }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .chat-input-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--gray-400);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input-btn:hover { background: var(--gray-100); color: var(--gray-600); }
+    .chat-input-btn svg { width: 18px; height: 18px; }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      background: var(--gray-50);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .chat-input input::placeholder { color: var(--gray-400); }
+    .chat-input input:focus { border-color: var(--purple); background: var(--white); }
+
+    .chat-send-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 8px;
+      background: var(--purple);
+      color: var(--white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-send-btn:hover { background: var(--purple-dark); }
+    .chat-send-btn svg { width: 16px; height: 16px; }
+
+    /* Client Profile Panel */
+    .profile-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-header-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-header-section h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .profile-card {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--gray-900);
+      margin-bottom: 0.125rem;
+    }
+
+    .profile-phone {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-email {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .profile-action-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .profile-action-btn:hover { border-color: var(--gray-300); color: var(--gray-700); }
+    .profile-action-btn svg { width: 16px; height: 16px; }
+
+    .profile-details {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.375rem 0;
+    }
+
+    .profile-detail-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .profile-detail-value {
+      font-size: 0.8rem;
+      color: var(--gray-800);
+      font-weight: 500;
+      text-align: right;
+      max-width: 60%;
+    }
+
+    .profile-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-status-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .status-badge-small {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    .status-badge-small.active { background: var(--green-light); color: var(--green); }
+
+    .progress-row {
+      margin-bottom: 0.625rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .progress-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .progress-value {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--gray-100);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-fill.purple { background: var(--purple); }
+    .progress-fill.green { background: var(--green); }
+
+    .profile-activity {
+      padding: 1rem 1.25rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.625rem;
+      padding: 0.375rem 0;
+    }
+
+    .activity-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.green { background: var(--green); }
+    .activity-dot.purple { background: var(--purple); }
+    .activity-dot.orange { background: var(--orange); }
+
+    .activity-text {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .activity-date {
+      font-size: 0.65rem;
+      color: var(--gray-400);
+    }
+
+    .profile-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--gray-100);
+      margin-top: auto;
+    }
+
+    .btn-new-convo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.625rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--green);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+
+    .btn-new-convo:hover { background: #15803d; }
+    .btn-new-convo svg { width: 16px; height: 16px; }
+
+    /* Conversation Summary */
+    .conv-summary {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .conv-summary-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .conv-summary-title svg {
+      width: 14px;
+      height: 14px;
+      color: var(--purple);
+    }
+
+    .conv-summary-text {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 0.625rem 0.75rem;
+      border-left: 3px solid var(--purple);
+    }
+
+    /* Gespreksstatus Badges */
+    .gespreksstatus-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .gespreksstatus-badge .gs-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .gespreksstatus-badge.gs-ai-actief {
+      background: var(--green-light);
+      color: var(--green);
+    }
+    .gespreksstatus-badge.gs-ai-actief .gs-dot { background: var(--green); }
+
+    .gespreksstatus-badge.gs-menselijke-overname {
+      background: var(--orange-light);
+      color: var(--orange-dark);
+    }
+    .gespreksstatus-badge.gs-menselijke-overname .gs-dot { background: var(--orange); }
+
+    .gespreksstatus-badge.gs-afgesloten {
+      background: var(--gray-100);
+      color: var(--gray-500);
+    }
+    .gespreksstatus-badge.gs-afgesloten .gs-dot { background: var(--gray-400); }
+
+    .conv-item .conv-status-row {
+      margin-top: 0.25rem;
+    }
+
+    /* Mobile */
+    .mobile-sidebar-toggle {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--purple);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 1200px) {
+      .inbox-layout { grid-template-columns: 280px 1fr; }
+      .profile-panel { display: none; }
+    }
+
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .mobile-sidebar-toggle { display: inline-flex; }
+      .inbox-layout { grid-template-columns: 1fr; }
+      .conv-panel { display: none; }
+      .conv-panel.mobile-show { display: flex; }
+      .chat-panel.mobile-hide { display: none; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .top-search input { width: 160px; }
+    }
+  
+
+    .empty-state{padding:1.25rem;text-align:center;color:var(--gray-500);font-size:.85rem;}
+    .empty-state strong{display:block;color:var(--gray-900);font-size:.95rem;margin-bottom:.25rem;}
+    .btn-small{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.38rem .7rem;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-700);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:none;font-family:var(--font-sans);transition:.2s;}
+    .btn-small:hover{background:var(--gray-50);border-color:var(--gray-300);}
+    .btn-purple{background:var(--purple);color:var(--white);border-color:var(--purple);}
+    .btn-purple:hover{background:var(--purple-dark);color:var(--white);}
+    .btn-orange{background:var(--orange);color:var(--white);border-color:var(--orange);}
+    .btn-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+    .modal-overlay,.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+    .modal-overlay.open,.modal-backdrop.open{display:flex;}
+    .modal{background:var(--white);border-radius:16px;width:min(560px,95vw);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.16);}
+    .modal.wide{width:min(760px,95vw);}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-100);}
+    .modal-header h2,.modal-title{font-size:1.05rem;font-weight:800;color:var(--gray-900);}
+    .modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:var(--gray-100);color:var(--gray-600);cursor:pointer;font-size:1.1rem;}
+    .modal-body{padding:1.5rem;}
+    .modal-footer,.modal-actions{display:flex;justify-content:flex-end;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid var(--gray-100);}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .form-field,.form-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem;}
+    .form-field.full{grid-column:1/-1;}
+    .form-field label,.form-group label{font-size:.78rem;font-weight:700;color:var(--gray-700);}
+    .form-field input,.form-field select,.form-field textarea,.form-group input,.form-group select,.form-group textarea{width:100%;padding:.55rem .75rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.85rem;font-family:var(--font-sans);color:var(--gray-800);background:var(--white);outline:none;}
+    .form-field input:focus,.form-field select:focus,.form-field textarea:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.1);}
+    .form-help{font-size:.72rem;color:var(--gray-500);}
+    .btn-save,.btn-primary{padding:.55rem 1.1rem;border:0;border-radius:8px;font-size:.8rem;font-weight:700;color:var(--white);background:var(--purple);cursor:pointer;font-family:var(--font-sans);}
+    .btn-cancel,.btn-secondary{padding:.55rem 1rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.8rem;font-weight:600;color:var(--gray-700);background:var(--white);cursor:pointer;font-family:var(--font-sans);}
+    .btn-danger-small{background:var(--red-light);color:var(--red);border-color:var(--red-light);}
+    .hidden{display:none!important;}
+    .toast{position:fixed;right:1rem;bottom:1rem;background:var(--gray-900);color:#fff;padding:.75rem 1rem;border-radius:10px;z-index:2000;font-size:.85rem;box-shadow:0 12px 30px rgba(0,0,0,.2);display:none;}
+    .toast.show{display:block;}
+    @media(max-width:768px){.form-grid{grid-template-columns:1fr}.modal-actions,.modal-footer{flex-wrap:wrap}.modal-actions button,.modal-footer button{flex:1}}
+
+
+    /* Reactify live notification + inbox improvements */
+
+.ai-toggle-btn{border:1px solid var(--green);background:var(--green-light);color:var(--green);border-radius:999px;padding:.38rem .7rem;font-size:.72rem;font-weight:900;cursor:pointer}.ai-toggle-btn.off{border-color:var(--orange);background:var(--orange-light);color:var(--orange-dark)}.ai-toggle-btn:hover{filter:brightness(.97)}
+.gespreksstatus-badge.gs-manual{background:var(--orange-light);color:var(--orange-dark)}.gespreksstatus-badge.gs-manual .gs-dot{background:var(--orange)}
+.urgency-meter{position:relative;height:12px;background:linear-gradient(90deg,#facc15,#f97316,#dc2626);border-radius:999px;overflow:visible}.urgency-meter-fill{display:none}.urgency-knob{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid #dc2626;box-shadow:0 3px 10px rgba(17,24,39,.22);transform:translate(-50%,-50%);transition:left .25s ease}.urgency-meter[data-level="low"] .urgency-knob{border-color:#facc15}.urgency-meter[data-level="medium"] .urgency-knob{border-color:#f97316}.urgency-meter[data-level="high"] .urgency-knob{border-color:#dc2626}
+
+    .notification-badge,.unread-badge{min-width:18px;height:18px;border-radius:999px;background:var(--orange);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
+    .notification-btn .notification-badge{position:absolute;right:-7px;top:-7px;display:none}.notification-btn.has-notifications .notification-badge{display:inline-flex}
+    .conv-item.unread{background:#fffaf0}.conv-item.unread.active{background:var(--purple-bg)}.conv-item.unread .conv-name{font-weight:800}.conv-item.unread .conv-preview{color:var(--gray-800);font-weight:600}
+    .conv-topline{display:flex;align-items:center;gap:.45rem;min-width:0}.conv-topline .conv-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.conv-actions{display:flex;align-items:center;gap:.35rem}.conv-delete-btn,.chat-delete-btn{border:0;background:var(--red-light);color:var(--red);border-radius:8px;padding:.32rem .5rem;font-size:.72rem;font-weight:800;cursor:pointer}.conv-delete-btn:hover,.chat-delete-btn:hover{filter:brightness(.95)}
+    .intent-pill{display:inline-flex;align-items:center;padding:.16rem .5rem;border-radius:999px;background:var(--purple-light);color:var(--purple);font-size:.68rem;font-weight:800}
+    .urgency-meter{width:100%;height:10px;border-radius:999px;background:var(--gray-100);overflow:hidden;margin-top:.35rem}.urgency-meter-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#facc15,#f97316,#dc2626);transition:width .25s ease}.urgency-caption{display:flex;justify-content:space-between;gap:.5rem;margin-top:.25rem;font-size:.7rem;color:var(--gray-500)}
+    .notification-panel{position:fixed;right:1.5rem;top:5rem;width:min(380px,92vw);max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--gray-200);border-radius:14px;box-shadow:0 20px 60px rgba(17,24,39,.18);z-index:1500;display:none}.notification-panel.open{display:block}.notification-panel-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;border-bottom:1px solid var(--gray-100)}.notification-panel-header h3{font-size:.95rem;font-weight:900;color:var(--gray-900)}.notification-list{display:grid;gap:.35rem;padding:.65rem}.notification-item{padding:.75rem;border-radius:10px;background:var(--gray-50);border-left:3px solid var(--purple)}.notification-item.unread{background:var(--orange-light);border-left-color:var(--orange)}.notification-title{font-weight:800;font-size:.82rem;color:var(--gray-900);margin-bottom:.2rem}.notification-body{font-size:.76rem;color:var(--gray-600);line-height:1.45}.notification-meta{font-size:.68rem;color:var(--gray-400);margin-top:.35rem}.notification-empty{padding:1.25rem;color:var(--gray-500);text-align:center;font-size:.82rem}
+
+
+
+/* Reactify global meldingen + sidebar badges */
+.rf-sidebar-badge{margin-left:auto;min-width:18px;height:18px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
+.sidebar-link.has-rf-badge .rf-sidebar-badge{display:inline-flex}.sidebar-link.has-rf-badge{position:relative}.sidebar-link.has-rf-badge svg{flex-shrink:0}
+.rf-global-notification{position:fixed;right:1.35rem;top:1.25rem;z-index:1800}.rf-global-bell{width:40px;height:40px;border:1px solid var(--gray-200,#E5E7EB);border-radius:12px;background:#fff;color:var(--gray-700,#374151);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 22px rgba(17,24,39,.10);position:relative}.rf-global-bell:hover{border-color:var(--purple,#5B2E91);color:var(--purple,#5B2E91)}.rf-global-count{position:absolute;right:-7px;top:-7px;min-width:19px;height:19px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;padding:0 .35rem}.rf-global-bell.has-items .rf-global-count{display:inline-flex}.rf-global-panel{position:absolute;right:0;top:48px;width:min(390px,92vw);max-height:72vh;overflow:auto;background:#fff;border:1px solid var(--gray-200,#E5E7EB);border-radius:16px;box-shadow:0 22px 70px rgba(17,24,39,.18);display:none}.rf-global-panel.open{display:block}.rf-global-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem 1.05rem;border-bottom:1px solid var(--gray-100,#F3F4F6)}.rf-global-head strong{font-size:.95rem;color:var(--gray-900,#111827)}.rf-global-head button{border:1px solid var(--gray-200,#E5E7EB);background:#fff;border-radius:8px;padding:.35rem .55rem;font-size:.72rem;font-weight:800;color:var(--gray-700,#374151);cursor:pointer}.rf-global-list{display:grid;gap:.4rem;padding:.7rem}.rf-global-item{border:0;text-align:left;width:100%;padding:.78rem;border-radius:12px;background:var(--gray-50,#F9FAFB);border-left:3px solid var(--purple,#5B2E91);cursor:pointer}.rf-global-item.unread{background:var(--orange-light,#FFF3DC);border-left-color:var(--orange,#F5A623)}.rf-global-title{font-size:.82rem;font-weight:900;color:var(--gray-900,#111827);margin-bottom:.2rem}.rf-global-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.45}.rf-global-meta{font-size:.68rem;color:var(--gray-500,#6B7280);margin-top:.28rem}.rf-global-empty{padding:1.25rem;color:var(--gray-500,#6B7280);font-size:.82rem;text-align:center}
+@media(max-width:768px){.rf-global-notification{right:.8rem;top:.8rem}.rf-global-panel{right:-.25rem}}
+
+
+
+/* Reactify final fixes: top toast, bell position */
+.rf-global-notification{top:1.25rem!important;right:1.25rem!important;z-index:2100!important}
+.rf-top-toast{position:fixed;top:1.1rem;left:50%;transform:translate(-50%,-130%);z-index:2400;width:min(560px,calc(100vw - 2rem));background:#fff;border:1px solid var(--purple-light,#E8DCF5);border-left:5px solid var(--orange,#F5A623);border-radius:14px;box-shadow:0 18px 50px rgba(17,24,39,.18);padding:.9rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;opacity:0;pointer-events:none;transition:transform .28s ease,opacity .28s ease}.rf-top-toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.rf-top-toast-icon{width:34px;height:34px;border-radius:999px;background:var(--orange-light,#FFF3DC);color:var(--orange-dark,#E0941A);display:flex;align-items:center;justify-content:center;flex-shrink:0}.rf-top-toast-title{font-size:.86rem;font-weight:900;color:var(--gray-900,#111827)}.rf-top-toast-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:768px){.rf-global-notification{top:.85rem!important;right:.85rem!important}.rf-top-toast{top:.75rem;width:calc(100vw - 1.5rem)}}
+
+
+
+/* Inbox final controls */
+.ai-toggle-btn{display:none!important}.chat-delete-btn{display:none!important}.btn-row{align-items:center}.ai-switch{display:inline-flex;align-items:center;gap:.45rem;border:1px solid transparent;border-radius:999px;padding:.25rem .65rem .25rem .28rem;font-size:.72rem;font-weight:900;cursor:pointer;white-space:nowrap;min-height:32px}.ai-switch.on{background:var(--green-light);color:var(--green);border-color:var(--green-light)}.ai-switch.off{background:var(--orange-light);color:var(--orange-dark);border-color:var(--orange-light)}.ai-switch-knob{width:22px;height:22px;border-radius:999px;background:currentColor;display:inline-block;box-shadow:0 2px 7px rgba(17,24,39,.16)}.ai-switch-text{line-height:1}.icon-danger-btn{width:34px;height:34px;border:0;border-radius:9px;background:var(--red-light);color:var(--red);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:.92rem}.icon-danger-btn:hover{filter:brightness(.96)}.finish-chat-btn{height:34px;border:1px solid #d1fae5;border-radius:9px;background:#ecfdf5;color:#15803d;padding:0 .75rem;font-size:.72rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}.finish-chat-btn:hover{background:#dcfce7}.finish-chat-btn:disabled{opacity:.55;cursor:default}.profile-footer{display:none!important}.urgency-meter{position:relative!important;width:100%!important;height:12px!important;border-radius:999px!important;background:linear-gradient(90deg,#facc15,#f97316,#dc2626)!important;overflow:visible!important;margin-top:.35rem}.urgency-meter-fill{display:none!important}.urgency-knob{position:absolute!important;top:50%!important;width:18px!important;height:18px!important;border-radius:50%!important;background:#fff!important;border:3px solid #f97316!important;box-shadow:0 3px 10px rgba(17,24,39,.22)!important;transform:translate(-50%,-50%);transition:left .25s ease;animation:urgencyRingWiggle 1.15s ease-in-out infinite alternate}.urgency-meter[data-level="low"] .urgency-knob{border-color:#facc15!important}.urgency-meter[data-level="medium"] .urgency-knob{border-color:#f97316!important}.urgency-meter[data-level="high"] .urgency-knob{border-color:#dc2626!important}@keyframes urgencyRingWiggle{0%{box-shadow:0 0 0 0 rgba(249,115,22,.0),0 3px 10px rgba(17,24,39,.20);transform:translate(-50%,-50%) scale(1)}100%{box-shadow:0 0 0 6px rgba(249,115,22,.18),0 3px 12px rgba(17,24,39,.24);transform:translate(-50%,-50%) scale(1.08)}}
+
+
+/* Stable inbox layout */
+.inbox-layout{grid-template-columns:280px minmax(460px,1fr) 380px!important;min-height:620px}.profile-panel{min-width:0;width:380px;max-width:380px;max-height:calc(100vh - 230px);overflow:hidden}.profile-panel #profilePanelContent{overflow-y:auto;min-height:0}.profile-description{font-size:.76rem;line-height:1.5;color:var(--gray-600);background:var(--gray-50);border-left:3px solid var(--purple);padding:.65rem .75rem;border-radius:8px;margin:.65rem 0;width:100%;text-align:left}.contact-type{display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:999px;font-size:.66rem;font-weight:800;margin-left:.35rem}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:var(--green-light);color:var(--green)}.client-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:2600}.client-drawer-overlay.open{display:block}.client-drawer{position:fixed;right:0;top:0;width:min(540px,96vw);height:100vh;background:#fff;z-index:2601;transform:translateX(100%);transition:.25s;display:flex;flex-direction:column;box-shadow:-12px 0 44px rgba(17,24,39,.2)}.client-drawer.open{transform:translateX(0)}.client-drawer-header,.client-drawer-footer{padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}.client-drawer-footer{border-top:1px solid var(--gray-100);border-bottom:0;justify-content:flex-end;gap:.65rem}.client-drawer-body{padding:1.25rem;overflow-y:auto;flex:1}.drawer-photo{text-align:center;margin-bottom:1rem}.drawer-avatar{width:82px;height:82px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:800;margin:0 auto .7rem;overflow:hidden}.drawer-avatar img{width:100%;height:100%;object-fit:cover}.drawer-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}.drawer-input{margin-bottom:.8rem}.drawer-input label{display:block;font-size:.76rem;font-weight:800;margin-bottom:.3rem}.drawer-input input,.drawer-input select,.drawer-input textarea{width:100%;padding:.6rem .7rem;border:1px solid var(--gray-200);border-radius:8px}.drawer-photo-btn,.client-drawer-close{border:1px solid var(--gray-200);background:#fff;border-radius:8px;padding:.45rem .7rem;cursor:pointer}.icon-danger-btn{width:34px;height:34px;border:0;border-radius:9px;background:var(--red-light);color:var(--red);cursor:pointer}@media(max-width:1250px){.inbox-layout{grid-template-columns:260px 1fr!important}.profile-panel{display:none}}
+
+.ai-control-toggle{display:inline-flex;align-items:center;gap:.45rem;border:0;border-radius:999px;padding:.38rem .7rem;font-size:.72rem;font-weight:800;cursor:pointer;white-space:nowrap}
+.ai-control-toggle.active{background:var(--green-light);color:var(--green)}
+.ai-control-toggle.manual{background:var(--orange-light);color:var(--orange-dark)}
+.ai-control-dot{width:10px;height:10px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(255,255,255,.55)}
+.drawer-input select:disabled{opacity:1;color:var(--gray-700);background:var(--gray-50);cursor:not-allowed}
+.profile-panel #profilePanelContent{scrollbar-width:thin;scrollbar-color:var(--purple-light) transparent}
+.profile-panel #profilePanelContent::-webkit-scrollbar{width:7px}
+.profile-panel #profilePanelContent::-webkit-scrollbar-thumb{background:var(--purple-light);border-radius:999px}
+
+/* Inbox header alignment fix */
+.chat-header-actions{display:flex;align-items:center;gap:.55rem;margin-left:auto;flex-shrink:0}
+.ai-header-switch{display:inline-flex;align-items:center;gap:.5rem;min-width:92px;height:34px;padding:0 .72rem 0 .34rem;border:1px solid transparent;border-radius:999px;font-family:var(--font-sans);font-size:.72rem;font-weight:800;cursor:pointer;transition:.2s;white-space:nowrap}
+.ai-header-switch.on{background:var(--green-light);color:var(--green);border-color:#bbf7d0}
+.ai-header-switch.off{background:var(--orange-light);color:var(--orange-dark);border-color:#fed7aa}
+.ai-header-switch:hover{filter:brightness(.97);transform:translateY(-1px)}
+.ai-header-switch-track{position:relative;width:34px;height:20px;border-radius:999px;background:currentColor;display:inline-block;flex-shrink:0}
+.ai-header-switch-track:after{content:'';position:absolute;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(17,24,39,.22);transition:left .2s ease}
+.ai-header-switch.on .ai-header-switch-track:after{left:17px}
+.ai-header-switch.off .ai-header-switch-track:after{left:3px}
+.chat-header-name-row,.profile-name-row{display:flex;align-items:center;justify-content:center;gap:.42rem;min-width:0}
+.chat-header-name-row{justify-content:flex-start}
+.chat-header-name-row .chat-header-name,.profile-name-row .profile-name{margin:0}
+.chat-header-details{margin-top:.15rem}
+.contact-type{margin-left:0!important;flex-shrink:0}
+
+/* Reactify statusmodel: apart van Lead/Klant */
+.conversation-state{display:inline-flex;align-items:center;gap:.3rem;padding:.17rem .55rem;border-radius:999px;font-size:.65rem;font-weight:800;white-space:nowrap;border:1px solid transparent}
+.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.conversation-state.ai-active{background:#dcfce7;color:#15803d;border-color:#bbf7d0}
+.conversation-state.needs-takeover{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+.conversation-state.taken-over{background:#e0f2fe;color:#0369a1;border-color:#bae6fd}
+.conversation-state.completed{background:#f3f4f6;color:#4b5563;border-color:#e5e7eb}
+.conversation-state.inactive{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
+.profile-description-label{width:100%;text-align:left;font-size:.72rem;font-weight:800;color:var(--gray-800);margin-top:.7rem;margin-bottom:.3rem}
+.chat-header-actions .conversation-state{margin-right:.15rem}
+
+.email-message-body{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:1.58}.chat-msg.email-message{max-width:82%;padding:.9rem 1rem}.chat-msg.email-message .chat-msg-subject{padding-bottom:.45rem;margin-bottom:.5rem;border-bottom:1px solid rgba(107,114,128,.18);font-size:.76rem}.chat-msg.outgoing.email-message .chat-msg-subject{border-bottom-color:rgba(255,255,255,.24)}
+</style>
+<style id="reactify-message-meta-fix">
+.chat-msg-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:.75rem!important;margin-top:.28rem!important;font-size:.58rem!important;line-height:1.15!important;font-weight:500!important;letter-spacing:0!important;opacity:.78!important}
+.chat-msg.incoming .chat-msg-meta{color:#4B5563!important}
+.chat-msg.outgoing .chat-msg-meta{color:rgba(255,255,255,.82)!important}
+.chat-msg-meta .message-origin{font-size:inherit!important;font-weight:600!important;background:transparent!important;padding:0!important;border:0!important;color:inherit!important}
+
+/* E-mailkanaal */
+.chat-compose{padding:.75rem 1.25rem;border-top:1px solid var(--gray-100);display:grid;gap:.55rem;background:#fff}.chat-compose-top{display:flex;gap:.55rem;align-items:center}.chat-channel-select,.chat-subject-input{border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);padding:.5rem .65rem;font-size:.8rem;color:var(--gray-800)}.chat-channel-select{width:110px;font-weight:700}.chat-subject-input{flex:1}.chat-compose-bottom{display:flex;align-items:flex-end;gap:.5rem}.chat-compose textarea{flex:1;resize:vertical;min-height:44px;max-height:150px;padding:.65rem .75rem;border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);font:inherit;font-size:.85rem;outline:none}.chat-compose textarea:focus,.chat-subject-input:focus,.chat-channel-select:focus{border-color:var(--purple);background:#fff}.chat-msg-subject{font-size:.72rem;font-weight:800;margin-bottom:.35rem;opacity:.85}.channel-pill{display:inline-flex;align-items:center;padding:.13rem .45rem;border-radius:999px;background:var(--purple-light);color:var(--purple);font-size:.65rem;font-weight:800}.email-sync-state{font-size:.68rem;color:var(--gray-500)}
+</style>
+
+<style id="reactify-contact-sentiment-appointment-fix">
+.sentiment-pill{display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.sentiment-pill.positief{background:#DCFCE7;color:#16A34A}.sentiment-pill.neutraal{background:#F3F4F6;color:#6B7280}.sentiment-pill.negatief{background:#FEE2E2;color:#DC2626}
+.profile-appointment-btn{width:100%;margin-top:.7rem;border:0;border-radius:9px;padding:.62rem .8rem;background:var(--purple);color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;box-shadow:0 6px 14px rgba(91,46,145,.18)}.profile-appointment-btn:hover{background:var(--purple-dark);transform:translateY(-1px)}
+.finish-chat-btn:disabled{background:#DCFCE7!important;color:#15803D!important;border-color:#86EFAC!important;opacity:1!important;cursor:default!important}
+</style>
+</head><body>
+<aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img alt="Reactify" src="/logo.png" style="height:28px;width:auto;filter:brightness(1.8);"/></div><nav class="sidebar-nav"><a class="sidebar-link" href="/platform/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Dashboard</a>
+<a class="sidebar-link" href="/platform/klantenlijst/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Klanten</a>
+<a class="sidebar-link active" href="/platform/inbox/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>Inbox</a>
+<a class="sidebar-link" href="/platform/agenda/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>Agenda</a><div class="sidebar-spacer"></div><a class="sidebar-link" href="/platform/instellingen/">Instellingen</a><a class="sidebar-link" href="#">Help</a></nav><div class="sidebar-user"><div class="user-avatar">BD</div><div class="user-info"><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div></aside>
+<main class="main"><button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button><div class="top-bar"><div class="top-bar-left"><h1>Inbox</h1><p>Beheer al je klantgesprekken op één plaats.</p></div><div class="top-bar-right"><div class="top-search"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" fill-rule="evenodd"></path></svg><input id="inboxSearch" placeholder="Zoek klanten, berichten..." type="text"/></div><button class="notification-btn" id="notificationBtn" onclick="toggleNotificationsPanel()" title="Meldingen">🔔<span class="notification-badge" id="notificationBadge">0</span></button></div></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-icon purple">💬</div><div class="stat-info"><div class="stat-label">Open gesprekken</div><div class="stat-value" id="statOpen">0</div><div class="stat-change">Live uit inbox</div></div></div><div class="stat-card"><div class="stat-icon orange">✉</div><div class="stat-info"><div class="stat-label">Ongelezen</div><div class="stat-value" id="statUnread">0</div><div class="stat-change">Te verwerken</div></div></div><div class="stat-card"><div class="stat-icon green">✓</div><div class="stat-info"><div class="stat-label">% afgehandeld deze week</div><div class="stat-value" id="statHandled">0%</div><div class="stat-change">Op basis van status</div></div></div></div>
+<div class="inbox-layout"><div class="inbox-panel conv-panel"><div class="conv-tabs"><button class="conv-tab active" data-channel="all">Alles</button><button class="conv-tab" data-channel="sms">SMS</button><button class="conv-tab" data-channel="email">E-mail</button><button class="conv-tab" data-folder="spam">Spam</button></div><div style="padding:.7rem 1rem;border-bottom:1px solid var(--gray-100);display:flex;gap:.5rem"><button class="btn-small btn-purple" style="width:100%" onclick="openNewConversation()">＋ Nieuw gesprek</button></div><div class="conv-list" id="conversationList"></div><div class="conv-footer"><a href="/platform/klantenlijst/">Contactpersonen beheren</a></div></div><div class="inbox-panel chat-panel"><div class="chat-header" id="chatHeader"></div><div class="chat-messages" id="chatMessages"></div><div class="chat-compose"><div class="chat-compose-top"><select class="chat-channel-select" id="chatChannel" aria-label="Communicatiekanaal"><option value="sms">SMS</option><option value="email">E-mail</option></select><input class="chat-subject-input" id="chatSubject" placeholder="Onderwerp van de e-mail" type="text"/><span class="email-sync-state" id="emailSyncState"></span></div><div class="chat-compose-bottom"><textarea id="chatInput" placeholder="Typ een bericht..." rows="2"></textarea><button class="chat-send-btn" onclick="sendMessage()">➤</button></div></div></div><div class="inbox-panel profile-panel"><div class="profile-header-section"><h2>Profiel</h2></div><div id="profilePanelContent"></div></div></div></main>
+<div class="notification-panel" id="notificationPanel">
+<div class="notification-panel-header"><h3>Meldingen</h3><button class="btn-small" onclick="markAllNotificationsRead()" type="button">Markeer gelezen</button></div>
+<div class="notification-list" id="notificationList"></div>
+</div>
+<div class="modal-overlay" id="rfClientModal">
+<div class="modal">
+<div class="modal-header"><h2>Nieuwe contactpersoon</h2><button class="modal-close" onclick="RFUI.closeClientModal()" type="button">×</button></div>
+<form id="rfClientForm">
+<div class="modal-body">
+<div class="form-group"><label>Naam</label><input id="rfClientName" placeholder="Naam klant" required=""/></div>
+<div class="form-group"><label>E-mail</label><input id="rfClientEmail" placeholder="klant@email.be" type="email"/></div>
+<div class="form-group"><label>Telefoon</label><input id="rfClientPhone" placeholder="+32 ..." type="tel"/></div>
+<div class="form-group"><label>Voorkeurskanaal</label><select id="rfClientChannel"><option value="sms">SMS</option><option value="email">E-mail</option></select></div><div class="form-group"><label>Notitie</label><textarea id="rfClientNote" placeholder="Korte notitie" rows="3"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn-cancel" onclick="RFUI.closeClientModal()" type="button">Annuleren</button><button class="btn-save" type="submit">Opslaan</button></div>
+</form>
+</div>
+</div>
+<div class="modal-overlay" id="rfAppointmentModal">
+<div class="modal wide">
+<div class="modal-header"><h2>Afspraak maken met klant</h2><button class="modal-close" onclick="RFUI.closeAppointmentModal()" type="button">×</button></div>
+<form id="rfAppointmentForm">
+<div class="modal-body">
+<div class="empty-state hidden" id="rfAppointmentAlert"></div>
+<input id="rfApptClient" type="hidden"/>
+<div class="form-grid">
+<div class="form-field full"><label>Geselecteerde klant</label><input id="rfApptClientDisplay" readonly="" type="text"/><div class="form-help">Deze klant komt uit het geselecteerde inboxgesprek.</div></div>
+<div class="form-field"><label>Afspraaktype</label><select id="rfApptEventType" required=""><option value="">Cal.com afspraaktypes laden...</option></select><div class="form-help">Dit zijn dezelfde afspraaktypes als op de agenda-pagina.</div></div>
+<div class="form-field"><label>Startdatum en tijd</label><input id="rfApptStart" required="" type="datetime-local"/></div>
+<div class="form-field"><label>E-mail klant</label><input id="rfApptEmail" placeholder="klant@email.be" type="email"/><div class="form-help">Cal.com heeft een e-mailadres nodig.</div></div>
+<div class="form-field"><label>Telefoon klant</label><input id="rfApptPhone" placeholder="+32 ..." type="tel"/></div>
+<div class="form-field"><label>Plaats</label><select id="rfApptLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="custom">Andere plaats</option></select></div>
+<div class="form-field"><label>Plaats detail</label><input id="rfApptLocationValue" placeholder="Link, telefoonnummer of adres"/><div class="form-help">Bij Cal.com video mag dit leeg blijven.</div></div>
+<div class="form-field"><label>Duur</label><input id="rfApptLength" min="5" placeholder="Automatisch" step="5" type="number"/></div>
+<div class="form-field full"><label>Opmerking</label><textarea id="rfApptNotes" placeholder="Bijv. afspraak ingepland vanuit inbox" rows="3"></textarea></div>
+<label class="form-field full" style="display:flex;flex-direction:row;align-items:center;gap:.5rem;"><input id="rfApptForce" style="width:auto;" type="checkbox"/> Forceer afspraak buiten beschikbaarheid of bij conflict</label>
+</div>
+</div>
+<div class="modal-footer"><button class="btn-cancel" onclick="RFUI.closeAppointmentModal()" type="button">Annuleren</button><button class="btn-save" type="submit">Afspraak aanmaken</button></div>
+</form>
+</div>
+</div>
+<div class="modal-overlay" id="newConversationModal"><div class="modal"><div class="modal-header"><h2>Nieuw gesprek starten</h2><button class="modal-close" onclick="closeNewConversation()">×</button></div><div class="modal-body"><div class="form-group"><label>Contactpersoon</label><select id="newConversationContact"></select></div><div class="form-group"><label>Kanaal</label><select id="newConversationChannel"><option value="sms">SMS</option><option value="email">E-mail</option></select></div><div class="form-group" id="newConversationSubjectWrap" style="display:none"><label>Onderwerp</label><input id="newConversationSubject" placeholder="Onderwerp van de e-mail"></div><div class="form-help">Contact ontbreekt? Voeg hem eerst toe via Klanten.</div></div><div class="modal-footer"><button class="btn-cancel" onclick="closeNewConversation()">Annuleren</button><button class="btn-save" onclick="createNewConversation()">Gesprek starten</button></div></div></div><div class="toast" id="rfToast"></div><div class="client-drawer-overlay" id="clientDrawerOverlay" onclick="closeClientDrawer()"></div><aside class="client-drawer" id="clientDrawer"><div class="client-drawer-header"><h2>Contactprofiel</h2><button class="client-drawer-close" onclick="closeClientDrawer()">×</button></div><div class="client-drawer-body"><input id="drawerClientId" type="hidden"><div class="drawer-photo"><div class="drawer-avatar" id="drawerAvatar">?</div><button class="drawer-photo-btn" type="button" onclick="document.getElementById('drawerPhotoInput').click()">Foto wijzigen</button><input id="drawerPhotoInput" type="file" accept="image/*" hidden></div><div class="drawer-row"><div class="drawer-input"><label>Naam</label><input id="drawerName"></div><div class="drawer-input"><label>Type</label><select id="drawerType" disabled><option>Lead</option><option>Klant</option></select><div class="form-help">Wordt automatisch bepaald op basis van het gesprek.</div></div></div><div class="drawer-row"><div class="drawer-input"><label>E-mail</label><input id="drawerEmail" type="email"></div><div class="drawer-input"><label>Telefoon</label><input id="drawerPhone"></div></div><div class="drawer-input"><label>Adres</label><input id="drawerAddress"></div><div class="drawer-input"><label>Sentiment</label><select id="drawerStatus" disabled><option value="neutraal">Neutraal</option><option value="positief">Positief</option><option value="negatief">Negatief</option></select><div class="form-help">Wordt automatisch bepaald en kan niet handmatig worden aangepast.</div></div><div class="drawer-input"><label>Contactpersoonbeschrijving</label><textarea id="drawerDescription" rows="4"></textarea><div class="form-help">Beschrijvende samenvatting van wie deze persoon is, kenmerken, voorkeuren, achtergrond en gebruikelijke communicatie.</div></div><div class="drawer-input"><label>Notities</label><textarea id="drawerNote" rows="4"></textarea></div></div><div class="client-drawer-footer"><button class="btn-cancel" onclick="closeClientDrawer()">Annuleren</button><button class="btn-save" onclick="saveClientDrawer()">Opslaan</button></div></aside><script>
+(() => {
+  'use strict';
+  const STORE='reactify_platform_data_v3';
+  const DELETED='reactify.deletedClients.v3';
+  const START='reactify.inboxStartedAt.emailCleanV7';
+  const NOTIFY_SEEN='reactify.inboxNotificationSeen.v1';
+  const API={conversations:'/.netlify/functions/conversations',messages:'/.netlify/functions/conversation-messages',send:'/.netlify/functions/send-message',emailSync:'/.netlify/functions/email-sync',classify:'/.netlify/functions/classify-conversation',eventTypes:'/.netlify/functions/cal-event-types',booking:'/.netlify/functions/conversation-booking'};
+  const $=id=>document.getElementById(id);
+  const now=()=>new Date().toISOString();
+  const uid=(p='id')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?';
+  const normPhone=v=>{let s=String(v||'').trim().replace(/[^0-9+]/g,'');if(!s)return '';if(s.startsWith('00'))s='+'+s.slice(2);let d=s.replace(/\D/g,'');if(d.startsWith('32'))return '+32'+d.slice(2);if(d.startsWith('0'))return '+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return '+32'+d;return s.startsWith('+')?'+'+d:d};
+  const normEmail=v=>String(v||'').trim().toLowerCase();
+  const read=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch{return f}};
+  const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const blank=()=>({clients:[],conversations:[],appointments:[],settings:{ownerName:'Bob Demo'}});
+  const load=()=>{const d=read(STORE,blank());d.clients||=[];d.conversations||=[];d.appointments||=[];d.settings||={};return d};
+  const save=d=>{write(STORE,d);window.dispatchEvent(new CustomEvent('reactify:data',{detail:d}));};
+  const fmt=d=>{try{return new Date(d).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch{return ''}};
+  const colors=['#5B2E91','#F5A623','#16a34a','#2563eb','#7B52AB','#dc2626'];
+  const toast=msg=>{const t=$('rfToast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2600)};
+  const headers=()=>{const h={'Content-Type':'application/json'};const tenantId=(localStorage.getItem('reactify.tenantId')||'').trim();if(tenantId)h['X-Tenant-Id']=tenantId;return h;};
+  async function api(url,opts={}){
+    const timeoutMs=Number(opts.timeoutMs||18000);
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),timeoutMs);
+    const fetchOpts={...opts,signal:opts.signal||controller.signal,headers:{...headers(),...(opts.headers||{})}};
+    delete fetchOpts.timeoutMs;
+    try{
+      const r=await fetch(url,fetchOpts);
+      const raw=await r.text();
+      let j={};try{j=raw?JSON.parse(raw):{}}catch{j={raw}}
+      if(!r.ok||j.status==='error'){
+        const platformTimeout=/Inactivity Timeout|Too much time has passed|timed? out/i.test(raw||'');
+        const detail=typeof j.details==='string'?j.details:(!platformTimeout&&j.raw?j.raw:'');
+        const base=platformTimeout?'De backend reageerde te traag. De aanvraag is veilig gestopt.':(j.error||j.message||`Request mislukt (HTTP ${r.status})`);
+        const err=new Error([base,detail].filter(Boolean).join(' — '));err.status=r.status;err.payload=j;throw err;
+      }
+      return j;
+    }catch(error){
+      if(error?.name==='AbortError'){const err=new Error('De backend reageerde niet binnen de verwachte tijd. Probeer opnieuw.');err.status=504;throw err}
+      throw error;
+    }finally{clearTimeout(timer)}
+  }
+  const isNotFoundError=e=>Number(e?.status)===404||/HTTP 404|niet gevonden|not found/i.test(String(e?.message||''));
+  async function callBackendAction(action,payload={}){
+    const primary=action==='send-message'?API.send:API.emailSync;
+    try{return await api(primary,{method:'POST',body:JSON.stringify(payload)})}
+    catch(primaryError){
+      if(!isNotFoundError(primaryError))throw primaryError;
+      return api(API.conversations,{method:'POST',body:JSON.stringify({_reactifyAction:action,...payload})});
+    }
+  }
+
+  // One-time clean start: only contacts active after this deployment are imported.
+  if(!localStorage.getItem(START)){
+    localStorage.setItem(START,now());
+    const d=load(); d.clients=[]; d.conversations=[]; save(d);
+  }
+  const startedAt=()=>new Date(localStorage.getItem(START)||0).getTime();
+  const tombstones=()=>read(DELETED,[]);
+  function isDeleted(obj){const p=normPhone(obj?.phone||obj?.contact_phone),e=normEmail(obj?.email||obj?.contact_email),id=String(obj?.id||obj?.backendId||'');return tombstones().some(x=>(id&&(x.id===id||x.backendId===id))||(p&&x.phone===p)||(e&&x.email===e));}
+  function markDeleted(client,conv){const list=tombstones();const item={id:String(client?.id||''),backendId:String(conv?.backendId||conv?.id||''),phone:normPhone(client?.phone),email:normEmail(client?.email),deletedAt:now()};if(!list.some(x=>(item.backendId&&x.backendId===item.backendId)||(item.phone&&x.phone===item.phone)||(item.email&&x.email===item.email)))list.unshift(item);write(DELETED,list.slice(0,2000));}
+  function unmarkDeleted(client){const p=normPhone(client.phone),e=normEmail(client.email);write(DELETED,tombstones().filter(x=>!((p&&x.phone===p)||(e&&x.email===e))))}
+  function determineType(text,current='Lead'){
+    const t=String(text||'').toLowerCase().trim();
+    if(/\b(geen|nog geen|niet) klant\b|\bik ben geen klant\b|\b(nee|neen),? ik ben geen klant\b|\bnieuwe klant\b|\beerste keer\b/.test(t)) return 'Lead';
+    if(/\bik ben( al)? klant\b|\bik ben een bestaande klant\b|\breeds klant\b|\bja,? ik ben( al)? klant\b/.test(t)) return 'Klant';
+    return current||'Lead';
+  }
+  function determineTypeFromMessages(messages,current='Lead'){
+    const items=(messages||[]).filter(m=>m&&String(m.text||'').trim());
+    let type=current||'Lead';
+    for(let i=0;i<items.length;i++){
+      const m=items[i];
+      if((m.type||'incoming')!=='incoming') continue;
+      const text=String(m.text||'').toLowerCase().trim().replace(/[.!?]+$/,'');
+      const previousOutgoing=items.slice(0,i).reverse().find(x=>(x.type||'incoming')==='outgoing');
+      const askedCustomer=/ben je( al)? klant|bent u( al)? klant|ben jij( al)? klant|bestaande klant/.test(String(previousOutgoing?.text||'').toLowerCase());
+      if(/\bgeen klant\b|\bik ben geen klant\b|\bnog geen klant\b|\beerste keer\b/.test(text) || (askedCustomer && /^(nee|neen|nope|nog niet)\b/.test(text))){type='Lead';continue;}
+      if(/\bik ben( al)? klant\b|\bik ben een bestaande klant\b|\breeds klant\b/.test(text) || (askedCustomer && /^(ja|jazeker|zeker|inderdaad|klopt|yes)\b/.test(text))){type='Klant';continue;}
+    }
+    return type;
+  }
+  function sentiment(text,status=''){
+    const t=(String(text||'')+' '+String(status||'')).toLowerCase();
+    const negative=(t.match(/klacht|boos|ontevreden|niet tevreden|probleem|fout|slecht|teleurgesteld|annuleer|geen reactie|niet geholpen|dringend|spoed/g)||[]).length;
+    const positive=(t.match(/bedankt|dank u|merci|opgelost|geholpen|bevestigd|prima|perfect|tevreden|top|fijn|goed geholpen|in orde/g)||[]).length;
+    if(negative>positive)return 'negatief';
+    if(positive>negative)return 'positief';
+    return 'neutraal';
+  }
+  function isGreetingOnly(text){const t=String(text||'').toLowerCase().trim().replace(/[.!?,;:]+/g,'').replace(/\s+/g,' ');return /^(hoi|hallo|hey|heey|goeiedag|goedendag|goedenavond|goedemorgen|dag|yo|hi)( daar)?$/.test(t)}
+  function description(client,conversations){
+    const list=Array.isArray(conversations)?conversations:[];
+    const messages=list.flatMap(conv=>(conv?.messages||[]).filter(m=>String(m.text||'').trim()).map(m=>({text:String(m.text||'').trim(),incoming:(m.type||'incoming')==='incoming',channel:String(m.channel||conv.channel||'sms').toLowerCase()})));
+    const incoming=messages.filter(m=>m.incoming).map(m=>m.text);
+    const allText=messages.map(m=>m.text).join(' ').toLowerCase();
+    const channelCounts=messages.reduce((acc,m)=>{acc[m.channel]=(acc[m.channel]||0)+1;return acc;},{});
+    const preferred=Object.entries(channelCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||String(list[0]?.channel||'sms').toLowerCase();
+    const channelLabel=preferred==='email'?'e-mail':'SMS';
+    const parts=[];
+    const name=client.name||'Deze persoon';
+
+    if(/bouw|aannemer|renovatie|werf|metsel|dakwerk|elektricien|loodgieter/.test(allText))parts.push('is actief in of heeft een duidelijke link met de bouwsector');
+    else if(/kapper|kapsalon|haar|kleuren|knippen/.test(allText))parts.push('heeft interesse in haarverzorging of kappersdiensten');
+    else if(/coach|consultant|advies|onderneming|bedrijf|zaakvoerder/.test(allText))parts.push('heeft een professionele of ondernemende achtergrond');
+
+    if(/dringend|spoed|asap|meteen|zo snel mogelijk/.test(allText))parts.push('verwacht snelle en concrete opvolging');
+    if(/prijs|kost|tarief|offerte|euro/.test(allText))parts.push('is prijsbewust en vraagt graag duidelijke kosteninformatie');
+    if(/afspraak|boeken|inplannen|reservatie|beschikbaar/.test(allText))parts.push('is gericht op praktische planning en afspraken');
+    if(/klacht|ontevreden|probleem|fout|slecht|teleurgesteld/.test(allText))parts.push('communiceert kritisch wanneer iets niet naar wens verloopt');
+    else if(/bedankt|dank u|merci|prima|perfect|top|fijn/.test(allText))parts.push('communiceert doorgaans vriendelijk en waarderend');
+    if(incoming.length>2 && incoming.reduce((n,x)=>n+x.length,0)/incoming.length<55)parts.push('communiceert kort en direct');
+    else if(incoming.length && incoming.reduce((n,x)=>n+x.length,0)/incoming.length>180)parts.push('geeft meestal uitgebreide context in berichten');
+
+    const unique=[...new Set(parts)].slice(0,3);
+    const core=unique.length?`${name} ${unique.join(', ')}.`:`${name} heeft nog een beperkt opgebouwd profiel; nieuwe gesprekken zullen de beschrijving verder verfijnen.`;
+    return `${core} Gebruikt meestal ${channelLabel} voor communicatie.`;
+  }
+
+  function updateStableDescription(client, conversations){
+    if(!client)return;
+    const related=Array.isArray(conversations)?conversations:[];
+    const messageCount=related.reduce((total,conv)=>total+(Array.isArray(conv?.messages)?conv.messages.filter(m=>String(m?.text||'').trim()).length:0),0);
+    const previousCount=Number(client.descriptionMessageCount||0);
+    const candidate=description(client,related);
+    client.autoDescription=client.autoDescription||candidate;
+    // Alleen wijzigen wanneer er daadwerkelijk nieuwe gespreksinhoud is.
+    // Zo wisselt de beschrijving niet bij live syncs waarin berichten tijdelijk nog niet geladen zijn.
+    if(!client.descriptionManual&&(!client.description||messageCount>previousCount)){
+      client.autoDescription=candidate;
+      client.description=candidate;
+      client.descriptionMessageCount=messageCount;
+    }
+  }
+
+
+  function localConversationAnalysis(conv){const text=(conv?.messages||[]).map(m=>m.text||'').join(' ').toLowerCase();const human=/medewerker|persoon spreken|mens spreken|iemand spreken|klantendienst|manager|zaakvoerder/.test(text);const negative=/klacht|ontevreden|niet tevreden|probleem|fout|slecht|teleurgesteld|annuleren/.test(text);const urgent=/dringend|spoed|asap|meteen|onmiddellijk|zo snel mogelijk/.test(text);const booking=/afspraak|boeken|inplannen|reservatie|beschikbaar|welke dag|welk uur/.test(text);if(human)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt expliciet om een medewerker of menselijke opvolging.',action:'Neem het gesprek over en reageer persoonlijk.'};if(negative)return{requiresHuman:true,urgency:'hoog',summary:'De klant meldt een klacht of probleem en heeft menselijke opvolging nodig.',action:'Neem het gesprek over, erken het probleem en stel een concrete oplossing voor.'};if(urgent)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt dringende opvolging.',action:'Neem het gesprek over en reageer zo snel mogelijk.'};if(booking)return{requiresHuman:false,urgency:'normaal',summary:'De klant wil een afspraak maken of een beschikbaar moment vinden.',action:'Laat AI twee concrete momenten voorstellen of plan de afspraak in.'};return{requiresHuman:false,urgency:'normaal',summary:'De klant heeft een vraag en verwacht verdere opvolging.',action:'Laat AI antwoorden en volg op wanneer het gesprek niet verdergaat.'};}
+  function statusInfo(status){const x=String(status||'inactive').toLowerCase().replaceAll('-','_').replaceAll(' ','_');if(['manual_overname','manual_takeover','overgenomen','taken_over'].includes(x))return{key:'taken-over',label:'Overgenomen'};if(['menselijke_overname','human_required','human_needed','overname_nodig'].includes(x))return{key:'needs-takeover',label:'Overname nodig'};if(['afgesloten','closed','completed'].includes(x))return{key:'completed',label:'Afgerond'};if(['ai_active','ai_actief'].includes(x))return{key:'ai-active',label:'AI actief'};return{key:'inactive',label:'Inactief'};}
+  function stateBadge(status){const m=statusInfo(status);return `<span class="conversation-state ${m.key}"><span class="state-dot"></span>${m.label}</span>`;}
+  function clientMatch(d,row){const p=normPhone(row.contact_phone||row.phone),e=normEmail(row.contact_email||row.email);return d.clients.find(c=>(p&&normPhone(c.phone)===p)||(e&&normEmail(c.email)===e));}
+  function phoneLikeName(value){const raw=String(value||'').trim();if(!raw)return true;const digits=raw.replace(/\D/g,'');return digits.length>=9&&normPhone(raw)!=='';}
+  function betterContactName(current,incoming,phone){const cur=String(current||'').trim(),inc=String(incoming||'').trim();if(!inc||phoneLikeName(inc)||normPhone(inc)===normPhone(phone))return cur||phone||'Nieuwe lead';if(!cur||phoneLikeName(cur)||/^(nieuwe lead|onbekende klant|onbekend)$/i.test(cur))return inc;return cur;}
+  function validBackendRow(row){if(!row)return false;const id=String(row.id||row.conversation_id||'');/* Alleen exact verwijderde gesprekken verbergen. Een nieuwe oproep van hetzelfde nummer moet opnieuw zichtbaar worden. */if(id&&tombstones().some(x=>String(x.backendId||'')===id))return false;return true;}
+  function mergeBackend(rows){
+    const d=load(); const seen=new Set(); const claimedConversations=new Set();
+    for(const row of rows.filter(validBackendRow)){
+      const backendId=String(row.id||row.conversation_id||''); if(!backendId)continue;
+      let c=clientMatch(d,row);
+      const combined=[row.last_message,row.summary,row.contact_name].filter(Boolean).join(' ');
+      if(!c){c={id:uid('client'),name:betterContactName('',row.contact_name,row.contact_phone),email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:'Lead',status:'neutraal',sentiment:'neutraal',description:'',source:String(row.channel||'sms').toLowerCase()==='email'?'Nieuw e-mailgesprek':'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
+      c.name=betterContactName(c.name,row.contact_name,row.contact_phone);
+      c.email=row.contact_email||c.email;
+      c.phone=normPhone(row.contact_phone||c.phone);
+      c.updatedAt=row.updated_at||c.updatedAt;
+      c.type=c.type||'Lead';unmarkDeleted(c);
+
+      // Eén zichtbaar gesprek per contact én kanaal. SMS en e-mail blijven apart.
+      const rowChannel=String(row.channel||'sms').toLowerCase();
+      const rowFolder=String(row.folder||'inbox');const conversationKey=`${c.id}:${rowChannel}:${rowFolder}`;
+      let conv=d.conversations.find(x=>x.backendId===backendId||x.id===backendId);
+      if(!conv) conv=d.conversations.find(x=>x.clientId===c.id&&String(x.channel||'sms').toLowerCase()===rowChannel&&String(x.folder||'inbox')===rowFolder&&!x.backendId);
+      if(!conv&&!claimedConversations.has(conversationKey)) conv=d.conversations.find(x=>x.clientId===c.id&&String(x.channel||'sms').toLowerCase()===rowChannel&&String(x.folder||'inbox')===rowFolder);
+      if(claimedConversations.has(conversationKey)&&(!conv||String(conv.backendId)!==backendId)){seen.add(backendId);continue}
+      if(!conv){conv={id:backendId,backendId,clientId:c.id,channel:'sms',subject:'',messages:[],createdAt:row.created_at||now()};d.conversations.unshift(conv)}
+      if(!conv.backendId){conv.backendId=backendId;conv.id=backendId}
+      claimedConversations.add(conversationKey);
+      const completedByContent=/afspraak.*succesvol.*ingepland|gesprek.*afgerond/i.test(`${row.summary||''} ${row.recommended_action||''}`);
+      const takeoverByContent=/neem (het )?gesprek over|menselijke opvolging|medewerker|persoonlijk opvolgen/i.test(`${row.summary||''} ${row.recommended_action||''}`);
+      // Een bewuste manuele overname heeft altijd voorrang op de AI-analyse.
+      // Anders zet requires_human/recommended_action de status bij elke live sync
+      // opnieuw terug van 'Overgenomen' naar 'Overname nodig'.
+      const storedState=statusInfo(row.status||conv.status||'inactive').key;
+      const backendStatus=storedState==='completed'
+        ? 'afgesloten'
+        : (storedState==='taken-over'
+            ? 'manual_overname'
+            : (completedByContent
+                ? 'afgesloten'
+                : ((row.requires_human||takeoverByContent)
+                    ? 'menselijke_overname'
+                    : (row.status||conv.status||'inactive'))));
+      Object.assign(conv,{clientId:c.id,channel:rowChannel,folder:String(row.folder||'inbox'),subject:String(row.subject||conv.subject||''),status:backendStatus,summary:row.summary||conv.summary||'',lastMessage:row.last_message||conv.lastMessage||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||now(),ai:{intent:row.intent||'onbekend',urgency:row.urgency||'normaal',requiresHuman:completedByContent?false:!!(row.requires_human||takeoverByContent),summary:row.summary||'',recommendedAction:row.recommended_action||'',suggestedReply:row.suggested_reply||''}});
+      if(completedByContent&&row.status!=='afgesloten'){fetch('/.netlify/functions/conversations',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversationId:backendId,status:'afgesloten',aiEnabled:false})}).catch(()=>{});}
+      c.sentiment=sentiment([conv.summary,conv.lastMessage].join(' '),conv.status);c.status=c.sentiment;seen.add(backendId);
+    }
+    // Verwijder alleen duplicaten voor dezelfde contactpersoon én hetzelfde kanaal.
+    const byClient=new Map();
+    d.conversations=d.conversations.filter(cv=>{
+      if(cv.backendId&&!seen.has(String(cv.backendId)))return false;
+      const key=`${cv.clientId}:${String(cv.channel||'sms').toLowerCase()}:${String(cv.folder||'inbox')}`;const prev=byClient.get(key);
+      if(!prev){byClient.set(key,cv);return true}
+      const keepCurrent=!!cv.backendId&&!prev.backendId;
+      if(keepCurrent){const idx=d.conversations.indexOf(prev);if(idx>=0)d.conversations.splice(idx,1);byClient.set(key,cv);return true}
+      return false;
+    });
+    // Contactpersonen bestaan onafhankelijk van gesprekken.
+    // Een verwijderd gesprek mag het gekoppelde contactprofiel nooit verwijderen.
+    for(const client of d.clients){
+      const related=d.conversations.filter(conv=>conv.clientId===client.id);
+      updateStableDescription(client,related);
+    }
+    save(d);
+  }
+
+
+  let selectedId=null,search='',activeChannel='all',activeFolder='inbox';
+  function ensureSelection(){const d=load();const q=new URLSearchParams(location.search).get('client');if(q){let cv=d.conversations.find(x=>x.clientId===q&&String(x.folder||'inbox')==='inbox');if(!cv){cv={id:uid('conv'),clientId:q,channel:'sms',folder:'inbox',subject:'',status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(cv);save(d)}selectedId=cv.id;activeFolder='inbox';history.replaceState(null,'','/platform/inbox/')}const visible=d.conversations.filter(x=>String(x.folder||'inbox')===activeFolder&&(activeChannel==='all'||String(x.channel||'sms').toLowerCase()===activeChannel));if(!selectedId||!visible.some(x=>x.id===selectedId))selectedId=visible[0]?.id||null}
+  function current(){const d=load(),conv=d.conversations.find(x=>x.id===selectedId),client=conv?d.clients.find(c=>c.id===conv.clientId):null;return{d,conv,client}}
+  function applyLifecycle(d){
+    const cutoff=Date.now()-30*60*1000;
+    let changed=false;
+    for(const cv of d.conversations){
+      const state=statusInfo(cv.status).key;
+      const messages=Array.isArray(cv.messages)?cv.messages:[];
+      const lastTime=new Date(messages.at(-1)?.time||cv.updatedAt||cv.createdAt||0).getTime();
+
+      // Handmatige overname, overname nodig en afgeronde gesprekken mogen nooit
+      // door de lokale 30-minutenlogica opnieuw naar AI actief worden gezet.
+      if(['taken-over','needs-takeover','completed'].includes(state)){
+        if(lastTime&&lastTime<cutoff&&state!=='taken-over'){
+          if(cv.status!=='inactive'){cv.status='inactive';changed=true;}
+        }
+        continue;
+      }
+
+      const next=messages.length===0?'inactive':(lastTime&&lastTime<cutoff?'inactive':'ai-active');
+      if(String(cv.status)!==next){cv.status=next;changed=true;}
+    }
+    if(changed)save(d);
+  }
+  function render(){ensureSelection();const d=load();applyLifecycle(d);const unavailable=activeChannel==='chat';const list=unavailable?[]:d.conversations.filter(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};const channel=String(cv.channel||'sms').toLowerCase();const channelOk=activeChannel==='all'||channel===activeChannel;const folder=String(cv.folder||'inbox');const folderOk=folder===activeFolder;return folderOk&&channelOk&&[c.name,c.phone,c.email,cv.lastMessage,cv.summary].join(' ').toLowerCase().includes(search)}).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
+    $('statOpen').textContent=d.conversations.filter(x=>String(x.folder||'inbox')==='inbox'&&!String(x.status).includes('afgesloten')).length;$('statUnread').textContent=d.conversations.reduce((n,x)=>n+Number(x.unread||0),0);$('statHandled').textContent=d.conversations.length?Math.round(100*d.conversations.filter(x=>String(x.status).includes('afgesloten')).length/d.conversations.length)+'%':'0%';
+    $('conversationList').innerHTML=unavailable
+      ? `<div class="empty-state"><strong>Chat nog niet beschikbaar</strong>Dit kanaal wordt later aan Reactify toegevoegd.</div>`
+      : (list.map(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};return `<div class="conv-item ${cv.id===selectedId?'active':''}" onclick="selectConversation('${cv.id}')"><div class="conv-avatar" style="background:${c.color||'#5B2E91'}">${initials(c.name)}</div><div class="conv-content"><div class="conv-header"><div class="conv-name">${esc(c.name||'Onbekend')} <span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${esc(c.type||'Lead')}</span>${stateBadge(cv.status)}</div><div class="conv-time">${fmt(cv.updatedAt)}</div></div><div class="conv-preview">${esc(cv.lastMessage||cv.summary||'Nog geen berichten')}</div></div></div>`}).join('')||'<div class="empty-state"><strong>Geen gesprekken</strong>Nieuwe SMS- en e-mailgesprekken verschijnen hier automatisch.</div>');
+    renderSelected();
+  }
+  async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',subject:m.subject||'',channel:String(m.channel||x.channel||'sms').toLowerCase(),time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineTypeFromMessages(x.messages,c.type||'Lead');c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
+  function cleanDisplayedEmail(value){
+    let text=String(value||'').replace(/\r\n?/g,'\n');
+    text=text.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<script[\s\S]*?<\/script>/gi,'');
+    text=text.replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/gi,'$1');
+    text=text.replace(/<https?:\/\/[^>]+>/gi,'');
+    text=text.replace(/https?:\/\/\S+/gi,link=>link.length>55?'':link);
+    text=text.replace(/\{[\s\S]{0,500}?\}/g,'');
+    const markers=[/^\s*On .+ wrote:\s*$/im,/^\s*Op .+ schreef .+:\s*$/im,/^\s*(From|Van):\s+.+$/im,/^\s*-{2,}\s*(Original Message|Oorspronkelijk bericht)\s*-{2,}\s*$/im];
+    let cut=text.length;markers.forEach(rx=>{const m=rx.exec(text);if(m)cut=Math.min(cut,m.index)});text=text.slice(0,cut);
+    const footer=/^\s*(unsubscribe|uitschrijven|manage (your )?email preferences|privacy notice|bekijk in browser|view (this )?email in (your )?browser|this email was sent|you are receiving this email)\b.*$/im.exec(text);
+    if(footer)text=text.slice(0,footer.index);
+    return text.split('\n').filter(line=>{
+      const l=line.trim();
+      if(/^>/.test(l))return false;
+      if(/^(message-id|references|in-reply-to|content-type|mime-version|list-id|list-unsubscribe|x-[a-z-]+):/i.test(l))return false;
+      if(/^(https?:\/\/|[{}[\]<>]{2,}|--[a-z0-9_-]{10,})/i.test(l))return false;
+      if(/^(var|const|let|function|select|insert|update|delete)\b/i.test(l))return false;
+      if(/powered by ai|generated (by|using) (an )?ai|privacy policy|cookie policy|terms (of use|and conditions)|manage (your )?(email )?preferences|unsubscribe/i.test(l))return false;
+      return true;
+    }).join('\n').replace(/```[\s\S]*?```/g,'').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+  }
+  function renderSelected(){const {conv,client}=current();if(!conv||!client){$('chatHeader').innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>';$('chatMessages').innerHTML='<div class="empty-state">Selecteer een gesprek.</div>';$('profilePanelContent').innerHTML='<div class="empty-state">Geen profiel geselecteerd.</div>';return}
+    const statusMeta=statusInfo(conv.status);const isManual=statusMeta.key==='taken-over';
+    const currentState=statusInfo(conv.status).key;
+    const needsTakeover=currentState==='needs-takeover';
+    const restrictedFolder=String(conv.folder||'inbox')==='spam';
+    const switchOff=restrictedFolder||isManual||needsTakeover;
+    const switchLabel=restrictedFolder?'AI uit':(needsTakeover?'Overnemen':(isManual?'AI uit':'AI aan'));
+    const switchTitle=restrictedFolder?'AI is uitgeschakeld in Spam en Prullenbak':(needsTakeover?'Markeer het gesprek als overgenomen':(isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen'));
+    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span class="channel-pill">${String(conv.channel||'sms').toLowerCase()==='email'?'✉ E-mail':'💬 SMS'}</span>${stateBadge(conv.status)}</div></div><div class="chat-header-actions"><button class="finish-chat-btn" onclick="completeConversation()" title="Zet dit gesprek op afgerond" ${currentState==='completed'?'disabled':''}>✓ Afronden</button><button class="ai-header-switch ${switchOff?'off':'on'}" onclick="toggleTakeover()" title="${switchTitle}" aria-label="AI aan of uit" ${restrictedFolder?'disabled':''}><span class="ai-header-switch-track"></span><span>${switchLabel}</span></button><button class="btn-small" onclick="markAsSpam()" title="Spam/inbox">${String(conv.folder||'inbox')==='spam'?'↩ Inbox':'⚠ Spam'}</button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
+    $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=!outgoing?'Klant':origin==='ai'?'AI':origin==='manual'?'Manueel':origin==='system'?'Systeem':'Manueel';const isEmail=String(m.channel||conv.channel||'sms').toLowerCase()==='email';const body=isEmail?cleanDisplayedEmail(m.text):String(m.text||'');return `<div class="chat-msg ${m.type||'incoming'} ${isEmail?'email-message':''}">${m.subject?`<div class="chat-msg-subject">${esc(m.subject)}</div>`:''}<div class="email-message-body">${esc(body).replace(/\n/g,'<br>')}</div><div class="chat-msg-meta"><span class="message-origin ${origin==='ai'?'ai':origin==='manual'?'manual':'customer'}">${label}</span><span>${fmt(m.time)}</span></div></div>`}).join('')||`<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste ${String(conv.channel||'sms').toLowerCase()==='email'?'e-mailbericht':'SMS-bericht'}.</div>`;
+    const fallbackAI=localConversationAnalysis(conv);const backendSummary=String(conv.ai?.summary||conv.summary||'').trim();const aiSummary=(!backendSummary||/nieuw gesprek aangemaakt/i.test(backendSummary))?fallbackAI.summary:backendSummary;const recommended=String(conv.ai?.recommendedAction||'').trim()||fallbackAI.action;const urgency=String((conv.ai?.urgency&&conv.ai.urgency!=='normaal')?conv.ai.urgency:fallbackAI.urgency).toLowerCase();const left=urgency.includes('hoog')?'88%':urgency.includes('medium')?'55%':'25%';
+    $('profilePanelContent').innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="profile-name-row"><div class="profile-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="profile-phone">${esc(client.phone||'Geen telefoon')}</div><div class="profile-email">${esc(client.email||'Geen e-mail')}</div><div class="profile-description-label">Contactpersoonbeschrijving</div><div class="profile-description">${esc(client.description||description(client,conv)||'Nog geen contactpersoonbeschrijving.')}</div><button class="btn-small" onclick="openProfile('${client.id}')">Profiel bekijken</button></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="intent-pill">${esc(conv.ai?.intent||'Onbekend')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Sentiment</span><span class="sentiment-pill ${esc(client.sentiment||client.status||'neutraal')}">${esc((client.sentiment||client.status||'neutraal').charAt(0).toUpperCase()+(client.sentiment||client.status||'neutraal').slice(1))}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Urgentie</span><span>${esc(conv.ai?.urgency||'Normaal')}</span></div><div class="urgency-meter"><span class="urgency-knob" style="left:${left}"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span>${stateBadge(conv.status)}</div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span>${fmt(conv.updatedAt)}</span></div></div><div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${esc(aiSummary)}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${esc(recommended)}</div><button class="profile-appointment-btn" type="button" onclick="RFUI.openAppointmentModal()">＋ Afspraak maken</button></div>`;
+    $('chatChannel').value=String(conv.channel||'sms').toLowerCase()==='email'?'email':'sms';const subjectInput=$('chatSubject');if(document.activeElement!==subjectInput)subjectInput.value=conv.subjectDraft??conv.subject??'';subjectInput.style.display=$('chatChannel').value==='email'?'block':'none';$('chatInput').placeholder=$('chatChannel').value==='email'?'Schrijf de e-mailtekst...':'Typ een SMS-bericht...';$('chatMessages').scrollTop=$('chatMessages').scrollHeight;
+  }
+  window.selectConversation=id=>{selectedId=id;render();const {conv}=current();loadMessages(conv)};
+  async function refreshConversationAnalysis(conv,{preserveStatus=true}={}){
+    if(!conv?.backendId)return null;
+    try{
+      const j=await api(API.classify,{method:'POST',body:JSON.stringify({conversationId:conv.backendId})});
+      const a=j.data||j;
+      conv.ai=conv.ai||{};
+      conv.ai.intent=a.intent||conv.ai.intent||'onbekend';
+      conv.ai.urgency=a.urgency||conv.ai.urgency||'normaal';
+      conv.ai.requiresHuman=!!a.requiresHuman;
+      conv.ai.summary=a.summary||conv.ai.summary||'';
+      conv.ai.recommendedAction=a.recommendedAction||conv.ai.recommendedAction||'';
+      conv.ai.suggestedReply=a.suggestedReply||conv.ai.suggestedReply||'';
+      conv.summary=conv.ai.summary;
+      const d=load();const stored=d.conversations.find(x=>x.id===conv.id);if(stored){stored.ai=conv.ai;stored.summary=conv.summary;if(preserveStatus)stored.status=conv.status;const c=d.clients.find(x=>x.id===stored.clientId);if(c){c.sentiment=sentiment((stored.messages||[]).map(m=>m.text).join(' '),stored.status);c.status=c.sentiment;updateStableDescription(c,d.conversations.filter(x=>x.clientId===c.id));}save(d);}
+      return a;
+    }catch(e){console.warn('Analyse bijwerken mislukt:',e);return null;}
+  }
+  window.sendMessage=async()=>{
+    const input=$('chatInput'),text=input.value.trim();
+    if(!text)return;
+    const {d,conv,client}=current();
+    if(!conv||!client)return;
+    const channel=$('chatChannel').value==='email'?'email':'sms';
+    const subject=$('chatSubject').value.trim();
+    if(channel==='sms'&&!client.phone){toast('Voeg eerst een telefoonnummer toe.');return}
+    if(channel==='email'&&!client.email){toast('Voeg eerst een e-mailadres toe.');return}
+    if(channel==='email'&&!subject){toast('Vul een onderwerp in voor de e-mail.');return}
+
+    input.disabled=true;$('chatChannel').disabled=true;$('chatSubject').disabled=true;
+    try{
+      client.phone=normPhone(client.phone);
+      client.email=normEmail(client.email);
+      conv.channel=channel;
+      conv.subject=channel==='email'?subject:'';
+      conv.subjectDraft=conv.subject;
+
+      const createConversation=async()=>{
+        const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel,subject})});
+        const created=j.data||j;
+        const id=created.id||created.conversationId||created.conversation_id;
+        if(!id)throw new Error('Gesprek kon niet worden aangemaakt.');
+        conv.backendId=id;
+        save(d);
+        return id;
+      };
+
+      let backendId=conv.backendId||await createConversation();
+      const makePayload=()=>({conversationId:backendId,channel,subject,message:text,name:client.name,phone:client.phone,email:client.email});
+      let sent;
+      try{
+        sent=await callBackendAction('send-message',makePayload());
+      }catch(firstError){
+        // Een lokaal gesprek kan nog naar een oud/verwijderd backend-ID wijzen.
+        // Maak het gesprek opnieuw aan en probeer exact één keer opnieuw.
+        if(!isNotFoundError(firstError))throw firstError;
+        conv.backendId='';
+        backendId=await createConversation();
+        sent=await callBackendAction('send-message',makePayload());
+      }
+
+      const result=sent.data||sent;
+      if(result.conversationId){conv.backendId=result.conversationId;backendId=result.conversationId}
+      conv.messages=conv.messages||[];
+      conv.messages.push({id:result.id||uid('msg'),type:'outgoing',text,subject:channel==='email'?subject:'',channel,time:now(),sender:'manual'});
+      conv.lastMessage=text;
+      conv.updatedAt=now();
+      conv.status='manual_overname';
+      client.sentiment=sentiment((conv.messages||[]).map(m=>m.text).join(' '),conv.status);
+      client.status=client.sentiment;
+      updateStableDescription(client,d.conversations.filter(x=>x.clientId===client.id));
+      save(d);
+      input.value='';
+      render();
+      await refreshConversationAnalysis(conv,{preserveStatus:true});
+      render();
+      toast(channel==='email'?'E-mail verzonden.':'SMS verzonden.');
+      setTimeout(()=>sync({notify:false,forceMessages:true}),350);
+    }catch(e){
+      toast(e.message||'Bericht verzenden mislukt.');
+    }finally{
+      input.disabled=false;$('chatChannel').disabled=false;$('chatSubject').disabled=false;input.focus();
+    }
+  };
+  window.completeConversation=async()=>{const {d,conv,client}=current();if(!conv)return;conv.status='afgesloten';conv.ai=conv.ai||{};conv.ai.requiresHuman=false;conv.ai.urgency='normaal';conv.ai.summary='De contactpersoon is geholpen en het gesprek is afgerond.';conv.ai.recommendedAction='Geen verdere actie nodig. Het gesprek is afgerond.';conv.summary=conv.ai.summary;conv.updatedAt=now();if(client){client.sentiment=sentiment((conv.messages||[]).map(m=>m.text).join(' '),'afgesloten');client.status=client.sentiment;}save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:'afgesloten',aiEnabled:false,channel:conv.channel||'sms',subject:conv.subject||'',summary:conv.ai.summary,recommendedAction:conv.ai.recommendedAction,urgency:'normaal',requiresHuman:false})});toast('Gesprek is afgerond.');setTimeout(()=>sync({notify:false,forceMessages:true}),500);}catch(e){toast('Gesprek lokaal afgerond, maar backend-update mislukte.');}};
+  window.toggleTakeover=async()=>{const {d,conv}=current();if(!conv)return;if(String(conv.folder||'inbox')==='spam'){toast('AI is uitgeschakeld in Spam.');return;}const state=statusInfo(conv.status).key;const activateAI=state!=='ai-active';const next=activateAI?'ai-active':'manual_overname';conv.status=next;conv.ai=conv.ai||{};conv.ai.requiresHuman=!activateAI;save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:next,aiEnabled:activateAI,channel:conv.channel||'sms',subject:conv.subject||''})});toast(activateAI?'AI is opnieuw actief.':'Je hebt het gesprek overgenomen.');setTimeout(()=>sync({notify:false,forceMessages:true}),250);}catch(e){toast('Status lokaal aangepast, maar backend-update mislukte.');}};
+  async function moveConversation(conv,folder){if(!conv?.backendId)return;await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,folder,channel:conv.channel||'sms',subject:conv.subject||''})});}
+  window.deleteCurrent=async()=>{const {d,conv,client}=current();if(!conv)return;if(!confirm('Dit gesprek definitief verwijderen? De contactpersoon blijft bewaard.'))return;try{if(conv.backendId){await api(API.conversations,{method:'DELETE',body:JSON.stringify({conversationId:conv.backendId,action:'permanent'})});markDeleted(null,conv);}d.conversations=d.conversations.filter(x=>x.id!==conv.id);if(client){client.updatedAt=now();}save(d);selectedId=null;render();toast('Gesprek definitief verwijderd. Contactpersoon blijft bewaard.');}catch(e){toast(e.message||'Verwijderen mislukt.')}};
+  window.markAsSpam=async()=>{const {d,conv}=current();if(!conv)return;const folder=String(conv.folder||'inbox')==='spam'?'inbox':'spam';try{await moveConversation(conv,folder);conv.folder=folder;if(folder==='spam'){conv.status='inactive';conv.ai=conv.ai||{};conv.ai.requiresHuman=false;}save(d);selectedId=null;render();toast(folder==='spam'?'Naar spam verplaatst.':'Teruggezet naar inbox.');}catch(e){toast(e.message||'Verplaatsen mislukt.')}};
+
+  // Shared profile drawer
+  let editPhoto='';
+  window.openProfile=id=>{const d=load(),c=d.clients.find(x=>x.id===id);if(!c)return;$('drawerClientId').value=c.id;$('drawerName').value=c.name||'';$('drawerEmail').value=c.email||'';$('drawerPhone').value=c.phone||'';$('drawerAddress').value=c.address||'';$('drawerType').value=c.type||'Lead';$('drawerStatus').value=c.status||'neutraal';$('drawerDescription').value=c.description||'';$('drawerNote').value=c.note||'';editPhoto=c.photo||'';$('drawerAvatar').innerHTML=editPhoto?`<img src="${editPhoto}">`:initials(c.name);$('drawerAvatar').style.background=c.color||'#5B2E91';$('clientDrawerOverlay').classList.add('open');$('clientDrawer').classList.add('open')};
+  window.closeClientDrawer=()=>{$('clientDrawerOverlay').classList.remove('open');$('clientDrawer').classList.remove('open')};
+  window.saveClientDrawer=()=>{const d=load(),c=d.clients.find(x=>x.id===$('drawerClientId').value);if(!c)return;const manualDescription=$('drawerDescription').value.trim();Object.assign(c,{name:$('drawerName').value.trim(),email:normEmail($('drawerEmail').value),phone:normPhone($('drawerPhone').value),address:$('drawerAddress').value.trim(),description:manualDescription||c.autoDescription||'',descriptionManual:Boolean(manualDescription&&manualDescription!==c.autoDescription),note:$('drawerNote').value.trim(),photo:editPhoto,updatedAt:now()});unmarkDeleted(c);save(d);closeClientDrawer();render();toast('Profiel opgeslagen.')};
+  $('drawerPhotoInput')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{editPhoto=String(r.result);$('drawerAvatar').innerHTML=`<img src="${editPhoto}">`};r.readAsDataURL(f)});
+
+  let syncBusy=false;
+  async function sync({notify=false,forceMessages=false}={}){
+    if(syncBusy)return;
+    syncBusy=true;
+    try{
+      const beforeData=load();
+      const before=beforeData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
+      const j=await api(`${API.conversations}?limit=500&folder=all&_=${Date.now()}`);
+      mergeBackend(Array.isArray(j.data)?j.data:[]);
+      const afterData=load();
+      const after=afterData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
+      render();
+
+      const {conv}=current();
+      if(conv?.backendId && (forceMessages || before!==after || document.visibilityState==='visible')){
+        await loadMessages(conv);
+      }
+
+      if(notify){
+        const rows=Array.isArray(j.data)?j.data:[];
+        const signatures=rows.filter(validBackendRow).map(row=>{
+          const id=String(row.id||row.conversation_id||'');
+          const stamp=String(row.last_message_at||row.updated_at||'');
+          const body=String(row.last_message||'').trim();
+          return id&&body?`${id}|${stamp}|${body}`:'';
+        }).filter(Boolean);
+        const seen=new Set(read(NOTIFY_SEEN,[]));
+        const fresh=signatures.filter(sig=>!seen.has(sig));
+        if(!localStorage.getItem(NOTIFY_SEEN)){
+          write(NOTIFY_SEEN,signatures.slice(0,300));
+        }else if(fresh.length){
+          write(NOTIFY_SEEN,[...fresh,...seen].slice(0,300));
+          showTopToast();
+        }
+      }
+    }catch(e){
+      console.warn('Inbox sync:',e.message);
+      render();
+    }finally{
+      syncBusy=false;
+    }
+  }
+  let emailSyncBusy=false;
+  async function syncEmail(){
+    if(emailSyncBusy)return;
+    emailSyncBusy=true;
+    const state=$('emailSyncState');
+    try{
+      const j=await callBackendAction('email-sync',{});
+      const result=j.data||j;
+      if(state){
+        if(!result.enabled)state.textContent='';
+        else if(result.queued)state.textContent='E-mailsync gestart';
+        else if(result.busy)state.textContent='E-mail wordt gesynchroniseerd';
+        else if(result.processed)state.textContent=`${result.processed} nieuwe e-mail(s)`;
+        else state.textContent='E-mail gesynchroniseerd';
+        state.title='';
+      }
+      // De backend importeert in de achtergrond. Haal kort daarna de nieuwe gesprekken op.
+      setTimeout(()=>sync({notify:true,forceMessages:true}),result.queued?1800:250);
+      if(result.queued)setTimeout(()=>sync({notify:true,forceMessages:true}),5000);
+    }catch(e){
+      if(state){state.textContent='E-mailsync wordt opnieuw geprobeerd';state.title=e.message||''}
+      console.warn('E-mailsync:',e.message);
+    }finally{
+      emailSyncBusy=false;
+    }
+  }
+  function showTopToast(){let t=document.querySelector('.rf-top-toast');if(!t){t=document.createElement('div');t.className='rf-top-toast';t.innerHTML='<div class="rf-top-toast-icon">💬</div><div><div class="rf-top-toast-title">Nieuw bericht</div><div class="rf-top-toast-body">Open de inbox om het SMS- of e-mailgesprek te bekijken.</div></div>';t.onclick=()=>location.href='/platform/inbox/';document.body.appendChild(t)}t.classList.add('show');setTimeout(()=>t.classList.remove('show'),5000)}
+  const tabsScroller=document.querySelector('.conv-tabs');
+  tabsScroller?.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();tabsScroller.scrollLeft+=e.deltaY;}},{passive:false});
+
+  document.querySelectorAll('.conv-tab').forEach(tab=>tab.addEventListener('click',()=>{
+    activeFolder=tab.dataset.folder||'inbox';
+    activeChannel=tab.dataset.channel||'all';
+    document.querySelectorAll('.conv-tab').forEach(x=>x.classList.toggle('active',x===tab));
+    selectedId=null;render();
+  }));
+  window.addEventListener('reactify:calbookings',()=>{render();});
+  $('inboxSearch')?.addEventListener('input',e=>{search=e.target.value.toLowerCase();render()});$('chatSubject')?.addEventListener('input',e=>{const {d,conv}=current();if(!conv)return;conv.subjectDraft=e.target.value;save(d)});$('chatChannel')?.addEventListener('change',e=>{const {d,conv,client}=current();if(!conv||!client)return;const channel=e.target.value;let target=d.conversations.find(x=>x.clientId===client.id&&String(x.channel||'sms').toLowerCase()===channel);if(!target){target={id:uid('conv'),clientId:client.id,channel,folder:'inbox',subject:'',status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(target);save(d)}selectedId=target.id;render();if(target.backendId)loadMessages(target)});$('chatInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});$('sidebarToggle')?.addEventListener('click',()=>$('sidebar')?.classList.toggle('open'));
+  window.openNewConversation=()=>{const d=load(),sel=$('newConversationContact');sel.innerHTML=d.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}${c.email?' — '+esc(c.email):c.phone?' — '+esc(c.phone):''}</option>`).join('');if(!d.clients.length){toast('Voeg eerst een contactpersoon toe via Klanten.');return}$('newConversationModal').classList.add('open');$('newConversationChannel').dispatchEvent(new Event('change'));};
+  window.closeNewConversation=()=>$('newConversationModal').classList.remove('open');
+  $('newConversationChannel')?.addEventListener('change',e=>$('newConversationSubjectWrap').style.display=e.target.value==='email'?'block':'none');
+  window.createNewConversation=async()=>{const d=load(),client=d.clients.find(c=>c.id===$('newConversationContact').value);if(!client)return;const channel=$('newConversationChannel').value==='email'?'email':'sms',subject=$('newConversationSubject').value.trim();if(channel==='sms'&&!client.phone){toast('Dit contact heeft geen telefoonnummer.');return}if(channel==='email'&&!client.email){toast('Dit contact heeft geen e-mailadres.');return}if(channel==='email'&&!subject){toast('Vul een onderwerp in.');return}let conv=d.conversations.find(c=>c.clientId===client.id&&String(c.channel||'sms')===channel&&String(c.folder||'inbox')==='inbox');if(!conv){conv={id:uid('conv'),clientId:client.id,channel,folder:'inbox',subject,status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(conv)}try{const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel,subject})});conv.backendId=(j.data||j).id||conv.backendId;conv.folder='inbox';save(d);selectedId=conv.id;activeFolder='inbox';activeChannel=channel;closeNewConversation();render();$('chatInput').focus();toast('Nieuw gesprek gestart.');}catch(e){toast(e.message||'Gesprek starten mislukt.')}};
+
+  window.RFUI={
+    openClientModal(){ $('rfClientModal')?.classList.add('open'); },
+    closeClientModal(){ $('rfClientModal')?.classList.remove('open'); },
+    async openAppointmentModal(){
+      const {client}=current();if(!client){toast('Selecteer eerst een gesprek.');return;}
+      $('rfApptClient').value=client.id;$('rfApptClientDisplay').value=client.name||'Contactpersoon';$('rfApptEmail').value=client.email||'';$('rfApptPhone').value=client.phone||'';$('rfAppointmentAlert').classList.add('hidden');$('rfAppointmentModal').classList.add('open');
+      const start=new Date(Date.now()+60*60*1000);start.setMinutes(Math.ceil(start.getMinutes()/15)*15,0,0);$('rfApptStart').value=new Date(start.getTime()-start.getTimezoneOffset()*60000).toISOString().slice(0,16);
+      try{const j=await api(API.eventTypes);const rows=Array.isArray(j.data)?j.data:(Array.isArray(j.data?.data)?j.data.data:[]);$('rfApptEventType').innerHTML=rows.map(x=>`<option value="${esc(x.id)}" data-length="${esc(x.lengthInMinutes||x.length||30)}">${esc(x.title||x.name||'Afspraak')} — ${esc(x.lengthInMinutes||x.length||30)} min</option>`).join('')||'<option value="">Geen afspraaktypes gevonden</option>';const opt=$('rfApptEventType').selectedOptions[0];if(opt)$('rfApptLength').value=opt.dataset.length||'';}catch(e){$('rfApptEventType').innerHTML='<option value="">Afspraaktypes laden mislukt</option>';toast(e.message||'Afspraaktypes laden mislukt.');}
+    },
+    closeAppointmentModal(){ $('rfAppointmentModal')?.classList.remove('open'); }
+  };
+  $('rfApptEventType')?.addEventListener('change',e=>{const opt=e.target.selectedOptions[0];if(opt&&opt.dataset.length)$('rfApptLength').value=opt.dataset.length;});
+  $('rfAppointmentForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();const {client}=current();if(!client)return;
+    const eventTypeId=$('rfApptEventType').value,start=$('rfApptStart').value,email=normEmail($('rfApptEmail').value),phone=normPhone($('rfApptPhone').value);
+    if(!eventTypeId||!start||!email){toast('Kies een afspraaktype, startmoment en e-mailadres.');return;}
+    const selected=$('rfApptEventType').selectedOptions[0];const payload={eventTypeId:Number(eventTypeId),start:new Date(start).toISOString(),name:client.name||'Contactpersoon',email,phone,attendee:{name:client.name||'Contactpersoon',email,phoneNumber:phone,timeZone:'Europe/Brussels',language:'nl'},title:selected?.textContent?.split(' — ')[0]||'Reactify afspraak',notes:$('rfApptNotes').value.trim(),locationType:$('rfApptLocationType').value,locationValue:$('rfApptLocationValue').value.trim(),lengthInMinutes:Number($('rfApptLength').value||selected?.dataset.length||30),allowConflicts:$('rfApptForce').checked,allowBookingOutOfBounds:$('rfApptForce').checked};
+    try{await api(API.booking,{method:'POST',body:JSON.stringify(payload)});client.email=email;client.phone=phone;const d=load();const c=d.clients.find(x=>x.id===client.id);if(c){c.email=email;c.phone=phone;c.updatedAt=now();}save(d);RFUI.closeAppointmentModal();toast('Afspraak is aangemaakt.');window.dispatchEvent(new CustomEvent('reactify:calbookings'));}catch(err){toast(err.message||'Afspraak aanmaken mislukt.');}
+  });
+  $('rfClientForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=$('rfClientName')?.value.trim()||'',phone=normPhone($('rfClientPhone')?.value||''),email=normEmail($('rfClientEmail')?.value||''),note=$('rfClientNote')?.value.trim()||'';
+    if(!name){toast('Vul een naam in.');return}
+    const channel=$('rfClientChannel')?.value==='email'?'email':'sms';if(channel==='sms'&&!phone){toast('Vul een telefoonnummer in om een SMS te kunnen sturen.');return}if(channel==='email'&&!email){toast('Vul een e-mailadres in om een e-mail te kunnen sturen.');return}
+    const d=load();
+    let client=d.clients.find(c=>normPhone(c.phone)===phone||(email&&normEmail(c.email)===email));
+    if(client){Object.assign(client,{name,phone,email:email||client.email,note,updatedAt:now()});}
+    else{client={id:uid('client'),name,phone,email,type:'Lead',status:'neutraal',sentiment:'neutraal',description:'',note,source:'Manueel',createdAt:now(),updatedAt:now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(client)}
+    unmarkDeleted(client);
+    let conv=d.conversations.find(c=>c.clientId===client.id);
+    if(!conv){conv={id:uid('conv'),clientId:client.id,channel,folder:'inbox',subject:'',status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(conv)}
+    try{
+      const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel,subject:''})});
+      conv.backendId=(j.data||j).id||conv.backendId;
+    }catch(err){console.warn('Backendgesprek wordt bij eerste verzending opnieuw geprobeerd:',err.message)}
+    save(d);selectedId=conv.id;e.target.reset();RFUI.closeClientModal();render();toast(`Contactpersoon aangemaakt. Je kunt nu via ${channel==='email'?'e-mail':'SMS'} sturen.`);
+  });
+  syncEmail();sync({forceMessages:true});
+  const emailPoll=setInterval(syncEmail,30000);
+  const livePoll=setInterval(()=>sync({notify:true,forceMessages:true}),5000);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible')sync({notify:false,forceMessages:true});
+  });
+  window.addEventListener('focus',()=>sync({notify:false,forceMessages:true}));
+})();
+</script>
+<script src="/platform/assets/cal-sync.js"></script>
+<script src="/platform-ui.js"></script>
+</body></html>
