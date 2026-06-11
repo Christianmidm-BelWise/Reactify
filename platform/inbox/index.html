@@ -1277,7 +1277,48 @@
       : (list.map(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};return `<div class="conv-item ${cv.id===selectedId?'active':''}" onclick="selectConversation('${cv.id}')"><div class="conv-avatar" style="background:${c.color||'#5B2E91'}">${initials(c.name)}</div><div class="conv-content"><div class="conv-header"><div class="conv-name">${esc(c.name||'Onbekend')} <span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${esc(c.type||'Lead')}</span>${stateBadge(cv.status)}</div></div><div class="conv-preview">${esc(cv.lastMessage||cv.summary||'Nog geen berichten')}</div><div class="conv-bottom-date">${fmt(cv.updatedAt)}</div></div></div>`}).join('')||'<div class="empty-state"><strong>Geen gesprekken</strong>Nieuwe SMS- en e-mailgesprekken verschijnen hier automatisch.</div>');
     renderSelected();
   }
-  async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',subject:m.subject||'',channel:String(m.channel||x.channel||'sms').toLowerCase(),time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineTypeFromMessages(x.messages,c.type||'Lead');c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
+  function extractEmailSignatureName(text){
+    const lines=String(text||'').replace(/\r/g,'').split('\n').map(x=>x.trim().replace(/^[,;:\-\s]+|[,;:\-\s]+$/g,''));
+    const closing=/^(?:(?:met\s+)?(?:vriendelijke|hartelijke)\s+groet(?:en)?|groet(?:en)?|mvg|kind regards|best regards|regards|sincerely)$/i;
+    const blocked=/^(team|reactify|klantendienst|customer service|support|administratie|sales|marketing|directie|bedrijf)$/i;
+    for(let i=0;i<lines.length;i++){
+      if(!closing.test(lines[i]))continue;
+      for(const raw of lines.slice(i+1,i+4)){
+        if(!raw||/@|https?:\/\/|www\.|\d{4,}/i.test(raw)||blocked.test(raw))continue;
+        const cleaned=raw.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ' .-]/g,'').trim();
+        const words=cleaned.split(/\s+/).filter(Boolean);
+        if(words.length<1||words.length>5||cleaned.length<2||cleaned.length>70)continue;
+        return words.map(w=>w.charAt(0).toLocaleUpperCase('nl-BE')+w.slice(1)).join(' ');
+      }
+    }
+    return '';
+  }
+  async function loadMessages(conv){
+    if(!conv?.backendId)return;
+    try{
+      const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);
+      const rows=Array.isArray(j.data)?j.data:[];
+      const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;
+      x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',subject:m.subject||'',channel:String(m.channel||x.channel||'sms').toLowerCase(),time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));
+      x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;
+      const c=d.clients.find(v=>v.id===x.clientId);
+      if(c){
+        c.type=determineTypeFromMessages(x.messages,c.type||'Lead');
+        c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;
+        if(String(x.channel||'').toLowerCase()==='email'){
+          const incoming=x.messages.filter(m=>(m.type||'incoming')==='incoming');
+          let detected='';
+          for(let i=incoming.length-1;i>=0&&!detected;i--)detected=extractEmailSignatureName(incoming[i].text);
+          if(detected&&betterContactName(c.name,detected,c.phone)!==c.name){
+            c.name=betterContactName(c.name,detected,c.phone);
+            api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:x.backendId,contact_name:c.name,name:c.name})}).catch(()=>{});
+          }
+        }
+        c.description=description(c,[x]);
+      }
+      save(d);render();
+    }catch(e){console.warn(e)}
+  }
   function cleanDisplayedEmail(value){
     let text=String(value||'').replace(/\r\n?/g,'\n');
     text=text.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<script[\s\S]*?<\/script>/gi,'');
