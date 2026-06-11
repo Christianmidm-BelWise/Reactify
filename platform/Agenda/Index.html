@@ -32,6 +32,10 @@
 .appt-customer-row{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;margin-top:.1rem}
 .contact-type{display:inline-flex;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:var(--blue-light);color:var(--blue)}
 .conversation-state{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}.conversation-state.ai-active{background:var(--green-light);color:var(--green)}.conversation-state.manual{background:var(--orange-light);color:var(--orange-dark)}.conversation-state.completed{background:var(--gray-100);color:var(--gray-600)}
+
+/* Reactify bezettingsgraad en afspraakknoppen */
+.occupancy-card{position:relative}.occupancy-period{margin-top:.28rem;border:1px solid var(--gray-200);border-radius:7px;background:#fff;color:var(--gray-700);font-size:.68rem;font-weight:800;padding:.25rem .4rem;outline:none}.occupancy-period:focus{border-color:var(--purple)}
+.panel-footer-actions{display:grid;gap:.55rem;justify-items:center}.panel-footer-actions .btn-primary{width:min(220px,100%)}
 </style>
 
 <style id="reactify-final-agenda-time-style">.appt-time{width:72px!important;line-height:1.2}.appt-day-label{display:block;font-size:.66rem;color:var(--gray-500);font-weight:800;margin-top:.15rem}.appt-sub{margin-top:.1rem}</style>
@@ -55,6 +59,7 @@
     <div class="main-header">
       <div class="page-header"><h1>Agenda</h1><p>Afspraken, beschikbaarheid en afspraaktypes beheren via Cal.com.</p></div>
       <div class="header-actions">
+        <button id="openBookingBtn" class="btn-primary" type="button">＋ Afspraak maken</button>
         <button id="openAvailabilityBtn" class="btn-secondary" type="button">Beschikbaarheid instellen</button>
         <button id="openEventTypeBtn" class="btn-secondary" type="button">Afspraaktypes beheren</button>
         
@@ -67,7 +72,7 @@
       <article class="stat-card"><div class="stat-icon purple">📅</div><div><div class="stat-label">Afspraken vandaag</div><div class="stat-value" id="statToday">0</div><div class="stat-trend">Live uit Cal.com</div></div></article>
       <article class="stat-card"><div class="stat-icon orange">🗓️</div><div><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeek">0</div><div class="stat-trend">Accepted only</div></div></article>
       <article class="stat-card"><div class="stat-icon green">✓</div><div><div class="stat-label">Totaal deze maand</div><div class="stat-value" id="statMonth">0</div><div class="stat-trend">Gekozen maand</div></div></article>
-      <article class="stat-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><div class="stat-trend">Indicatief</div></div></article>
+      <article class="stat-card occupancy-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><select class="occupancy-period" id="occupancyPeriod" aria-label="Periode bezettingsgraad"><option value="day">Dag</option><option value="week">Week</option><option value="month" selected>Maand</option><option value="year">Jaar</option></select><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
     </section>
 
     <section class="agenda-layout">
@@ -91,7 +96,7 @@
       <article class="panel">
         <div class="panel-header"><h2 id="appointmentsTitle">Maand</h2></div>
         <div class="appt-list" id="appointmentList"></div>
-        <div class="panel-footer"><a href="https://app.cal.com/bookings" target="_blank" rel="noopener noreferrer">Bekijk alles in Cal.com</a></div>
+        <div class="panel-footer panel-footer-actions"><button class="btn-primary" type="button" onclick="openModal('bookingModal')">＋ Afspraak maken</button><a href="https://app.cal.com/bookings" target="_blank" rel="noopener noreferrer">Bekijk alles in Cal.com</a></div>
       </article>
     </section>
   </main>
@@ -276,14 +281,31 @@ const NOTIFICATION_KEY="reactify.notifications";
     const inRange=(b,s,e)=>b.start>=s&&b.start<e;
     const bookingsForDate=d=>bookings.filter(b=>sameDate(b.start,d));
     function renderAll(){renderStats();renderCalendar();renderAppointments();}
+    function occupancyRange(){
+      const period=$("occupancyPeriod")?.value||"month";let s,e;
+      if(period==="day"){s=new Date(selectedDate);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+1);}
+      else if(period==="week"){s=new Date(selectedDate);const d=s.getDay()||7;s.setDate(s.getDate()-d+1);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+7);}
+      else if(period==="year"){s=new Date(selectedDate.getFullYear(),0,1);e=new Date(selectedDate.getFullYear()+1,0,1);}
+      else{s=new Date(visibleDate.getFullYear(),visibleDate.getMonth(),1);e=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);}
+      return{s,e,period};
+    }
+    function hmMinutes(value){const m=String(value||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0;}
+    function scheduleBlocks(){
+      const blocks=[];for(const schedule of schedules){const rows=Array.isArray(schedule.availability)?schedule.availability:Array.isArray(schedule.availabilities)?schedule.availabilities:[];for(const row of rows){const days=Array.isArray(row.days)?row.days:[];const start=hmMinutes(row.startTime||row.start);const end=hmMinutes(row.endTime||row.end);if(end>start)blocks.push({days,start,end});}}
+      if(!blocks.length)blocks.push({days:['Monday','Tuesday','Wednesday','Thursday','Friday'],start:9*60,end:17*60});return blocks;
+    }
+    function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const index=date.getDay();return days.some(d=>{if(typeof d==='number')return d===index||d===((index+6)%7);const v=String(d).trim().toLowerCase();return v===names[index].toLowerCase()||v===short[index].toLowerCase()||v===String(index)||v===String((index+6)%7);});}
+    function availableMinutesInRange(s,e){let total=0;const blocks=scheduleBlocks();for(let d=new Date(s);d<e;d.setDate(d.getDate()+1)){for(const block of blocks){if(dayMatches(block.days,d))total+=Math.max(0,block.end-block.start);}}return total;}
+    function bookedMinutesInRange(s,e){return bookings.reduce((total,b)=>{const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return total;let duration=(be-bs)/60000;if(!(duration>0))duration=Number(b.duration||0)||30;const overlapStart=Math.max(bs.getTime(),s.getTime());const overlapEnd=Math.min(bs.getTime()+duration*60000,e.getTime());return total+Math.max(0,(overlapEnd-overlapStart)/60000);},0);}
     function renderStats(){
       const today=new Date();today.setHours(0,0,0,0);const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
-      const weekStart=new Date(today);const day=weekStart.getDay()||7;weekStart.setDate(weekStart.getDate()-day+1);const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+7);
+      const weekStart=new Date(today);const day=weekStart.getDay()||7;weekStart.setDate(weekStart.getDate()-day+1);weekStart.setHours(0,0,0,0);const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+7);
       const monthStart=new Date(visibleDate.getFullYear(),visibleDate.getMonth(),1);const monthEnd=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);
       $("statToday").textContent=bookings.filter(b=>inRange(b,today,tomorrow)).length;
       $("statWeek").textContent=bookings.filter(b=>inRange(b,weekStart,weekEnd)).length;
-      const monthCount=bookings.filter(b=>inRange(b,monthStart,monthEnd)).length;$("statMonth").textContent=monthCount;
-      $("statOccupancy").textContent=`${Math.min(100,Math.round(monthCount/80*100))}%`;
+      $("statMonth").textContent=bookings.filter(b=>inRange(b,monthStart,monthEnd)).length;
+      const range=occupancyRange();const available=availableMinutesInRange(range.s,range.e);const booked=bookedMinutesInRange(range.s,range.e);const percentage=available>0?Math.min(100,Math.round(booked/available*100)):0;
+      $("statOccupancy").textContent=`${percentage}%`;$("occupancyDetail").textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
     }
     function renderCalendar(){
       const c=$("calendarContainer");c.innerHTML="";document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===viewMode));
@@ -349,6 +371,8 @@ const NOTIFICATION_KEY="reactify.notifications";
     }
     function openModal(id){ if(id==="bookingModal"){setBookingStartFromSelectedDate(); fillContactSelect(); fillEventTypeSelects();} if(id==="eventTypeModal"){fillScheduleSelect(); renderEventTypeList();} $(id).classList.add("open"); $(id).setAttribute("aria-hidden","false"); document.body.style.overflow="hidden"; }
     function closeModal(id){$(id).classList.remove("open");$(id).setAttribute("aria-hidden","true");document.body.style.overflow="";}
+    function applyAppointmentQuery(){const q=new URLSearchParams(location.search);if(q.get("newAppointment")!=="1")return;const contactId=q.get("contactId")||"";if(contactId&&$("bookingContact"))$("bookingContact").value=contactId;updateCustomerFieldsFromSelect();if(q.get("name"))$("bookingName").value=q.get("name");if(q.get("email"))$("bookingEmail").value=q.get("email");if(q.get("phone"))$("bookingPhone").value=q.get("phone");openModal("bookingModal");history.replaceState({},document.title,location.pathname);}
+
     function showAlert(id,type,msg){const a=$(id);a.className=`alert ${type} show`;a.textContent=msg;}
     window.openModal=openModal;window.closeModal=closeModal;
 
@@ -386,13 +410,13 @@ const NOTIFICATION_KEY="reactify.notifications";
     $("prevBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()-1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()-7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()-1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("nextBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()+7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()+1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("todayBtn").onclick=()=>{selectedDate=new Date();visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll()};
-    $("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");
+    $("openBookingBtn").onclick=()=>openModal("bookingModal");$("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");$("occupancyPeriod").onchange=renderStats;
     $("sidebarToggle")?.addEventListener("click",()=>$("sidebar").classList.toggle("open"));
     document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id))});
     const startDefault=new Date();startDefault.setDate(startDefault.getDate()+1);startDefault.setHours(10,0,0,0);$("bookingStart").value=toLocalInputValue(startDefault);
     window.addEventListener("reactify:datachange",()=>{fillContactSelect(); renderAll();});
     if("Notification" in window && Notification.permission==="default") Notification.requestPermission().catch(()=>{});
-    visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll();loadAll();
+    visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll();loadAll().then(()=>setTimeout(applyAppointmentQuery,0));
   </script>
 
 <script>
