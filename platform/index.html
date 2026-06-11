@@ -426,6 +426,26 @@
 .contact-type{display:inline-flex;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:#dbeafe;color:#2563eb}
 .conversation-state{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}.conversation-state.ai-active{background:#dcfce7;color:#16a34a}.conversation-state.manual{background:var(--orange-light);color:var(--orange-dark)}.conversation-state.completed{background:var(--gray-100);color:var(--gray-600)}
 </style>
+
+<style id="reactify-dashboard-analytics-style">
+  .stat-info{flex:1;min-width:0}
+  .stat-progress{margin-top:.55rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}
+  .stat-progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--orange));width:0;transition:width .45s ease}
+  .stat-progress-fill.green{background:linear-gradient(90deg,#16a34a,#22c55e)}
+  .stat-meta{font-size:.68rem;color:var(--gray-600);margin-top:.28rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dashboard-card .card-body{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--purple-light) transparent}
+  .dashboard-card .card-body::-webkit-scrollbar{width:7px}.dashboard-card .card-body::-webkit-scrollbar-thumb{background:var(--purple-light);border-radius:999px}.dashboard-card .card-body:hover::-webkit-scrollbar-thumb{background:var(--purple)}
+  .analytics-card{grid-column:1/-1;margin-top:1.25rem;background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+  .analytics-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.15rem 1.25rem;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
+  .analytics-title h2{font-size:1.05rem;color:var(--gray-900);margin-bottom:.18rem}.analytics-title p{font-size:.76rem;color:var(--gray-600)}
+  .analytics-controls{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}.analytics-switch{display:inline-flex;gap:.2rem;padding:.24rem;background:var(--purple-bg);border:1px solid var(--purple-light);border-radius:10px}
+  .analytics-btn{border:0;background:transparent;color:var(--gray-600);border-radius:7px;padding:.38rem .65rem;font-size:.72rem;font-weight:800;cursor:pointer;transition:.18s}.analytics-btn:hover{background:#fff;color:var(--purple)}.analytics-btn.active{background:var(--purple);color:#fff;box-shadow:0 4px 10px rgba(91,46,145,.2)}
+  .analytics-body{padding:1.2rem 1.25rem 1.35rem}.chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem;min-height:22px}.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--gray-600);font-weight:700}.legend-dot{width:9px;height:9px;border-radius:999px}
+  .chart-wrap{height:310px;display:flex;align-items:stretch;gap:.75rem;position:relative;padding:0 .25rem}.chart-y{width:34px;display:flex;flex-direction:column;justify-content:space-between;color:var(--gray-400);font-size:.65rem;text-align:right;padding-bottom:28px}.chart-plot{position:relative;flex:1;border-left:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);display:flex;align-items:flex-end;gap:.55rem;padding:.5rem .55rem 28px;background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--gray-100) 25%)}
+  .chart-group{flex:1;height:100%;min-width:42px;display:flex;align-items:flex-end;justify-content:center;gap:.18rem;position:relative}.chart-bar{min-width:10px;max-width:24px;flex:1;border-radius:6px 6px 2px 2px;min-height:2px;transition:height .45s ease,filter .2s;position:relative;cursor:default}.chart-bar:hover{filter:brightness(.95)}.chart-bar:after{content:attr(data-value);position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);font-size:.62rem;font-weight:800;color:var(--gray-700);opacity:0;transition:.15s;white-space:nowrap}.chart-bar:hover:after{opacity:1}
+  .chart-x{position:absolute;left:0;right:0;bottom:2px;display:flex;gap:.55rem;padding:0 .55rem}.chart-x span{flex:1;min-width:42px;text-align:center;font-size:.65rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chart-empty{margin:auto;text-align:center;color:var(--gray-500);font-size:.82rem}.chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}
+  @media(max-width:900px){.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.chart-wrap{height:280px;overflow-x:auto}.chart-plot{min-width:620px}}
+</style>
 </head>
 <body>
 <!-- Sidebar -->
@@ -504,8 +524,10 @@
 <svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>
 </div>
 <div class="stat-info">
-<div class="stat-label">Afspraken deze week</div>
-<div class="stat-value" id="statWeekAppts">0</div>
+<div class="stat-label">Bezettingsgraad</div>
+<div class="stat-value" id="statOccupancy">0%</div>
+<div class="stat-progress"><div class="stat-progress-fill" id="occupancyBar"></div></div>
+<div class="stat-meta" id="occupancyMeta">0 van 0 uur geboekt</div>
 </div>
 </div>
 <div class="stat-card">
@@ -513,8 +535,10 @@
 <svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" fill-rule="evenodd"></path></svg>
 </div>
 <div class="stat-info">
-<div class="stat-label">Klantafspraken vandaag</div>
-<div class="stat-value" id="statTodayAppts">0</div>
+<div class="stat-label">Afgehandeld deze week</div>
+<div class="stat-value" id="statCompletedWeek">0</div>
+<div class="stat-progress"><div class="stat-progress-fill green" id="completedBar"></div></div>
+<div class="stat-meta" id="completedMeta">0% van de gesprekken</div>
 </div>
 </div>
 </div>
@@ -548,6 +572,28 @@
 </div>
 </div>
 </div>
+<section class="analytics-card" aria-label="Gespreksanalyse">
+  <div class="analytics-head">
+    <div class="analytics-title"><h2 id="analyticsHeading">Gespreksanalyse</h2><p id="analyticsSubtitle">Actuele cijfers uit gesprekken en klantprofielen.</p></div>
+    <div class="analytics-controls">
+      <div class="analytics-switch" aria-label="Grafiektype">
+        <button class="analytics-btn active" data-metric="sentiment" type="button">Sentiment</button>
+        <button class="analytics-btn" data-metric="handling" type="button">AI / manueel</button>
+        <button class="analytics-btn" data-metric="completed" type="button">Afgehandeld</button>
+      </div>
+      <div class="analytics-switch" aria-label="Periode">
+        <button class="analytics-btn" data-period="day" type="button">Dag</button>
+        <button class="analytics-btn" data-period="week" type="button">Week</button>
+        <button class="analytics-btn active" data-period="month" type="button">Maand</button>
+      </div>
+    </div>
+  </div>
+  <div class="analytics-body">
+    <div class="chart-legend" id="chartLegend"></div>
+    <div class="chart-wrap" id="chartWrap"></div>
+    <div class="chart-summary" id="chartSummary"></div>
+  </div>
+</section>
 </main>
 
 
@@ -682,8 +728,9 @@
 <script>
 (function(){
   const STORE='reactify_platform_data_v3';
-  const API={bookings:'/.netlify/functions/cal-bookings'};
+  const API={bookings:'/.netlify/functions/cal-bookings',schedules:'/.netlify/functions/cal-schedules'};
   const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb'];
+  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a'};
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const read=()=>{try{const d=JSON.parse(localStorage.getItem(STORE)||'{}');return {clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[]}}catch(e){return{clients:[],conversations:[],appointments:[]}}};
   const initials=n=>String(n||'Klant').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'KL';
@@ -691,49 +738,113 @@
   const dayLabel=iso=>{const d=new Date(iso),n=new Date();n.setHours(0,0,0,0);const x=new Date(d);x.setHours(0,0,0,0);const diff=Math.round((x-n)/86400000);if(diff===0)return'Vandaag';if(diff===1)return'Morgen';if(diff===2)return'Overmorgen';return d.toLocaleDateString('nl-BE',{weekday:'long',day:'numeric',month:'short',timeZone:'Europe/Brussels'});};
   const clientFor=(d,c)=>d.clients.find(x=>x.id===(c.clientId||c.contactId))||{};
   const latestConversationFor=(d,client)=>[...d.conversations].filter(c=>c.clientId===client?.id).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0))[0]||null;
-  const stateInfo=status=>{const x=String(status||'ai-active').toLowerCase().replaceAll('_','-');if(x.includes('afgesloten')||x.includes('closed')||x.includes('inactive'))return{key:'completed',label:'Afgerond'};if(x.includes('overname')||x.includes('manual')||x.includes('human'))return{key:'manual',label:'Overname nodig'};return{key:'ai-active',label:'AI actief'}};
+  const stateInfo=status=>{const x=String(status||'ai-active').toLowerCase().replaceAll('_','-');if(x.includes('afgesloten')||x.includes('closed')||x.includes('completed')||x.includes('inactive'))return{key:'completed',label:'Afgerond'};if(x.includes('overname')||x.includes('manual')||x.includes('human'))return{key:'manual',label:'Overname nodig'};return{key:'ai-active',label:'AI actief'}};
   const typeBadge=c=>`<span class="contact-type ${c?.type==='Klant'?'customer':'lead'}">${esc(c?.type||'Lead')}</span>`;
   const stateBadge=status=>{const st=stateInfo(status);return `<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`};
-  let remoteBookings=[]; let rendering=false; let lastHTML='';
-  async function fetchBookings(){
-    try{
-      const cached=window.ReactifyCalSync?.getCached?.()||[];
-      if(cached.length) remoteBookings=cached;
-      const r=await fetch(API.bookings,{headers:{'Content-Type':'application/json'},cache:'no-store'});
-      const j=await r.json();
-      remoteBookings=Array.isArray(j.data)?j.data:Array.isArray(j.bookings)?j.bookings:remoteBookings;
-    }catch(e){
-      remoteBookings=window.ReactifyCalSync?.getCached?.()||remoteBookings||[];
+  const statusKey=s=>stateInfo(s).key;
+  const sentimentOf=(d,c)=>{const cl=clientFor(d,c);const raw=String(c.sentiment||c.customerSentiment||cl.sentiment||cl.status||'').toLowerCase();if(raw.includes('posit'))return'positive';if(raw.includes('negat'))return'negative';const txt=String(c.summary||c.lastMessage||'').toLowerCase();if(/bedankt|prima|perfect|tevreden|opgelost|geholpen/.test(txt))return'positive';if(/klacht|boos|ontevreden|probleem|fout|slecht/.test(txt))return'negative';return'neutral'};
+  let remoteBookings=[],schedules=[],rendering=false;
+  let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'sentiment';
+  let chartPeriod=localStorage.getItem('reactify.dashboardChartPeriod')||'month';
+  if(!['sentiment','handling','completed'].includes(chartMetric))chartMetric='sentiment';
+  if(!['day','week','month'].includes(chartPeriod))chartPeriod='month';
+
+  async function fetchJSON(url){const sep=url.includes('?')?'&':'?';const r=await fetch(`${url}${sep}_fresh=${Date.now()}`,{headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},cache:'no-store'});const j=await r.json();if(!r.ok||j.status==='error')throw new Error(j.error||'Data laden mislukt');return j}
+  async function fetchLiveData(){
+    const [bookingResult,scheduleResult]=await Promise.allSettled([fetchJSON(API.bookings),fetchJSON(API.schedules)]);
+    if(bookingResult.status==='fulfilled'){
+      const j=bookingResult.value;remoteBookings=Array.isArray(j.data)?j.data:Array.isArray(j.bookings)?j.bookings:[];
+      localStorage.setItem('reactify.calBookingsCache',JSON.stringify(remoteBookings));
+      localStorage.setItem('reactify.calBookingsCacheUpdatedAt',new Date().toISOString());
+    }else remoteBookings=window.ReactifyCalSync?.getCached?.()||[];
+    if(scheduleResult.status==='fulfilled'){
+      const j=scheduleResult.value;schedules=Array.isArray(j.data)?j.data:Array.isArray(j.data?.schedules)?j.data.schedules:Array.isArray(j.schedules)?j.schedules:[];
     }
   }
   function normalizedAppointments(){
-    const cal=remoteBookings.filter(b=>['accepted','pending'].includes(String(b.status||'accepted').toLowerCase())).map((b,i)=>{const a=Array.isArray(b.attendees)?b.attendees[0]||{}:(b.attendee||{});return{id:'cal_'+(b.uid||b.id||i),title:b.title||b.eventType?.title||b.eventType?.slug||b.bookingFieldsResponses?.title||'Afspraak',start:b.start,customer:a.name||b.bookingFieldsResponses?.name||'Klant'};});
-    const seen=new Set();return cal.filter(a=>a&&a.start&&new Date(a.start)>=new Date()).filter(a=>{const k=String(a.id||a.start);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>new Date(a.start)-new Date(b.start));
+    const now=Date.now();
+    const cal=remoteBookings.filter(b=>['accepted','pending'].includes(String(b.status||'accepted').toLowerCase())).map((b,i)=>{const a=Array.isArray(b.attendees)?b.attendees[0]||{}:(b.attendee||{});return{id:'cal_'+(b.uid||b.id||i),title:b.title||b.eventType?.title||b.eventType?.slug||b.bookingFieldsResponses?.title||'Afspraak',start:b.start,end:b.end,customer:a.name||b.bookingFieldsResponses?.name||'Klant'};});
+    const seen=new Set();return cal.filter(a=>a&&a.start&&new Date(a.start).getTime()>=now).filter(a=>{const k=String(a.id||a.start);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>new Date(a.start)-new Date(b.start));
   }
-  function setHTML(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html;}
+  function hmMinutes(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0}
+  function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null}
+  function scheduleBlocks(){const s=activeSchedule();const rows=Array.isArray(s?.availability)?s.availability:Array.isArray(s?.availabilities)?s.availabilities:[];return rows.map(r=>({days:Array.isArray(r.days)?r.days:[],start:hmMinutes(r.startTime||r.start),end:hmMinutes(r.endTime||r.end)})).filter(r=>r.days.length&&r.end>r.start)}
+  function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const i=date.getDay();return days.some(d=>{if(typeof d==='number')return d===i||d===((i+6)%7);const v=String(d).trim().toLowerCase();return v===names[i].toLowerCase()||v===short[i].toLowerCase()||v===String(i)||v===String((i+6)%7)})}
+  function monthRange(){const n=new Date();return{start:new Date(n.getFullYear(),n.getMonth(),1),end:new Date(n.getFullYear(),n.getMonth()+1,1)}}
+  function availableMinutes(start,end){let total=0,blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1))for(const b of blocks)if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start);return total}
+  function bookedMinutes(start,end){return remoteBookings.reduce((t,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return t;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return t;let dur=(be-bs)/60000;if(!(dur>0))dur=Number(b.duration||0)||30;const os=Math.max(bs.getTime(),start.getTime()),oe=Math.min(bs.getTime()+dur*60000,end.getTime());return t+Math.max(0,(oe-os)/60000)},0)}
+  function setHTML(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html}
+  function startOfWeek(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+  function inCurrentWeek(date){const s=startOfWeek(new Date()),e=new Date(s);e.setDate(e.getDate()+7);const x=new Date(date);return x>=s&&x<e}
+  function isCompleted(c){return statusKey(c.status)==='completed'}
+
+  function chartBuckets(period){
+    const now=new Date();const out=[];
+    if(period==='day'){
+      const s=new Date(now);s.setHours(0,0,0,0);
+      for(let h=0;h<24;h+=4){const a=new Date(s);a.setHours(h);const b=new Date(s);b.setHours(h+4);out.push({label:`${String(h).padStart(2,'0')}u`,start:a,end:b})}
+    }else if(period==='week'){
+      const s=startOfWeek(now);for(let i=0;i<7;i++){const a=new Date(s);a.setDate(s.getDate()+i);const b=new Date(a);b.setDate(a.getDate()+1);out.push({label:a.toLocaleDateString('nl-BE',{weekday:'short'}),start:a,end:b})}
+    }else{
+      const s=new Date(now.getFullYear(),now.getMonth(),1);const days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+      for(let i=0;i<days;i+=5){const a=new Date(s);a.setDate(1+i);const b=new Date(s);b.setDate(Math.min(days+1,1+i+5));out.push({label:`${a.getDate()}-${Math.min(days,b.getDate()-1)}`,start:a,end:b})}
+    }
+    return out;
+  }
+  function renderChart(d){
+    document.querySelectorAll('[data-metric]').forEach(b=>b.classList.toggle('active',b.dataset.metric===chartMetric));
+    document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===chartPeriod));
+    const buckets=chartBuckets(chartPeriod);
+    const series=chartMetric==='sentiment'?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]:chartMetric==='handling'?[['ai','AI opgevolgd',chartColors.ai],['manual','Manueel opgevolgd',chartColors.manual]]:[['completed','Afgehandeld',chartColors.completed]];
+    const rows=buckets.map(bucket=>{
+      const convs=d.conversations.filter(c=>{const x=new Date(c.updatedAt||c.createdAt||0);return x>=bucket.start&&x<bucket.end});
+      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0};
+      convs.forEach(c=>{values[sentimentOf(d,c)]++;const state=statusKey(c.status);if(state==='manual')values.manual++;else values.ai++;if(state==='completed')values.completed++});
+      return{...bucket,values,total:convs.length};
+    });
+    const max=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
+    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI versus manuele opvolging':'Afgehandelde gesprekken';
+    const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
+    document.getElementById('analyticsHeading').textContent=heading;
+    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
+    document.getElementById('chartLegend').innerHTML=series.map(s=>`<span class="legend-item"><span class="legend-dot" style="background:${s[2]}"></span>${s[1]}</span>`).join('');
+    const wrap=document.getElementById('chartWrap');
+    const y=[max,Math.round(max*.75),Math.round(max*.5),Math.round(max*.25),0];
+    wrap.innerHTML=`<div class="chart-y">${y.map(v=>`<span>${v}</span>`).join('')}</div><div class="chart-plot">${rows.map(r=>`<div class="chart-group">${series.map(s=>{const v=r.values[s[0]];return`<div class="chart-bar" data-value="${v}" title="${s[1]}: ${v}" style="height:${Math.max(v?3:0,(v/max)*100)}%;background:${s[2]}"></div>`}).join('')}</div>`).join('')}<div class="chart-x">${rows.map(r=>`<span title="${esc(r.label)}">${esc(r.label)}</span>`).join('')}</div></div>`;
+    const totals=series.map(s=>[s[1],rows.reduce((n,r)=>n+r.values[s[0]],0)]);
+    document.getElementById('chartSummary').innerHTML=`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`;
+  }
+
   function render(){
-    if(rendering)return; rendering=true;
+    if(rendering)return;rendering=true;
     try{
-      const d=read(), now=new Date(), appts=normalizedAppointments(), open=d.conversations.filter(c=>!['afgesloten','closed'].includes(String(c.status||'').toLowerCase()));
+      const d=read(),appts=normalizedAppointments();
+      const open=d.conversations.filter(c=>!isCompleted(c));
       document.getElementById('statClients').textContent=d.clients.length;
       document.getElementById('statConversations').textContent=open.length;
-      const monday=new Date(now);monday.setHours(0,0,0,0);monday.setDate(now.getDate()-((now.getDay()+6)%7));const weekEnd=new Date(monday);weekEnd.setDate(monday.getDate()+7);
-      const todayEnd=new Date(now);todayEnd.setHours(24,0,0,0);const todayStart=new Date(now);todayStart.setHours(0,0,0,0);
-      document.getElementById('statWeekAppts').textContent=appts.filter(a=>new Date(a.start)>=monday&&new Date(a.start)<weekEnd).length;
-      document.getElementById('statTodayAppts').textContent=appts.filter(a=>new Date(a.start)>=todayStart&&new Date(a.start)<todayEnd).length;
-      const clients=[...d.clients].sort((a,b)=>new Date(b.updatedAt||b.lastActivity||b.createdAt||0)-new Date(a.updatedAt||a.lastActivity||a.createdAt||0)).slice(0,5);
+      const mr=monthRange(),available=availableMinutes(mr.start,mr.end),booked=bookedMinutes(mr.start,mr.end),occupancy=available>0?Math.min(100,Math.round(booked/available*100)):0;
+      document.getElementById('statOccupancy').textContent=`${occupancy}%`;
+      document.getElementById('occupancyBar').style.width=`${occupancy}%`;
+      document.getElementById('occupancyMeta').textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
+      const weekConvs=d.conversations.filter(c=>inCurrentWeek(c.updatedAt||c.createdAt));const completed=weekConvs.filter(isCompleted).length;const completedPct=weekConvs.length?Math.round(completed/weekConvs.length*100):0;
+      document.getElementById('statCompletedWeek').textContent=completed;
+      document.getElementById('completedBar').style.width=`${completedPct}%`;
+      document.getElementById('completedMeta').textContent=`${completedPct}% van ${weekConvs.length} gesprekken`;
+      const clients=[...d.clients].sort((a,b)=>new Date(b.updatedAt||b.lastActivity||b.createdAt||0)-new Date(a.updatedAt||a.lastActivity||a.createdAt||0));
       setHTML(document.getElementById('recentClients'),clients.length?clients.map((c,i)=>{const cv=latestConversationFor(d,c);return `<div class="client-item" onclick="location.href='/platform/klantenlijst/?client=${encodeURIComponent(c.id||'')}'"><div class="client-avatar" style="background:${c.color||colors[i%colors.length]}">${initials(c.name)}</div><div class="client-info"><div class="name-with-badges"><span class="client-name">${esc(c.name||'Klant')}</span>${typeBadge(c)}${cv?stateBadge(cv.status):''}</div><div class="client-phone">${esc(c.phone||c.email||'Geen contactgegevens')}</div></div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Nog geen recente klanten.</div>`);
-      const convs=[...d.conversations].sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0)).slice(0,5);
+      const convs=[...d.conversations].sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
       setHTML(document.getElementById('recentConversations'),convs.length?convs.map((c,i)=>{const cl=clientFor(d,c);return`<div class="inbox-item" onclick="location.href='/platform/inbox/?conversation=${encodeURIComponent(c.id||'')}'"><div class="inbox-avatar" style="background:${cl.color||colors[i%colors.length]}">${initials(cl.name||c.contactName)}</div><div class="inbox-content"><div class="name-with-badges"><span class="inbox-sender">${esc(cl.name||c.contactName||'Klant')}</span>${typeBadge(cl)}${stateBadge(c.status)}</div><div class="inbox-preview">${esc(c.lastMessage||c.messages?.at?.(-1)?.text||'Nog geen berichten')}</div></div><div class="inbox-time">${c.updatedAt?fmtTime(c.updatedAt):''}</div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Nog geen recente gesprekken.</div>`);
-      setHTML(document.getElementById('upcomingAppointments'),appts.length?appts.slice(0,5).map((a,i)=>{const cl=d.clients.find(c=>c.id===(a.clientId||a.contactId));const name=a.customer||a.clientName||cl?.name||'Klant';return`<div class="agenda-item" onclick="location.href='/platform/agenda/'"><div class="agenda-time"><div>${fmtTime(a.start)}</div><div style="font-size:.66rem;color:var(--gray-600);font-weight:700;line-height:1.2;margin-top:.15rem">${esc(dayLabel(a.start))}</div></div><div class="agenda-dot ${['purple','orange','green'][i%3]}"></div><div class="agenda-info"><div class="agenda-title">${esc(a.title||a.type||'Afspraak')}</div><div class="agenda-sub name-with-badges"><span>${esc(name)}</span>${cl?typeBadge(cl):''}${cl&&latestConversationFor(d,cl)?stateBadge(latestConversationFor(d,cl).status):''}</div></div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Geen komende afspraken.</div>`);
-    }finally{rendering=false;}
+      setHTML(document.getElementById('upcomingAppointments'),appts.length?appts.map((a,i)=>`<div class="agenda-item" onclick="location.href='/platform/agenda/'"><div class="agenda-time"><div>${fmtTime(a.start)}</div><div style="font-size:.66rem;color:var(--gray-600);font-weight:700;line-height:1.2;margin-top:.15rem">${esc(dayLabel(a.start))}</div></div><div class="agenda-dot ${['purple','orange','green'][i%3]}"></div><div class="agenda-info"><div class="agenda-title">${esc(a.title||'Afspraak')}</div><div class="agenda-sub">${esc(a.customer||'Klant')}</div></div></div>`).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Geen komende afspraken.</div>`);
+      renderChart(d);
+    }finally{rendering=false}
   }
+  document.querySelectorAll('[data-metric]').forEach(btn=>btn.addEventListener('click',()=>{chartMetric=btn.dataset.metric;localStorage.setItem('reactify.dashboardChartMetric',chartMetric);render()}));
+  document.querySelectorAll('[data-period]').forEach(btn=>btn.addEventListener('click',()=>{chartPeriod=btn.dataset.period;localStorage.setItem('reactify.dashboardChartPeriod',chartPeriod);render()}));
   const toggle=document.getElementById('sidebarToggle'),sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));
-  let timer=null;async function refresh(){await fetchBookings();render();}
-  refresh();timer=setInterval(refresh,30000);
-  window.addEventListener('storage',e=>{if(!e.key||e.key===STORE)render()});
-  window.addEventListener('reactify:data',render);window.addEventListener('reactify:datachange',render);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+  async function refresh(){await fetchLiveData().catch(()=>{});render()}
+  refresh();setInterval(refresh,30000);
+  window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+  window.addEventListener('storage',e=>{if(!e.key||e.key===STORE)render()});window.addEventListener('reactify:data',render);window.addEventListener('reactify:datachange',render);
 })();
 </script>
 <script src="/platform/assets/cal-sync.js"></script>
