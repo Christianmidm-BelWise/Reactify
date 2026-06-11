@@ -39,6 +39,11 @@
 </style>
 
 <style id="reactify-final-agenda-time-style">.appt-time{width:72px!important;line-height:1.2}.appt-day-label{display:block;font-size:.66rem;color:var(--gray-500);font-weight:800;margin-top:.15rem}.appt-sub{margin-top:.1rem}</style>
+
+<style id="reactify-agenda-final-visuals">
+.metric-progress{margin-top:.42rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}.metric-progress-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}.metric-progress-fill.purple{background:var(--purple)}
+.appt-item.past{opacity:.62;background:#FAFAFB}.appt-item.past:hover{opacity:.82}.appt-item.past .appt-title{text-decoration:none;color:var(--gray-600)}.appt-badge.past{background:var(--gray-100);color:var(--gray-500)}
+</style>
 </head>
 <body>
   <aside class="sidebar" id="sidebar">
@@ -72,7 +77,7 @@
       <article class="stat-card"><div class="stat-icon purple">📅</div><div><div class="stat-label">Afspraken vandaag</div><div class="stat-value" id="statToday">0</div><div class="stat-trend">Live uit Cal.com</div></div></article>
       <article class="stat-card"><div class="stat-icon orange">🗓️</div><div><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeek">0</div><div class="stat-trend">Accepted only</div></div></article>
       <article class="stat-card"><div class="stat-icon green">✓</div><div><div class="stat-label">Totaal deze maand</div><div class="stat-value" id="statMonth">0</div><div class="stat-trend">Gekozen maand</div></div></article>
-      <article class="stat-card occupancy-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><select class="occupancy-period" id="occupancyPeriod" aria-label="Periode bezettingsgraad"><option value="day">Dag</option><option value="week">Week</option><option value="month" selected>Maand</option><option value="year">Jaar</option></select><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
+      <article class="stat-card occupancy-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div><select class="occupancy-period" id="occupancyPeriod" aria-label="Periode bezettingsgraad"><option value="day">Dag</option><option value="week">Week</option><option value="month" selected>Maand</option><option value="year">Jaar</option></select><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
     </section>
 
     <section class="agenda-layout">
@@ -188,6 +193,7 @@
     const localToUTCISO=value=>new Date(value).toISOString();
     const formatTime=d=>new Date(d).toLocaleTimeString("nl-BE",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Brussels"});
     const formatDate=d=>new Date(d).toLocaleDateString("nl-BE",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Brussels"});
+    const relativeDayLabel=d=>{const x=new Date(d),today=new Date();today.setHours(0,0,0,0);const day=new Date(x);day.setHours(0,0,0,0);const diff=Math.round((day-today)/86400000);if(diff===0)return"Vandaag";if(diff===1)return"Morgen";if(diff===2)return"Overmorgen";if(diff===-1)return"Gisteren";return x.toLocaleDateString("nl-BE",{weekday:"long",day:"numeric",month:"short",timeZone:"Europe/Brussels"});};
     const readJSON=(key, fallback=[])=>{try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback}catch(e){return fallback}};
     const writeJSON=(key,val)=>{localStorage.setItem(key,JSON.stringify(val));window.dispatchEvent(new CustomEvent("reactify:datachange",{detail:{key}}))};
 const NOTIFICATION_KEY="reactify.notifications";
@@ -263,7 +269,7 @@ const NOTIFICATION_KEY="reactify.notifications";
           bookings=normalizeBookings(bookingPayload.value);
         } else { bookings=[]; throw bookingPayload.reason; }
         if(typePayload.status==="fulfilled") eventTypes=Array.isArray(typePayload.value.data)?typePayload.value.data:[];
-        if(schedulePayload.status==="fulfilled") schedules=Array.isArray(schedulePayload.value.data)?schedulePayload.value.data:[];
+        if(schedulePayload.status==="fulfilled"){const sp=schedulePayload.value;schedules=Array.isArray(sp.data)?sp.data:Array.isArray(sp.data?.schedules)?sp.data.schedules:Array.isArray(sp.schedules)?sp.schedules:[];}
         renderAll(); fillContactSelect(); fillEventTypeSelects(); fillScheduleSelect(); renderEventTypeList();
         setSync("ok",`Verbonden met Cal.com · ${bookings.length} afspraken · ${eventTypes.length} afspraaktypes · ${schedules.length} schema's`);
       }catch(error){
@@ -290,13 +296,12 @@ const NOTIFICATION_KEY="reactify.notifications";
       return{s,e,period};
     }
     function hmMinutes(value){const m=String(value||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0;}
-    function scheduleBlocks(){
-      const blocks=[];for(const schedule of schedules){const rows=Array.isArray(schedule.availability)?schedule.availability:Array.isArray(schedule.availabilities)?schedule.availabilities:[];for(const row of rows){const days=Array.isArray(row.days)?row.days:[];const start=hmMinutes(row.startTime||row.start);const end=hmMinutes(row.endTime||row.end);if(end>start)blocks.push({days,start,end});}}
-      if(!blocks.length)blocks.push({days:['Monday','Tuesday','Wednesday','Thursday','Friday'],start:9*60,end:17*60});return blocks;
-    }
+    function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null;}
+    function scheduleRows(schedule){const direct=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];if(direct.length)return direct;const nested=schedule?.availability||schedule?.availabilities||{};const rows=[];if(nested&&typeof nested==='object'&&!Array.isArray(nested)){for(const [day,blocks] of Object.entries(nested)){for(const b of (Array.isArray(blocks)?blocks:[blocks]))if(b)rows.push({...b,days:b.days||[day]});}}return rows;}
+    function scheduleBlocks(){return scheduleRows(activeSchedule()).map(row=>({days:Array.isArray(row.days)?row.days:[row.day||row.weekday].filter(Boolean),start:hmMinutes(row.startTime||row.start||row.start_time),end:hmMinutes(row.endTime||row.end||row.end_time)})).filter(block=>block.days.length&&block.end>block.start);}
     function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const index=date.getDay();return days.some(d=>{if(typeof d==='number')return d===index||d===((index+6)%7);const v=String(d).trim().toLowerCase();return v===names[index].toLowerCase()||v===short[index].toLowerCase()||v===String(index)||v===String((index+6)%7);});}
     function availableMinutesInRange(s,e){let total=0;const blocks=scheduleBlocks();for(let d=new Date(s);d<e;d.setDate(d.getDate()+1)){for(const block of blocks){if(dayMatches(block.days,d))total+=Math.max(0,block.end-block.start);}}return total;}
-    function bookedMinutesInRange(s,e){return bookings.reduce((total,b)=>{const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return total;let duration=(be-bs)/60000;if(!(duration>0))duration=Number(b.duration||0)||30;const overlapStart=Math.max(bs.getTime(),s.getTime());const overlapEnd=Math.min(bs.getTime()+duration*60000,e.getTime());return total+Math.max(0,(overlapEnd-overlapStart)/60000);},0);}
+    function bookedMinutesInRange(s,e){return bookings.reduce((total,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return total;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return total;let duration=(be-bs)/60000;if(!(duration>0))duration=Number(b.duration||b.lengthInMinutes||0)||30;const overlapStart=Math.max(bs.getTime(),s.getTime());const overlapEnd=Math.min(bs.getTime()+duration*60000,e.getTime());return total+Math.max(0,(overlapEnd-overlapStart)/60000);},0);}
     function renderStats(){
       const today=new Date();today.setHours(0,0,0,0);const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
       const weekStart=new Date(today);const day=weekStart.getDay()||7;weekStart.setDate(weekStart.getDate()-day+1);weekStart.setHours(0,0,0,0);const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+7);
@@ -305,7 +310,7 @@ const NOTIFICATION_KEY="reactify.notifications";
       $("statWeek").textContent=bookings.filter(b=>inRange(b,weekStart,weekEnd)).length;
       $("statMonth").textContent=bookings.filter(b=>inRange(b,monthStart,monthEnd)).length;
       const range=occupancyRange();const available=availableMinutesInRange(range.s,range.e);const booked=bookedMinutesInRange(range.s,range.e);const percentage=available>0?Math.min(100,Math.round(booked/available*100)):0;
-      $("statOccupancy").textContent=`${percentage}%`;$("occupancyDetail").textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
+      $("statOccupancy").textContent=`${percentage}%`;if($("occupancyBar"))$("occupancyBar").style.width=`${percentage}%`;$("occupancyDetail").textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
     }
     function renderCalendar(){
       const c=$("calendarContainer");c.innerHTML="";document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===viewMode));
@@ -329,7 +334,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     function renderAppointments(){
       const r=getRange(); const list=bookings.filter(b=>inRange(b,r.s,r.e)); const el=$("appointmentList");
       if(!list.length){el.innerHTML=`<div class="appt-empty">Geen afspraken in deze ${r.label.toLowerCase()}.</div>`; return;}
-      el.innerHTML=list.map((b,i)=>`<div class="appt-item ${colors[i%colors.length]}" onclick="openBookingDetails('${escapeHTML(b.meetingUrl||'')}')"><div class="appt-time">${formatTime(b.start)}</div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${formatDate(b.start)} · ${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${b.status==='pending'?'pending':'confirmed'}"><span class="dot"></span>${b.status==='pending'?'In aanvraag':'Bevestigd'}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`).join("");
+      el.innerHTML=list.map((b,i)=>{const isPast=new Date(b.end||b.start).getTime()<Date.now();return `<div class="appt-item ${colors[i%colors.length]}${isPast?' past':''}" onclick="openBookingDetails('${escapeHTML(b.meetingUrl||'')}')"><div class="appt-time"><span>${formatTime(b.start)}</span><span class="appt-day-label">${escapeHTML(relativeDayLabel(b.start))}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${isPast?'past':(b.status==='pending'?'pending':'confirmed')}"><span class="dot"></span>${isPast?'Voorbij':(b.status==='pending'?'In aanvraag':'Bevestigd')}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`}).join("");
     }
     function cleanLocationLabel(value){const text=String(value||""); if(text.includes("app.cal.com/video")) return "Cal.com video"; if(text.includes("zoom.us")) return "Zoom meeting"; return text;}
     function openBookingDetails(url){ if(url) window.open(url,"_blank","noopener,noreferrer"); }
