@@ -1188,9 +1188,12 @@
     for(const row of rows.filter(validBackendRow)){
       const backendId=String(row.id||row.conversation_id||''); if(!backendId)continue;
       let c=clientMatch(d,row);
-      const combined=[row.last_message,row.summary,row.contact_name].filter(Boolean).join(' ');
-      if(!c){c={id:uid('client'),name:betterContactName('',row.contact_name,row.contact_phone),email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:'Lead',status:'neutraal',sentiment:'neutraal',description:'',source:String(row.channel||'sms').toLowerCase()==='email'?'Nieuw e-mailgesprek':'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
-      c.name=betterContactName(c.name,row.contact_name,row.contact_phone);
+      const combined=[row.latest_incoming_message,row.last_message,row.summary,row.contact_name].filter(Boolean).join(' ');
+      const signatureName=String(row.channel||'').toLowerCase()==='email'?extractEmailSignatureName(row.latest_incoming_message||row.last_message||''):'';
+      const backendName=signatureName||row.contact_name||'';
+      if(!c){c={id:uid('client'),name:betterContactName('',backendName,row.contact_phone),email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:'Lead',status:'neutraal',sentiment:'neutraal',description:'',source:String(row.channel||'sms').toLowerCase()==='email'?'Nieuw e-mailgesprek':'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
+      c.name=betterContactName(c.name,backendName,row.contact_phone);
+      if(signatureName&&backendId){api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:backendId,contact_name:signatureName,name:signatureName})}).catch(()=>{});}
       c.email=row.contact_email||c.email;
       c.phone=normPhone(row.contact_phone||c.phone);
       c.updatedAt=row.updated_at||c.updatedAt;
@@ -1279,7 +1282,7 @@
   }
   function extractEmailSignatureName(text){
     const lines=String(text||'').replace(/\r/g,'').split('\n').map(x=>x.trim().replace(/^[,;:\-\s]+|[,;:\-\s]+$/g,''));
-    const closing=/^(?:(?:met\s+)?(?:vriendelijke|hartelijke)\s+groet(?:en)?|groet(?:en)?|mvg|kind regards|best regards|regards|sincerely)$/i;
+    const closing=/^(?:(?:met\s+)?(?:vriendelijke|hartelijke)\s+groet(?:en)?|groet(?:en)?|m\.?v\.?g\.?|kind regards|best regards|regards|sincerely)[,!.:;]*$/i;
     const blocked=/^(team|reactify|klantendienst|customer service|support|administratie|sales|marketing|directie|bedrijf)$/i;
     for(let i=0;i<lines.length;i++){
       if(!closing.test(lines[i]))continue;
