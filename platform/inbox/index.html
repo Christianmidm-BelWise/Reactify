@@ -1172,17 +1172,37 @@
   function description(client,conversations){
     const list=(Array.isArray(conversations)?conversations:[]).filter(conv=>String(conv?.folder||'inbox')!=='trash');
     const incoming=list.flatMap(conv=>(conv?.messages||[]).filter(m=>(m.type||'incoming')==='incoming'&&String(m.sender||'customer').toLowerCase()!=='system').map(m=>String(m.text||'').trim())).filter(Boolean);
-    const context=[...incoming,...list.map(conv=>String(conv?.summary||'').trim()).filter(Boolean)].join(' ').toLowerCase();
-    const channels=new Set(list.map(conv=>String(conv?.channel||'sms').toLowerCase()));
-    const via=channels.has('sms')&&channels.has('email')?'SMS en e-mail':channels.has('email')?'e-mail':'SMS';
-    const name=client.name||'Deze persoon';
-    if(incoming.length&&incoming.every(isGreetingOnly))return `${name} nam via ${via} contact op met een begroeting.`;
-    let reason='';
-    if(/klacht|probleem|fout|ontevreden|niet tevreden|slecht/.test(context))reason='een probleem of klacht';
-    else if(/afspraak|boeken|inplannen|reserv|beschikbaar/.test(context))reason='een afspraak';
-    else if(/prijs|kost|tarief|offerte|euro/.test(context))reason='prijzen of een offerte';
-    else if(/informatie|info|wanneer|hoe|wat is|vraag/.test(context))reason='informatie';
-    return reason?`${name} neemt via ${via} contact op over ${reason}.`:`${name} neemt via ${via} contact op.`;
+    const text=[...incoming,...list.map(conv=>String(conv?.summary||'').trim()).filter(Boolean)].join(' ');
+    const lower=text.toLowerCase();
+    const name=client.name||'Deze klant';
+    const traits=[];
+    const background=[];
+    const behavior=[];
+
+    if(/\b(bouw|aannemer|renovatie|metselaar|dakwerk|schrijnwerk|elektricien|loodgieter|installateur|werf|construction)\b/.test(lower))background.push('is actief in de bouw of technische sector');
+    else if(/\b(kapper|kapsalon|haar|barber|salon)\b/.test(lower))background.push('is actief in de kappers- of schoonheidssector');
+    else if(/\b(garage|auto|wagen|voertuig|mechanieker)\b/.test(lower))background.push('is actief in de automobielsector');
+    else if(/\b(coach|consultant|advies|consultancy)\b/.test(lower))background.push('werkt als coach of consultant');
+    else if(/\b(hotel|restaurant|horeca|café|brasserie)\b/.test(lower))background.push('is actief in de horeca');
+    else if(/\b(dokter|arts|praktijk|therapeut|kinesist|zorg)\b/.test(lower))background.push('is actief in de zorgsector');
+
+    if(/\b(dringend|spoed|asap|meteen|vandaag|zo snel mogelijk|onmiddellijk)\b/.test(lower))traits.push('communiceert direct en tijdsgericht');
+    if(/\b(alstublieft|aub|dank|bedankt|merci|graag|vriendelijke groet|mvg)\b/.test(lower))traits.push('communiceert beleefd');
+    if(/\b(klacht|ontevreden|boos|probleem|fout|teleurgesteld)\b/.test(lower))traits.push('uit ontevredenheid duidelijk en verwacht een concrete oplossing');
+    if(/\b(prijs|kost|tarief|offerte|budget|euro)\b/.test(lower))traits.push('is prijsbewust en vraagt graag concrete informatie');
+    if(/\b(afspraak|boeken|inplannen|reservatie|beschikbaar|welke dag|welk uur)\b/.test(lower))behavior.push('wil efficiënt een afspraak of beschikbaar moment vastleggen');
+    if(/\b(meer info|informatie|hoe werkt|wat is|kan je|kunt u|vraag)\b/.test(lower))behavior.push('stelt gerichte vragen om eerst voldoende informatie te verzamelen');
+    if(/\b(ik ben al klant|bestaande klant|reeds klant)\b/.test(lower))background.push('is een bestaande klant');
+    if(/\b(eerste keer|nog geen klant|ik ben geen klant)\b/.test(lower))background.push('is een nieuwe lead');
+
+    const unique=arr=>[...new Set(arr)];
+    const facts=unique(background), personality=unique(traits), actions=unique(behavior), parts=[];
+    if(facts.length)parts.push(`${name} ${facts.join(' en ')}.`);
+    if(personality.length)parts.push(`${name} ${personality.join(' en ')}.`);
+    if(actions.length)parts.push(`${name} ${actions.join(' en ')}.`);
+    if(!parts.length&&incoming.length)parts.push(`${name} communiceert voorlopig neutraal en doelgericht. Er is nog te weinig informatie om achtergrond of persoonlijkheid betrouwbaar te beschrijven.`);
+    if(!parts.length)parts.push('Nog onvoldoende gespreksinformatie om gedrag, persoonlijkheid of achtergrond betrouwbaar te beschrijven.');
+    return parts.join(' ');
   }
 
   function localConversationAnalysis(conv){const text=(conv?.messages||[]).map(m=>m.text||'').join(' ').toLowerCase();const human=/medewerker|persoon spreken|mens spreken|iemand spreken|klantendienst|manager|zaakvoerder/.test(text);const negative=/klacht|ontevreden|niet tevreden|probleem|fout|slecht|teleurgesteld|annuleren/.test(text);const urgent=/dringend|spoed|asap|meteen|onmiddellijk|zo snel mogelijk/.test(text);const booking=/afspraak|boeken|inplannen|reservatie|beschikbaar|welke dag|welk uur/.test(text);if(human)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt expliciet om een medewerker of menselijke opvolging.',action:'Neem het gesprek over en reageer persoonlijk.'};if(negative)return{requiresHuman:true,urgency:'hoog',summary:'De klant meldt een klacht of probleem en heeft menselijke opvolging nodig.',action:'Neem het gesprek over, erken het probleem en stel een concrete oplossing voor.'};if(urgent)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt dringende opvolging.',action:'Neem het gesprek over en reageer zo snel mogelijk.'};if(booking)return{requiresHuman:false,urgency:'normaal',summary:'De klant wil een afspraak maken of een beschikbaar moment vinden.',action:'Laat AI twee concrete momenten voorstellen of plan de afspraak in.'};return{requiresHuman:false,urgency:'normaal',summary:'De klant heeft een vraag en verwacht verdere opvolging.',action:'Laat AI antwoorden en volg op wanneer het gesprek niet verdergaat.'};}
