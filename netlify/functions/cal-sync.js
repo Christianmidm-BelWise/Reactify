@@ -111,7 +111,15 @@
         if (JSON.stringify([client.name, client.email, client.phone, client.source]) !== before) changed = true;
       }
 
-      // Een succesvolle Cal.com-boeking betekent dat de klant geholpen is.
+      // Gebruik de volledige naam uit de agenda ook voor bestaande gesprekken.
+      // Zo wordt een telefoonnummer of “Nieuwe lead” vervangen door de naam van de deelnemer.
+      for (const conversation of data.conversations.filter((c) => c.clientId === client.id)) {
+        if (conversation.backendId && isUsefulName(info.name)) {
+          backendPatches.push({ conversationId: conversation.backendId, name: info.name, email: info.email, phone: info.phone, preserveStatus: true });
+        }
+      }
+
+      // Een succesvolle afspraak betekent dat de klant geholpen is.
       // Markeer elk gekoppeld gesprek als Afgerond, maar maak geen lege chat aan.
       for (const conversation of data.conversations.filter((c) => c.clientId === client.id)) {
         if (!["afgesloten", "closed", "completed"].includes(String(conversation.status || "").toLowerCase())) {
@@ -121,7 +129,7 @@
           conversation.ai.summary = "De afspraak is succesvol ingepland.";
           conversation.ai.recommendedAction = "Geen verdere actie nodig. Het gesprek is afgerond.";
           changed = true;
-          if (conversation.backendId) backendPatches.push({ conversationId: conversation.backendId, name: info.name, email: info.email, phone: info.phone });
+          if (conversation.backendId) backendPatches.push({ conversationId: conversation.backendId, name: info.name, email: info.email, phone: info.phone, completed: true });
         }
       }
     }
@@ -130,12 +138,17 @@
 
     // Backendstatus ook bewaren zodat alle pagina's dezelfde status zien.
     const uniquePatches = new Map();
-    for (const patch of backendPatches) uniquePatches.set(patch.conversationId, patch);
+    for (const patch of backendPatches) {
+      const previous = uniquePatches.get(patch.conversationId) || {};
+      uniquePatches.set(patch.conversationId, { ...previous, ...patch, completed: Boolean(previous.completed || patch.completed), preserveStatus: Boolean((previous.preserveStatus || patch.preserveStatus) && !(previous.completed || patch.completed)) });
+    }
     for (const patch of uniquePatches.values()) {
       fetch(CONVERSATIONS_API, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...patch, status: "afgesloten", aiEnabled: false }),
+        body: JSON.stringify(patch.completed
+          ? { conversationId: patch.conversationId, name: patch.name, email: patch.email, phone: patch.phone, status: "afgesloten", aiEnabled: false }
+          : { conversationId: patch.conversationId, name: patch.name, email: patch.email, phone: patch.phone }),
       }).catch(() => {});
     }
   }
@@ -152,7 +165,7 @@
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok || payload?.status === "error") {
-        throw new Error(payload?.error || "Cal.com-afspraken konden niet worden geladen.");
+        throw new Error(payload?.error || "Agenda-afspraken konden niet worden geladen.");
       }
       const bookings = normalize(payload);
       localStorage.setItem(CACHE_KEY, JSON.stringify(bookings));
@@ -161,7 +174,7 @@
       window.dispatchEvent(new CustomEvent("reactify:calbookings", { detail: { bookings } }));
       return bookings;
     } catch (error) {
-      if (!options.silent) console.warn("Cal.com synchronisatie mislukt:", error.message);
+      if (!options.silent) console.warn("Agenda-synchronisatie mislukt:", error.message);
       return readJSON(CACHE_KEY, []);
     } finally {
       busy = false;
