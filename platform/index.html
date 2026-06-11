@@ -435,16 +435,22 @@
   .stat-meta{font-size:.68rem;color:var(--gray-600);margin-top:.28rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .dashboard-card .card-body{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--purple-light) transparent}
   .dashboard-card .card-body::-webkit-scrollbar{width:7px}.dashboard-card .card-body::-webkit-scrollbar-thumb{background:var(--purple-light);border-radius:999px}.dashboard-card .card-body:hover::-webkit-scrollbar-thumb{background:var(--purple)}
-  .analytics-card{grid-column:1/-1;margin-top:1.25rem;background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
-  .analytics-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.15rem 1.25rem;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
-  .analytics-title h2{font-size:1.05rem;color:var(--gray-900);margin-bottom:.18rem}.analytics-title p{font-size:.76rem;color:var(--gray-600)}
-  .analytics-controls{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}.analytics-switch{display:inline-flex;gap:.2rem;padding:.24rem;background:var(--purple-bg);border:1px solid var(--purple-light);border-radius:10px}
-  .analytics-btn{border:0;background:transparent;color:var(--gray-600);border-radius:7px;padding:.38rem .65rem;font-size:.72rem;font-weight:800;cursor:pointer;transition:.18s}.analytics-btn:hover{background:#fff;color:var(--purple)}.analytics-btn.active{background:var(--purple);color:#fff;box-shadow:0 4px 10px rgba(91,46,145,.2)}
-  .analytics-body{padding:1.2rem 1.25rem 1.35rem}.chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem;min-height:22px}.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--gray-600);font-weight:700}.legend-dot{width:9px;height:9px;border-radius:999px}
-  .chart-wrap{height:310px;display:flex;align-items:stretch;gap:.75rem;position:relative;padding:0 .25rem}.chart-y{width:34px;display:flex;flex-direction:column;justify-content:space-between;color:var(--gray-400);font-size:.65rem;text-align:right;padding-bottom:28px}.chart-plot{position:relative;flex:1;border-left:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);display:flex;align-items:flex-end;gap:.55rem;padding:.5rem .55rem 28px;background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--gray-100) 25%)}
-  .chart-group{flex:1;height:100%;min-width:42px;display:flex;align-items:flex-end;justify-content:center;gap:.18rem;position:relative}.chart-bar{min-width:10px;max-width:24px;flex:1;border-radius:6px 6px 2px 2px;min-height:2px;transition:height .45s ease,filter .2s;position:relative;cursor:default}.chart-bar:hover{filter:brightness(.95)}.chart-bar:after{content:attr(data-value);position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);font-size:.62rem;font-weight:800;color:var(--gray-700);opacity:0;transition:.15s;white-space:nowrap}.chart-bar:hover:after{opacity:1}
-  .chart-x{position:absolute;left:0;right:0;bottom:2px;display:flex;gap:.55rem;padding:0 .55rem}.chart-x span{flex:1;min-width:42px;text-align:center;font-size:.65rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chart-empty{margin:auto;text-align:center;color:var(--gray-500);font-size:.82rem}.chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}
-  @media(max-width:900px){.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.chart-wrap{height:280px;overflow-x:auto}.chart-plot{min-width:620px}}
+  .analytics-card{grid-column:1/-1;margin-top:1.25rem;background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;font-family:var(--font-sans)}
+  .analytics-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.2rem 1.3rem;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
+  .analytics-title h2{font-size:1.05rem;font-weight:800;color:var(--gray-900);margin-bottom:.18rem;letter-spacing:-.01em}.analytics-title p{font-size:.76rem;color:var(--gray-600)}
+  .analytics-controls{display:flex;gap:.65rem;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+  .analytics-switch{display:inline-flex;gap:.22rem;padding:.28rem;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 1px 2px rgba(17,24,39,.04)}
+  .analytics-btn{appearance:none;border:0;background:transparent;color:var(--gray-600);border-radius:9px;padding:.46rem .78rem;font-family:var(--font-sans);font-size:.72rem;font-weight:750;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s,transform .18s;white-space:nowrap}
+  .analytics-btn:hover{background:var(--purple-bg);color:var(--purple);transform:translateY(-1px)}
+  .analytics-btn.active{background:var(--purple);color:#fff;box-shadow:0 5px 14px rgba(91,46,145,.24)}
+  .analytics-body{padding:1.2rem 1.3rem 1.35rem}
+  .chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem;min-height:22px}.legend-item{display:flex;align-items:center;gap:.42rem;font-size:.72rem;color:var(--gray-600);font-weight:700}.legend-dot{width:9px;height:9px;border-radius:999px;box-shadow:0 0 0 3px rgba(17,24,39,.035)}
+  .chart-wrap{height:330px;position:relative;overflow:hidden;border:1px solid var(--gray-100);border-radius:14px;background:linear-gradient(180deg,#fff 0%,#FCFAFE 100%)}
+  .line-chart{width:100%;height:100%;display:block;font-family:var(--font-sans)}
+  .line-grid{stroke:#E5E7EB;stroke-width:1;stroke-dasharray:4 5}.line-axis{stroke:#D1D5DB;stroke-width:1}.line-label{fill:#6B7280;font-size:11px;font-family:var(--font-sans)}.line-y-label{fill:#9CA3AF;font-size:10px;font-family:var(--font-sans)}
+  .line-path{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 4px 8px rgba(91,46,145,.12))}.line-area{opacity:.075}.line-point{stroke:#fff;stroke-width:2.5;cursor:pointer;transition:r .15s}.line-point:hover{r:6}
+  .chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}.chart-summary strong{color:var(--gray-900);font-weight:800}
+  @media(max-width:900px){.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.analytics-switch{overflow-x:auto;max-width:100%}.chart-wrap{height:290px;overflow-x:auto}.line-chart{min-width:720px}}
 </style>
 </head>
 <body>
@@ -579,7 +585,7 @@
       <div class="analytics-switch" aria-label="Grafiektype">
         <button class="analytics-btn active" data-metric="sentiment" type="button">Sentiment</button>
         <button class="analytics-btn" data-metric="handling" type="button">AI / manueel</button>
-        <button class="analytics-btn" data-metric="completed" type="button">Afgehandeld</button>
+        <button class="analytics-btn" data-metric="completed" type="button">Afgehandeld / open</button>
       </div>
       <div class="analytics-switch" aria-label="Periode">
         <button class="analytics-btn" data-period="day" type="button">Dag</button>
@@ -730,7 +736,7 @@
   const STORE='reactify_platform_data_v3';
   const API={bookings:'/.netlify/functions/cal-bookings',schedules:'/.netlify/functions/cal-schedules'};
   const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb'];
-  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a'};
+  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a',open:'#F5A623'};
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const read=()=>{try{const d=JSON.parse(localStorage.getItem(STORE)||'{}');return {clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[]}}catch(e){return{clients:[],conversations:[],appointments:[]}}};
   const initials=n=>String(n||'Klant').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'KL';
@@ -795,22 +801,46 @@
     document.querySelectorAll('[data-metric]').forEach(b=>b.classList.toggle('active',b.dataset.metric===chartMetric));
     document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===chartPeriod));
     const buckets=chartBuckets(chartPeriod);
-    const series=chartMetric==='sentiment'?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]:chartMetric==='handling'?[['ai','AI opgevolgd',chartColors.ai],['manual','Manueel opgevolgd',chartColors.manual]]:[['completed','Afgehandeld',chartColors.completed]];
+    const series=chartMetric==='sentiment'
+      ?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]
+      :chartMetric==='handling'
+        ?[['ai','AI opgevolgd',chartColors.ai],['manual','Manueel opgevolgd',chartColors.manual]]
+        :[['completed','Afgehandeld',chartColors.completed],['open','Niet afgehandeld',chartColors.open]];
     const rows=buckets.map(bucket=>{
       const convs=d.conversations.filter(c=>{const x=new Date(c.updatedAt||c.createdAt||0);return x>=bucket.start&&x<bucket.end});
-      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0};
-      convs.forEach(c=>{values[sentimentOf(d,c)]++;const state=statusKey(c.status);if(state==='manual')values.manual++;else values.ai++;if(state==='completed')values.completed++});
+      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0};
+      convs.forEach(c=>{
+        values[sentimentOf(d,c)]++;
+        const state=statusKey(c.status);
+        if(state==='manual') values.manual++; else values.ai++;
+        if(state==='completed') values.completed++; else values.open++;
+      });
       return{...bucket,values,total:convs.length};
     });
-    const max=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
-    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI versus manuele opvolging':'Afgehandelde gesprekken';
+    const maxRaw=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
+    const max=Math.max(4,Math.ceil(maxRaw/4)*4);
+    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI versus manuele opvolging':'Afgehandeld versus niet afgehandeld';
     const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
     document.getElementById('analyticsHeading').textContent=heading;
     document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
     document.getElementById('chartLegend').innerHTML=series.map(s=>`<span class="legend-item"><span class="legend-dot" style="background:${s[2]}"></span>${s[1]}</span>`).join('');
+
     const wrap=document.getElementById('chartWrap');
-    const y=[max,Math.round(max*.75),Math.round(max*.5),Math.round(max*.25),0];
-    wrap.innerHTML=`<div class="chart-y">${y.map(v=>`<span>${v}</span>`).join('')}</div><div class="chart-plot">${rows.map(r=>`<div class="chart-group">${series.map(s=>{const v=r.values[s[0]];return`<div class="chart-bar" data-value="${v}" title="${s[1]}: ${v}" style="height:${Math.max(v?3:0,(v/max)*100)}%;background:${s[2]}"></div>`}).join('')}</div>`).join('')}<div class="chart-x">${rows.map(r=>`<span title="${esc(r.label)}">${esc(r.label)}</span>`).join('')}</div></div>`;
+    const W=1000,H=320,L=58,R=24,T=24,B=44,plotW=W-L-R,plotH=H-T-B;
+    const xAt=i=>L+(rows.length<=1?plotW/2:(i/(rows.length-1))*plotW);
+    const yAt=v=>T+plotH-(v/max)*plotH;
+    const ticks=[0,max*.25,max*.5,max*.75,max].map(v=>Math.round(v));
+    const grid=ticks.map(v=>`<line class="line-grid" x1="${L}" y1="${yAt(v)}" x2="${W-R}" y2="${yAt(v)}"></line><text class="line-y-label" x="${L-12}" y="${yAt(v)+4}" text-anchor="end">${v}</text>`).join('');
+    const xLabels=rows.map((r,i)=>`<text class="line-label" x="${xAt(i)}" y="${H-16}" text-anchor="middle">${esc(r.label)}</text>`).join('');
+    const lines=series.map((s,si)=>{
+      const pts=rows.map((r,i)=>[xAt(i),yAt(r.values[s[0]]),r.values[s[0]]]);
+      const path=pts.map((p,i)=>`${i?'L':'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+      const area=`${path} L ${xAt(rows.length-1).toFixed(1)} ${(T+plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(T+plotH).toFixed(1)} Z`;
+      const circles=pts.map((p,i)=>`<circle class="line-point" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"><title>${s[1]} · ${rows[i].label}: ${p[2]}</title></circle>`).join('');
+      return `<path class="line-area" d="${area}" fill="${s[2]}"></path><path class="line-path" d="${path}" stroke="${s[2]}"></path>${circles}`;
+    }).join('');
+    wrap.innerHTML=`<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(heading)}"><line class="line-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"></line><line class="line-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"></line>${grid}${xLabels}${lines}</svg>`;
+
     const totals=series.map(s=>[s[1],rows.reduce((n,r)=>n+r.values[s[0]],0)]);
     document.getElementById('chartSummary').innerHTML=`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`;
   }
