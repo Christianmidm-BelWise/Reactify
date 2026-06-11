@@ -192,6 +192,22 @@
     const localToUTCISO=value=>new Date(value).toISOString();
     const formatTime=d=>new Date(d).toLocaleTimeString("nl-BE",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Brussels"});
     const formatDate=d=>new Date(d).toLocaleDateString("nl-BE",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Brussels"});
+    function brusselsDateKey(value){
+      const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Brussels",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date(value));
+      const get=type=>parts.find(part=>part.type===type)?.value||"";
+      return `${get("year")}-${get("month")}-${get("day")}`;
+    }
+    function formatAgendaDayLabel(value){
+      const target=brusselsDateKey(value);
+      const now=new Date();
+      const today=brusselsDateKey(now);
+      const tomorrow=brusselsDateKey(new Date(now.getTime()+86400000));
+      const dayAfterTomorrow=brusselsDateKey(new Date(now.getTime()+172800000));
+      if(target===today)return "Vandaag";
+      if(target===tomorrow)return "Morgen";
+      if(target===dayAfterTomorrow)return "Overmorgen";
+      return formatDate(value);
+    }
     const readJSON=(key, fallback=[])=>{try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback}catch(e){return fallback}};
     const writeJSON=(key,val)=>{localStorage.setItem(key,JSON.stringify(val));window.dispatchEvent(new CustomEvent("reactify:datachange",{detail:{key}}))};
 const NOTIFICATION_KEY="reactify.notifications";
@@ -212,10 +228,16 @@ const NOTIFICATION_KEY="reactify.notifications";
     function badgesForBooking(b){const c=contactForBooking(b);if(!c)return '<span class="contact-type lead">Lead</span>';const cv=latestConvFor(c),st=cv?stateInfo(cv.status):null;return `<span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${escapeHTML(c.type||'Lead')}</span>${st?`<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`:''}`}
 
     async function apiFetch(url, options={}){
-      const res=await fetch(url,{headers:{"Content-Type":"application/json"},...options});
+      const headers={"Content-Type":"application/json","Cache-Control":"no-cache",...(options.headers||{})};
+      const res=await fetch(url,{cache:"no-store",...options,headers});
       const data=await res.json().catch(()=>({status:"error",error:"Kon response niet lezen."}));
       if(!res.ok || data.status==="error") throw new Error(data.error || data.message || (typeof data.details==="string"?data.details:JSON.stringify(data.details||"")) || "API request mislukt.");
       return data;
+    }
+
+    function freshUrl(url){
+      const separator=String(url).includes("?")?"&":"?";
+      return `${url}${separator}_fresh=${Date.now()}`;
     }
 
     function getContacts(){
@@ -261,7 +283,9 @@ const NOTIFICATION_KEY="reactify.notifications";
       setSync("laden","Cal.com data laden...");
       try{
         const [bookingPayload, typePayload, schedulePayload] = await Promise.allSettled([
-          apiFetch(API.bookings), apiFetch(API.eventTypes), apiFetch(API.schedules)
+          apiFetch(freshUrl(API.bookings)),
+          apiFetch(freshUrl(API.eventTypes)),
+          apiFetch(freshUrl(API.schedules))
         ]);
         if(bookingPayload.status==="fulfilled"){
           bookings=normalizeBookings(bookingPayload.value);
@@ -356,7 +380,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     function renderAppointments(){
       const r=getRange(); const list=bookings.filter(b=>inRange(b,r.s,r.e)); const el=$("appointmentList");
       if(!list.length){el.innerHTML=`<div class="appt-empty">Geen afspraken in deze ${r.label.toLowerCase()}.</div>`; return;}
-      el.innerHTML=list.map((b,i)=>`<div class="appt-item ${colors[i%colors.length]}" onclick="openBookingDetails(${i})"><div class="appt-time">${formatTime(b.start)}<span class="appt-day-label">${formatDate(b.start)}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${b.status==='pending'?'pending':'confirmed'}"><span class="dot"></span>${b.status==='pending'?'In aanvraag':'Bevestigd'}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`).join("");
+      el.innerHTML=list.map((b,i)=>`<div class="appt-item ${colors[i%colors.length]}" onclick="openBookingDetails(${i})"><div class="appt-time">${formatTime(b.start)}<span class="appt-day-label">${formatAgendaDayLabel(b.start)}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${b.status==='pending'?'pending':'confirmed'}"><span class="dot"></span>${b.status==='pending'?'In aanvraag':'Bevestigd'}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`).join("");
     }
     function cleanLocationLabel(value){const text=String(value||""); if(text.includes("app.cal.com/video")) return "Cal.com video"; if(text.includes("zoom.us")) return "Zoom meeting"; return text;}
     function openBookingDetails(index){const r=getRange();const list=bookings.filter(b=>inRange(b,r.s,r.e));const b=list[index];if(!b)return;const modal=$("bookingDetailsModal");$("bookingDetailsTitle").textContent=b.title||"Afspraak";$("bookingDetailsBody").innerHTML=`<div class="detail-grid"><div><span>Klant</span><strong>${escapeHTML(b.customer||"Onbekend")}</strong></div><div><span>Datum</span><strong>${escapeHTML(formatDate(b.start))}</strong></div><div><span>Tijd</span><strong>${escapeHTML(formatTime(b.start))}${b.end?` – ${escapeHTML(formatTime(b.end))}`:""}</strong></div><div><span>Status</span><strong>${b.status==="pending"?"In aanvraag":"Bevestigd"}</strong></div><div class="full"><span>Locatie</span><strong>${escapeHTML(cleanLocationLabel(b.location||"Niet opgegeven"))}</strong></div>${b.email?`<div class="full"><span>E-mail</span><strong>${escapeHTML(b.email)}</strong></div>`:""}${b.phone?`<div class="full"><span>Telefoon</span><strong>${escapeHTML(b.phone)}</strong></div>`:""}</div>`;const link=$("bookingMeetingLink");const url=b.meetingUrl||b.location||"";link.style.display=/^https?:\/\//i.test(url)?"inline-flex":"none";link.href=/^https?:\/\//i.test(url)?url:"#";modal.classList.add("open");modal.setAttribute("aria-hidden","false");}
@@ -447,6 +471,19 @@ const NOTIFICATION_KEY="reactify.notifications";
     window.addEventListener("reactify:datachange",()=>{fillContactSelect(); renderAll();});
     if("Notification" in window && Notification.permission==="default") Notification.requestPermission().catch(()=>{});
     visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll();loadAll().then(()=>setTimeout(applyAppointmentQuery,0));
+
+    // Houd de agenda rechtstreeks gelijk met Cal.com. Elke herlaadactie gebruikt
+    // cache-busting en no-store, zodat nieuwe, gewijzigde of verwijderde afspraken
+    // niet uit een oude browser- of CDN-cache komen.
+    let agendaRefreshBusy=false;
+    async function refreshAgendaFresh(){
+      if(agendaRefreshBusy)return;
+      agendaRefreshBusy=true;
+      try{await loadAll();}finally{agendaRefreshBusy=false;}
+    }
+    window.addEventListener("focus",refreshAgendaFresh);
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshAgendaFresh();});
+    setInterval(()=>{if(!document.hidden)refreshAgendaFresh();},30000);
   </script>
 
 <script>
