@@ -200,7 +200,7 @@
     /* Stats Grid */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns:repeat(4, 1fr);
       gap: 1.25rem;
       margin-bottom: 2rem;
     }
@@ -462,6 +462,11 @@
   .analytics-btn.active{background:linear-gradient(180deg,#6B38A5,#5B2E91);color:#fff;box-shadow:0 6px 16px rgba(91,46,145,.28),inset 0 1px 0 rgba(255,255,255,.18)}
   .chart-wrap{padding:0!important}
 </style>
+
+<style id="reactify-shared-metric-cards">
+.contact-total-values{display:flex;align-items:center;gap:.85rem;margin-top:.15rem}.contact-total-values>div{display:flex;align-items:baseline;gap:.35rem}.contact-total-label{font-size:.68rem;color:var(--gray-600);font-weight:700}.contact-total-divider{width:1px;height:28px;background:var(--gray-200)}
+.metric-progress{margin-top:.5rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}.metric-progress-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}.metric-progress-fill.purple{background:var(--purple)}.metric-progress-fill.green{background:#16a34a}.metric-meta{font-size:.68rem;color:var(--gray-600);margin-top:.28rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
 </head>
 <body>
 <!-- Sidebar -->
@@ -476,7 +481,7 @@
       </a>
 <a class="sidebar-link" href="/platform/klantenlijst/">
 <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
-        Klanten
+        Contactpersonen
       </a>
 <a class="sidebar-link" href="/platform/inbox/">
 <svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>
@@ -517,22 +522,13 @@
 </div>
 <!-- Stats -->
 <div class="stats-grid">
-<div class="stat-card">
+<div class="stat-card contact-totals-card">
 <div class="stat-icon purple">
 <svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
 </div>
 <div class="stat-info">
-<div class="stat-label">Totaal klanten</div>
-<div class="stat-value" id="statClients">0</div>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon orange">
-<svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path d="M10 2a4 4 0 100 8 4 4 0 000-8zM3 17a7 7 0 0114 0H3z"></path></svg>
-</div>
-<div class="stat-info">
-<div class="stat-label">Totaal leads</div>
-<div class="stat-value" id="statLeads">0</div>
+<div class="stat-label">Contactpersonen</div>
+<div class="contact-total-values"><div><span class="stat-value" id="statClients">0</span><span class="contact-total-label">Klanten</span></div><span class="contact-total-divider"></span><div><span class="stat-value" id="statLeads">0</span><span class="contact-total-label">Leads</span></div></div>
 </div>
 </div>
 <div class="stat-card">
@@ -551,8 +547,8 @@
 <div class="stat-info">
 <div class="stat-label">Bezettingsgraad</div>
 <div class="stat-value" id="statOccupancy">0%</div>
-<div class="stat-progress"><div class="stat-progress-fill" id="occupancyBar"></div></div>
-<div class="stat-meta" id="occupancyMeta">0 van 0 uur geboekt</div>
+<div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div>
+<div class="metric-meta" id="occupancyMeta">0 van 0 uur geboekt</div>
 </div>
 </div>
 <div class="stat-card">
@@ -562,8 +558,8 @@
 <div class="stat-info">
 <div class="stat-label">Afgehandeld deze week</div>
 <div class="stat-value" id="statCompletedWeek">0</div>
-<div class="stat-progress"><div class="stat-progress-fill green" id="completedBar"></div></div>
-<div class="stat-meta" id="completedMeta">0% van de gesprekken</div>
+<div class="metric-progress"><div class="metric-progress-fill green" id="completedBar"></div></div>
+<div class="metric-meta" id="completedMeta">0% van de gesprekken</div>
 </div>
 </div>
 </div>
@@ -793,11 +789,18 @@
   }
   function hmMinutes(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0}
   function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null}
-  function scheduleBlocks(){const s=activeSchedule();const rows=Array.isArray(s?.availability)?s.availability:Array.isArray(s?.availabilities)?s.availabilities:[];return rows.map(r=>({days:Array.isArray(r.days)?r.days:[],start:hmMinutes(r.startTime||r.start),end:hmMinutes(r.endTime||r.end)})).filter(r=>r.days.length&&r.end>r.start)}
+  function scheduleRows(schedule){
+    const direct=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
+    if(direct.length)return direct;
+    const nested=schedule?.availability||schedule?.availabilities||{};const rows=[];
+    if(nested&&typeof nested==='object'&&!Array.isArray(nested)){for(const [day,blocks] of Object.entries(nested)){for(const b of (Array.isArray(blocks)?blocks:[blocks]))if(b)rows.push({...b,days:b.days||[day]})}}
+    return rows;
+  }
+  function scheduleBlocks(){const s=activeSchedule();return scheduleRows(s).map(r=>({days:Array.isArray(r.days)?r.days:[r.day||r.weekday].filter(Boolean),start:hmMinutes(r.startTime||r.start||r.start_time),end:hmMinutes(r.endTime||r.end||r.end_time)})).filter(r=>r.days.length&&r.end>r.start)}
   function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const i=date.getDay();return days.some(d=>{if(typeof d==='number')return d===i||d===((i+6)%7);const v=String(d).trim().toLowerCase();return v===names[i].toLowerCase()||v===short[i].toLowerCase()||v===String(i)||v===String((i+6)%7)})}
   function monthRange(){const n=new Date();return{start:new Date(n.getFullYear(),n.getMonth(),1),end:new Date(n.getFullYear(),n.getMonth()+1,1)}}
-  function availableMinutes(start,end){let total=0,blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1))for(const b of blocks)if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start);return total}
-  function bookedMinutes(start,end){return remoteBookings.reduce((t,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return t;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return t;let dur=(be-bs)/60000;if(!(dur>0))dur=Number(b.duration||0)||30;const os=Math.max(bs.getTime(),start.getTime()),oe=Math.min(bs.getTime()+dur*60000,end.getTime());return t+Math.max(0,(oe-os)/60000)},0)}
+  function availableMinutes(start,end){let total=0;const blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1)){for(const b of blocks){if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start)}}return total}
+  function bookedMinutes(start,end){return remoteBookings.reduce((t,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return t;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return t;let dur=(be-bs)/60000;if(!(dur>0))dur=Number(b.duration||b.lengthInMinutes||0)||30;const os=Math.max(bs.getTime(),start.getTime()),oe=Math.min(bs.getTime()+dur*60000,end.getTime());return t+Math.max(0,(oe-os)/60000)},0)}
   function setHTML(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html}
   function startOfWeek(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
   function inCurrentWeek(date){const s=startOfWeek(new Date()),e=new Date(s);e.setDate(e.getDate()+7);const x=new Date(date);return x>=s&&x<e}
