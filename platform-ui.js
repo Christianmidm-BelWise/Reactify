@@ -49,5 +49,29 @@
   }
   function openHelp(){ensureHelp();document.getElementById("rfHelpModal").classList.add("open");}
   window.ReactifyHelp={open:openHelp};
-  document.addEventListener("DOMContentLoaded",()=>{installLinks();ensureHelp();});
+  function ensureGlobalNotifications(){
+    if(document.getElementById("rfGlobalNotifications") || document.getElementById("notificationBtn")) return;
+    const style=document.createElement("style");
+    style.textContent=`
+      .rf-global-notification{position:fixed;right:1.25rem;top:1.15rem;z-index:2100;display:flex;align-items:center;justify-content:center}
+      .rf-global-bell{width:38px;height:38px;border:1px solid #E5E7EB;border-radius:9px;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 22px rgba(17,24,39,.10);position:relative;font-size:16px;line-height:1}
+      .rf-global-bell:hover{border-color:#5B2E91;color:#5B2E91}.rf-global-count{position:absolute;right:-7px;top:-7px;min-width:19px;height:19px;border-radius:999px;background:#F5A623;color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;padding:0 .35rem}.rf-global-bell.has-items .rf-global-count{display:inline-flex}
+      .rf-global-panel{position:absolute;right:0;top:46px;width:min(390px,92vw);max-height:72vh;overflow:auto;background:#fff;border:1px solid #E5E7EB;border-radius:16px;box-shadow:0 22px 70px rgba(17,24,39,.18);display:none}.rf-global-panel.open{display:block}.rf-global-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem 1.05rem;border-bottom:1px solid #F3F4F6}.rf-global-head strong{font-size:.95rem;color:#111827}.rf-global-head button{border:1px solid #E5E7EB;background:#fff;border-radius:8px;padding:.35rem .55rem;font-size:.72rem;font-weight:800;color:#374151;cursor:pointer}.rf-global-list{display:grid;gap:.4rem;padding:.7rem}.rf-global-item{border:0;text-align:left;width:100%;padding:.78rem;border-radius:12px;background:#F9FAFB;border-left:3px solid #5B2E91;cursor:pointer}.rf-global-item.unread{background:#FFF3DC;border-left-color:#F5A623}.rf-global-title{font-size:.82rem;font-weight:900;color:#111827;margin-bottom:.2rem}.rf-global-body{font-size:.76rem;color:#4B5563;line-height:1.45}.rf-global-meta{font-size:.68rem;color:#6B7280;margin-top:.28rem}.rf-global-empty{padding:1.25rem;color:#6B7280;font-size:.82rem;text-align:center}
+      @media(max-width:768px){.rf-global-notification{right:.85rem;top:.85rem}}
+    `;
+    document.head.appendChild(style);
+    const KEY="reactify.notifications";
+    const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return []}};
+    const save=items=>{localStorage.setItem(KEY,JSON.stringify(items.slice(0,120)));renderBadge();};
+    const box=document.createElement("div");box.id="rfGlobalNotifications";box.className="rf-global-notification";
+    box.innerHTML=`<button class="rf-global-bell" id="rfGlobalBell" type="button" title="Meldingen" aria-label="Meldingen">🔔<span class="rf-global-count" id="rfGlobalCount">0</span></button><div class="rf-global-panel" id="rfGlobalPanel"><div class="rf-global-head"><strong>Meldingen</strong><button type="button" id="rfGlobalReadAll">Alles gelezen</button></div><div class="rf-global-list" id="rfGlobalList"></div></div>`;
+    document.body.appendChild(box);
+    function renderBadge(){const count=read().filter(n=>!n.read).length;const bell=document.getElementById("rfGlobalBell"),badge=document.getElementById("rfGlobalCount");bell?.classList.toggle("has-items",count>0);if(badge)badge.textContent=count>99?"99+":String(count)}
+    function renderPanel(){const list=document.getElementById("rfGlobalList");if(!list)return;const items=read();list.innerHTML=items.length?items.map(n=>`<button class="rf-global-item ${n.read?'':'unread'}" data-id="${String(n.id||'')}"><div class="rf-global-title">${String(n.title||'Reactify melding')}</div><div class="rf-global-body">${String(n.body||n.message||'')}</div><div class="rf-global-meta">${n.createdAt?new Date(n.createdAt).toLocaleString('nl-BE'):''}</div></button>`).join(""):'<div class="rf-global-empty">Nog geen meldingen.</div>';list.querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>{let target='/platform/inbox/';save(read().map(n=>{if(String(n.id)===el.dataset.id){target=n.link||target;return {...n,read:true}}return n}));location.href=target})}
+    document.getElementById("rfGlobalBell").onclick=e=>{e.stopPropagation();renderPanel();document.getElementById("rfGlobalPanel").classList.toggle("open")};
+    document.getElementById("rfGlobalReadAll").onclick=e=>{e.stopPropagation();save(read().map(n=>({...n,read:true})));renderPanel()};
+    document.addEventListener("click",e=>{if(!box.contains(e.target))document.getElementById("rfGlobalPanel")?.classList.remove("open")});
+    window.addEventListener("storage",e=>{if(e.key===KEY){renderBadge();renderPanel()}});renderBadge();
+  }
+  document.addEventListener("DOMContentLoaded",()=>{installLinks();ensureHelp();ensureGlobalNotifications();});
 })();
