@@ -461,6 +461,15 @@
   .analytics-btn:hover{background:#F5F0FA;color:#5B2E91;transform:none}
   .analytics-btn.active{background:linear-gradient(180deg,#6B38A5,#5B2E91);color:#fff;box-shadow:0 6px 16px rgba(91,46,145,.28),inset 0 1px 0 rgba(255,255,255,.18)}
   .chart-wrap{padding:0!important}
+  .chart-mode-switch{display:inline-flex;align-items:center;gap:.18rem;padding:.32rem;background:linear-gradient(180deg,#fff,#F9FAFB);border:1px solid var(--gray-200);border-radius:13px;box-shadow:0 5px 16px rgba(17,24,39,.06)}
+  .chart-icon-btn{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:var(--gray-600);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s}
+  .chart-icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .chart-icon-btn:hover{background:var(--purple-bg);color:var(--purple)}
+  .chart-icon-btn.active{background:linear-gradient(180deg,#6B38A5,#5B2E91);color:#fff;box-shadow:0 6px 16px rgba(91,46,145,.28)}
+  .metric-period-switch{display:inline-flex;gap:.12rem;margin-top:.38rem;padding:.2rem;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px}
+  .metric-period-btn{border:0;background:transparent;color:var(--gray-600);padding:.28rem .48rem;border-radius:7px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:var(--font-sans)}
+  .metric-period-btn:hover{background:var(--purple-bg);color:var(--purple)}
+  .metric-period-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px 8px rgba(91,46,145,.2)}
 </style>
 
 <style id="reactify-shared-metric-cards">
@@ -547,7 +556,7 @@
 <div class="stat-info">
 <div class="stat-label">Bezettingsgraad</div>
 <div class="stat-value" id="statOccupancy">0%</div>
-<div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div>
+<div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div><div class="metric-period-switch" aria-label="Periode bezettingsgraad"><button class="metric-period-btn" data-occupancy-period="day" type="button">Dag</button><button class="metric-period-btn" data-occupancy-period="week" type="button">Week</button><button class="metric-period-btn active" data-occupancy-period="month" type="button">Maand</button><button class="metric-period-btn" data-occupancy-period="year" type="button">Jaar</button></div>
 <div class="metric-meta" id="occupancyMeta">0 van 0 uur geboekt</div>
 </div>
 </div>
@@ -601,6 +610,11 @@
         <button class="analytics-btn active" data-metric="sentiment" type="button">Sentiment</button>
         <button class="analytics-btn" data-metric="handling" type="button">AI vs manuele opvolging</button>
         <button class="analytics-btn" data-metric="completed" type="button">Afgehandeld vs open gesprekken</button>
+        <button class="analytics-btn" data-metric="channel" type="button">Kanaalvergelijking</button>
+      </div>
+      <div class="chart-mode-switch" aria-label="Diagramtype">
+        <button class="chart-icon-btn active" data-chart-view="line" type="button" title="Lijndiagram" aria-label="Lijndiagram"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 7-8"/><path d="M19 7h2v2"/></svg></button>
+        <button class="chart-icon-btn" data-chart-view="bar" type="button" title="Staafdiagram" aria-label="Staafdiagram"><svg viewBox="0 0 24 24"><path d="M4 20V10h4v10"/><path d="M10 20V4h4v16"/><path d="M16 20v-7h4v7"/></svg></button>
       </div>
       <div class="analytics-switch" aria-label="Periode">
         <button class="analytics-btn" data-period="day" type="button">Dag</button>
@@ -751,7 +765,7 @@
   const STORE='reactify_platform_data_v3';
   const API={bookings:'/.netlify/functions/cal-bookings',schedules:'/.netlify/functions/cal-schedules'};
   const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb'];
-  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a',open:'#F5A623'};
+  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a',open:'#F5A623',sms:'#5B2E91',email:'#2563EB',chat:'#F5A623',other:'#9CA3AF'};
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const read=()=>{try{const d=JSON.parse(localStorage.getItem(STORE)||'{}');return {clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[]}}catch(e){return{clients:[],conversations:[],appointments:[]}}};
   const initials=n=>String(n||'Klant').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'KL';
@@ -767,8 +781,12 @@
   let remoteBookings=[],schedules=[],rendering=false;
   let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'sentiment';
   let chartPeriod=localStorage.getItem('reactify.dashboardChartPeriod')||'month';
-  if(!['sentiment','handling','completed'].includes(chartMetric))chartMetric='sentiment';
+  let chartView=localStorage.getItem('reactify.dashboardChartView')||'line';
+  let occupancyPeriod=localStorage.getItem('reactify.dashboardOccupancyPeriod')||'month';
+  if(!['sentiment','handling','completed','channel'].includes(chartMetric))chartMetric='sentiment';
   if(!['day','week','month'].includes(chartPeriod))chartPeriod='month';
+  if(!['line','bar'].includes(chartView))chartView='line';
+  if(!['day','week','month','year'].includes(occupancyPeriod))occupancyPeriod='month';
 
   async function fetchJSON(url){const sep=url.includes('?')?'&':'?';const r=await fetch(`${url}${sep}_fresh=${Date.now()}`,{headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},cache:'no-store'});const j=await r.json();if(!r.ok||j.status==='error')throw new Error(j.error||'Data laden mislukt');return j}
   async function fetchLiveData(){
@@ -798,7 +816,7 @@
   }
   function scheduleBlocks(){const s=activeSchedule();return scheduleRows(s).map(r=>({days:Array.isArray(r.days)?r.days:[r.day||r.weekday].filter(Boolean),start:hmMinutes(r.startTime||r.start||r.start_time),end:hmMinutes(r.endTime||r.end||r.end_time)})).filter(r=>r.days.length&&r.end>r.start)}
   function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const i=date.getDay();return days.some(d=>{if(typeof d==='number')return d===i||d===((i+6)%7);const v=String(d).trim().toLowerCase();return v===names[i].toLowerCase()||v===short[i].toLowerCase()||v===String(i)||v===String((i+6)%7)})}
-  function monthRange(){const n=new Date();return{start:new Date(n.getFullYear(),n.getMonth(),1),end:new Date(n.getFullYear(),n.getMonth()+1,1)}}
+  function occupancyRange(){const n=new Date();let start,end;if(occupancyPeriod==='day'){start=new Date(n);start.setHours(0,0,0,0);end=new Date(start);end.setDate(end.getDate()+1)}else if(occupancyPeriod==='week'){start=startOfWeek(n);end=new Date(start);end.setDate(end.getDate()+7)}else if(occupancyPeriod==='year'){start=new Date(n.getFullYear(),0,1);end=new Date(n.getFullYear()+1,0,1)}else{start=new Date(n.getFullYear(),n.getMonth(),1);end=new Date(n.getFullYear(),n.getMonth()+1,1)}return{start,end}}
   function availableMinutes(start,end){let total=0;const blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1)){for(const b of blocks){if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start)}}return total}
   function bookedMinutes(start,end){return remoteBookings.reduce((t,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return t;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return t;let dur=(be-bs)/60000;if(!(dur>0))dur=Number(b.duration||b.lengthInMinutes||0)||30;const os=Math.max(bs.getTime(),start.getTime()),oe=Math.min(bs.getTime()+dur*60000,end.getTime());return t+Math.max(0,(oe-os)/60000)},0)}
   function setHTML(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html}
@@ -822,26 +840,31 @@
   function renderChart(d){
     document.querySelectorAll('[data-metric]').forEach(b=>b.classList.toggle('active',b.dataset.metric===chartMetric));
     document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===chartPeriod));
+    document.querySelectorAll('[data-chart-view]').forEach(b=>b.classList.toggle('active',b.dataset.chartView===chartView));
     const buckets=chartBuckets(chartPeriod);
     const series=chartMetric==='sentiment'
       ?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]
       :chartMetric==='handling'
         ?[['ai','AI opgevolgd',chartColors.ai],['manual','Manueel opgevolgd',chartColors.manual]]
-        :[['completed','Afgehandeld',chartColors.completed],['open','Open gesprekken',chartColors.open]];
+        :chartMetric==='completed'
+          ?[['completed','Afgehandeld',chartColors.completed],['open','Open gesprekken',chartColors.open]]
+          :[['sms','SMS',chartColors.sms],['email','E-mail',chartColors.email],['chat','Chat',chartColors.chat],['other','Overig',chartColors.other]];
     const rows=buckets.map(bucket=>{
       const convs=d.conversations.filter(c=>{const x=new Date(c.updatedAt||c.createdAt||0);return x>=bucket.start&&x<bucket.end});
-      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0};
+      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0,sms:0,email:0,chat:0,other:0};
       convs.forEach(c=>{
         values[sentimentOf(d,c)]++;
         const state=statusKey(c.status);
         if(state==='manual') values.manual++; else values.ai++;
         if(state==='completed') values.completed++; else values.open++;
+        const channel=String(c.channel||c.communicationChannel||'').toLowerCase();
+        if(channel.includes('sms'))values.sms++;else if(channel.includes('mail'))values.email++;else if(channel.includes('chat')||channel.includes('web'))values.chat++;else values.other++;
       });
       return{...bucket,values,total:convs.length};
     });
     const maxRaw=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
     const max=Math.max(4,Math.ceil(maxRaw/4)*4);
-    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI vs manuele opvolging':'Afgehandeld vs open gesprekken';
+    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI vs manuele opvolging':chartMetric==='completed'?'Afgehandeld vs open gesprekken':'Kanaalvergelijking';
     const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
     document.getElementById('analyticsHeading').textContent=heading;
     document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
@@ -854,14 +877,16 @@
     const ticks=[0,max*.25,max*.5,max*.75,max].map(v=>Math.round(v));
     const grid=ticks.map(v=>`<line class="line-grid" x1="${L}" y1="${yAt(v)}" x2="${W-R}" y2="${yAt(v)}"></line><text class="line-y-label" x="${L-12}" y="${yAt(v)+4}" text-anchor="end">${v}</text>`).join('');
     const xLabels=rows.map((r,i)=>`<text class="line-label" x="${xAt(i)}" y="${H-16}" text-anchor="middle">${esc(r.label)}</text>`).join('');
-    const lines=series.map((s,si)=>{
-      const pts=rows.map((r,i)=>[xAt(i),yAt(r.values[s[0]]),r.values[s[0]]]);
-      const path=pts.map((p,i)=>`${i?'L':'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
-      const area=`${path} L ${xAt(rows.length-1).toFixed(1)} ${(T+plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(T+plotH).toFixed(1)} Z`;
-      const circles=pts.map((p,i)=>`<circle class="line-point" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"><title>${s[1]} · ${rows[i].label}: ${p[2]}</title></circle>`).join('');
-      return `<path class="line-area" d="${area}" fill="${s[2]}"></path><path class="line-path" d="${path}" stroke="${s[2]}"></path>${circles}`;
-    }).join('');
-    wrap.innerHTML=`<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(heading)}"><line class="line-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"></line><line class="line-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"></line>${grid}${xLabels}${lines}</svg>`;
+    let marks='';
+    if(chartView==='bar'){
+      const groupW=rows.length?plotW/rows.length:plotW;
+      const innerW=Math.min(groupW*.72,90);
+      const barW=Math.max(3,innerW/Math.max(1,series.length));
+      marks=rows.map((r,i)=>series.map((s,si)=>{const v=r.values[s[0]],h=(v/max)*plotH,x=L+i*groupW+(groupW-innerW)/2+si*barW,y=T+plotH-h;return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(2,barW-2).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="3" fill="${s[2]}"><title>${s[1]} · ${r.label}: ${v}</title></rect>`}).join('')).join('');
+    }else{
+      marks=series.map((s)=>{const pts=rows.map((r,i)=>[xAt(i),yAt(r.values[s[0]]),r.values[s[0]]]);const path=pts.map((p,i)=>`${i?'L':'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');const area=`${path} L ${xAt(rows.length-1).toFixed(1)} ${(T+plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(T+plotH).toFixed(1)} Z`;const circles=pts.map((p,i)=>`<circle class="line-point" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"><title>${s[1]} · ${rows[i].label}: ${p[2]}</title></circle>`).join('');return `<path class="line-area" d="${area}" fill="${s[2]}"></path><path class="line-path" d="${path}" stroke="${s[2]}"></path>${circles}`}).join('');
+    }
+    wrap.innerHTML=`<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(heading)}"><line class="line-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"></line><line class="line-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"></line>${grid}${xLabels}${marks}</svg>`;
 
     const totals=series.map(s=>[s[1],rows.reduce((n,r)=>n+r.values[s[0]],0)]);
     document.getElementById('chartSummary').innerHTML=`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`;
@@ -875,7 +900,8 @@
       document.getElementById('statClients').textContent=d.clients.filter(c=>String(c.type||'Lead').toLowerCase()==='klant').length;
       document.getElementById('statLeads').textContent=d.clients.filter(c=>String(c.type||'Lead').toLowerCase()!=='klant').length;
       document.getElementById('statConversations').textContent=open.length;
-      const mr=monthRange(),available=availableMinutes(mr.start,mr.end),booked=bookedMinutes(mr.start,mr.end),occupancy=available>0?Math.min(100,Math.round(booked/available*100)):0;
+      document.querySelectorAll('[data-occupancy-period]').forEach(b=>b.classList.toggle('active',b.dataset.occupancyPeriod===occupancyPeriod));
+      const mr=occupancyRange(),available=availableMinutes(mr.start,mr.end),booked=bookedMinutes(mr.start,mr.end),occupancy=available>0?Math.min(100,Math.round(booked/available*100)):0;
       document.getElementById('statOccupancy').textContent=`${occupancy}%`;
       document.getElementById('occupancyBar').style.width=`${occupancy}%`;
       document.getElementById('occupancyMeta').textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
@@ -893,6 +919,8 @@
   }
   document.querySelectorAll('[data-metric]').forEach(btn=>btn.addEventListener('click',()=>{chartMetric=btn.dataset.metric;localStorage.setItem('reactify.dashboardChartMetric',chartMetric);render()}));
   document.querySelectorAll('[data-period]').forEach(btn=>btn.addEventListener('click',()=>{chartPeriod=btn.dataset.period;localStorage.setItem('reactify.dashboardChartPeriod',chartPeriod);render()}));
+  document.querySelectorAll('[data-chart-view]').forEach(btn=>btn.addEventListener('click',()=>{chartView=btn.dataset.chartView;localStorage.setItem('reactify.dashboardChartView',chartView);render()}));
+  document.querySelectorAll('[data-occupancy-period]').forEach(btn=>btn.addEventListener('click',()=>{occupancyPeriod=btn.dataset.occupancyPeriod;localStorage.setItem('reactify.dashboardOccupancyPeriod',occupancyPeriod);render()}));
   const toggle=document.getElementById('sidebarToggle'),sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));
   async function refresh(){await fetchLiveData().catch(()=>{});render()}
   refresh();setInterval(refresh,30000);
