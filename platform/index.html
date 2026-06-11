@@ -451,6 +451,9 @@
   .line-grid{stroke:#E5E7EB;stroke-width:1;stroke-dasharray:4 5}.line-axis{stroke:#D1D5DB;stroke-width:1}.line-label{fill:#6B7280;font-size:11px;font-family:var(--font-sans)}.line-y-label{fill:#9CA3AF;font-size:10px;font-family:var(--font-sans)}
   .line-path{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 4px 8px rgba(91,46,145,.12))}.line-area{opacity:.075}.line-point{stroke:#fff;stroke-width:2.5;cursor:pointer;transition:r .15s}.line-point:hover{r:6}
   .chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}.chart-summary strong{color:var(--gray-900);font-weight:800}
+  .chart-axis-title{fill:#6B7280;font-size:11px;font-weight:800;font-family:var(--font-sans);letter-spacing:.01em}
+  .chart-hit{cursor:pointer;outline:none}.chart-hit:hover,.chart-hit:focus{filter:drop-shadow(0 0 5px rgba(91,46,145,.32))}
+  .chart-tooltip{position:absolute;z-index:20;display:none;min-width:240px;max-width:330px;padding:.8rem .9rem;background:#111827;color:#fff;border-radius:12px;box-shadow:0 16px 38px rgba(17,24,39,.25);pointer-events:none;font-size:.72rem;line-height:1.45;transform:translate(-50%,calc(-100% - 12px))}.chart-tooltip.show{display:block}.chart-tooltip strong{display:block;font-size:.78rem;margin-bottom:.35rem}.chart-tooltip-row{padding:.3rem 0;border-top:1px solid rgba(255,255,255,.12)}.chart-tooltip-row:first-of-type{border-top:0}.chart-tooltip-meta{color:#D1D5DB;font-size:.68rem}.chart-tooltip-preview{color:#F9FAFB;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.12rem}.chart-tooltip-hint{color:#C4B5FD;font-weight:800;margin-top:.4rem}.chart-wrap.is-stable .line-area,.chart-wrap.is-stable .line-path,.chart-wrap.is-stable .line-point,.chart-wrap.is-stable .chart-bar{animation:none!important;transition:none!important}
   @media(max-width:900px){.analytics-card{width:100%;margin-left:0;margin-right:0}.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.analytics-switch{overflow-x:auto;max-width:100%}.chart-wrap{height:340px;overflow-x:auto}.line-chart{min-width:760px}}
 
   /* Professionele analytics-bediening */
@@ -819,16 +822,20 @@
       Object.assign(conv,{backendId,clientId:client.id,channel:String(row.channel||'sms').toLowerCase(),folder:String(row.folder||'inbox'),status:row.status||conv.status||'inactive',summary:row.summary||'',lastMessage:row.last_message||conv.lastMessage||'',sentiment:row.sentiment||conv.sentiment||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||new Date().toISOString()});
       client.sentiment=sentimentOf({clients:d.clients},conv);client.status=client.sentiment;
     }
-    localStorage.setItem(STORE,JSON.stringify({...JSON.parse(localStorage.getItem(STORE)||'{}'),clients:d.clients,conversations:d.conversations}));
-    window.dispatchEvent(new CustomEvent('reactify:data',{detail:d}));
+    const currentRaw=localStorage.getItem(STORE)||'{}';
+    const current=JSON.parse(currentRaw||'{}');
+    const next={...current,clients:d.clients,conversations:d.conversations};
+    const nextRaw=JSON.stringify(next);
+    if(nextRaw!==currentRaw){
+      localStorage.setItem(STORE,nextRaw);
+      window.dispatchEvent(new CustomEvent('reactify:data',{detail:d}));
+    }
   }
   async function fetchLiveData(){
-    document.querySelectorAll('.stat-card,.dashboard-card').forEach(el=>el.classList.add('rf-updating'));
     const [bookingResult,scheduleResult,conversationResult]=await Promise.allSettled([fetchJSON(API.bookings),fetchJSON(API.schedules),fetchJSON(`${API.conversations}?limit=500&folder=all`)]);
     if(bookingResult.status==='fulfilled'){const j=bookingResult.value;remoteBookings=Array.isArray(j.data)?j.data:Array.isArray(j.bookings)?j.bookings:[];localStorage.setItem('reactify.calBookingsCache',JSON.stringify(remoteBookings));localStorage.setItem('reactify.calBookingsCacheUpdatedAt',new Date().toISOString())}else remoteBookings=window.ReactifyCalSync?.getCached?.()||[];
     if(scheduleResult.status==='fulfilled'){const j=scheduleResult.value;schedules=Array.isArray(j.data)?j.data:Array.isArray(j.data?.schedules)?j.data.schedules:Array.isArray(j.schedules)?j.schedules:[];}
     if(conversationResult.status==='fulfilled'){const j=conversationResult.value;remoteConversations=Array.isArray(j.data)?j.data:[];mergeLiveConversations(remoteConversations)}
-    document.querySelectorAll('.stat-card,.dashboard-card').forEach(el=>{el.classList.remove('rf-updating');el.classList.remove('rf-updated');void el.offsetWidth;el.classList.add('rf-updated')});
   }
   function normalizedAppointments(){
     const now=Date.now();
@@ -867,6 +874,22 @@
     }
     return out;
   }
+  let lastChartSignature='';
+  function seriesMatchesConversation(d,c,key){
+    if(key==='positive'||key==='neutral'||key==='negative')return sentimentOf(d,c)===key;
+    if(key==='ai')return statusKey(c.status)!=='manual';
+    if(key==='manual')return statusKey(c.status)==='manual';
+    if(key==='completed')return statusKey(c.status)==='completed';
+    if(key==='open')return statusKey(c.status)!=='completed';
+    const channel=String(c.channel||c.communicationChannel||'').toLowerCase();
+    if(key==='sms')return channel.includes('sms');
+    if(key==='email')return channel.includes('mail');
+    if(key==='chat')return channel.includes('chat')||channel.includes('web');
+    return !channel.includes('sms')&&!channel.includes('mail')&&!channel.includes('chat')&&!channel.includes('web');
+  }
+  function conversationDetails(d,convs){
+    return convs.slice(0,3).map(c=>{const cl=clientFor(d,c);return{name:cl.name||c.contactName||c.contact_name||'Onbekende afzender',channel:String(c.channel||c.communicationChannel||'Onbekend').toUpperCase(),status:stateInfo(c.status).label,preview:c.lastMessage||c.last_message||c.summary||'Geen berichtpreview',id:c.backendId||c.id||''}});
+  }
   function renderChart(d){
     document.querySelectorAll('[data-metric]').forEach(b=>b.classList.toggle('active',b.dataset.metric===chartMetric));
     document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===chartPeriod));
@@ -882,45 +905,56 @@
     const rows=buckets.map(bucket=>{
       const convs=d.conversations.filter(c=>{const x=new Date(c.updatedAt||c.createdAt||0);return x>=bucket.start&&x<bucket.end});
       const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0,sms:0,email:0,chat:0,other:0};
-      convs.forEach(c=>{
-        values[sentimentOf(d,c)]++;
-        const state=statusKey(c.status);
-        if(state==='manual') values.manual++; else values.ai++;
-        if(state==='completed') values.completed++; else values.open++;
-        const channel=String(c.channel||c.communicationChannel||'').toLowerCase();
-        if(channel.includes('sms'))values.sms++;else if(channel.includes('mail'))values.email++;else if(channel.includes('chat')||channel.includes('web'))values.chat++;else values.other++;
-      });
-      return{...bucket,values,total:convs.length};
+      convs.forEach(c=>series.forEach(s=>{if(seriesMatchesConversation(d,c,s[0]))values[s[0]]++}));
+      const details={};series.forEach(s=>details[s[0]]=conversationDetails(d,convs.filter(c=>seriesMatchesConversation(d,c,s[0]))));
+      return{...bucket,values,total:convs.length,details};
     });
     const maxRaw=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
     const max=Math.max(4,Math.ceil(maxRaw/4)*4);
     const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI chat':chartMetric==='completed'?'Afgehandelde gesprekken':'Kanaalvergelijking';
     const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
+    const xAxis=chartPeriod==='day'?'Tijdstip':chartPeriod==='week'?'Dag van de week':'Periode van de maand';
+    const yAxis=chartMetric==='handling'?'Aantal opgevolgde gesprekken':'Aantal gesprekken';
     document.getElementById('analyticsHeading').textContent=heading;
-    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
-    document.getElementById('chartLegend').innerHTML=series.map(s=>`<span class="legend-item"><span class="legend-dot" style="background:${s[2]}"></span>${s[1]}</span>`).join('');
+    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · X-as: ${xAxis} · Y-as: ${yAxis}.`;
+    setHTML(document.getElementById('chartLegend'),series.map(s=>`<span class="legend-item"><span class="legend-dot" style="background:${s[2]}"></span>${s[1]}</span>`).join(''));
 
     const wrap=document.getElementById('chartWrap');
-    const W=Math.max(900,Math.round(wrap.clientWidth||1200)),H=420,L=48,R=14,T=24,B=50,plotW=W-L-R,plotH=H-T-B;
+    const W=Math.max(900,Math.round(wrap.clientWidth||1200)),H=430,L=72,R=18,T=24,B=72,plotW=W-L-R,plotH=H-T-B;
     const xAt=i=>L+(rows.length<=1?plotW/2:(i/(rows.length-1))*plotW);
     const yAt=v=>T+plotH-(v/max)*plotH;
     const ticks=[0,max*.25,max*.5,max*.75,max].map(v=>Math.round(v));
     const grid=ticks.map(v=>`<line class="line-grid" x1="${L}" y1="${yAt(v)}" x2="${W-R}" y2="${yAt(v)}"></line><text class="line-y-label" x="${L-12}" y="${yAt(v)+4}" text-anchor="end">${v}</text>`).join('');
-    const xLabels=rows.map((r,i)=>`<text class="line-label" x="${xAt(i)}" y="${H-16}" text-anchor="middle">${esc(r.label)}</text>`).join('');
+    const xLabels=rows.map((r,i)=>`<text class="line-label" x="${xAt(i)}" y="${H-34}" text-anchor="middle">${esc(r.label)}</text>`).join('');
     let marks='';
     if(chartView==='bar'){
-      const groupW=rows.length?plotW/rows.length:plotW;
-      const innerW=Math.min(groupW*.72,90);
-      const barW=Math.max(3,innerW/Math.max(1,series.length));
-      marks=rows.map((r,i)=>series.map((s,si)=>{const v=r.values[s[0]],h=(v/max)*plotH,x=L+i*groupW+(groupW-innerW)/2+si*barW,y=T+plotH-h;return `<rect class="chart-bar" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(2,barW-2).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="3" fill="${s[2]}"><title>${s[1]} · ${r.label}: ${v}</title></rect>`}).join('')).join('');
+      const groupW=rows.length?plotW/rows.length:plotW,innerW=Math.min(groupW*.72,100),barW=Math.max(4,innerW/Math.max(1,series.length));
+      marks=rows.map((r,i)=>series.map((s,si)=>{const v=r.values[s[0]],h=(v/max)*plotH,x=L+i*groupW+(groupW-innerW)/2+si*barW,y=T+plotH-h;return `<rect tabindex="0" role="link" class="chart-bar chart-hit" data-row="${i}" data-series="${si}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(3,barW-2).toFixed(1)}" height="${Math.max(2,h).toFixed(1)}" rx="3" fill="${s[2]}"></rect>`}).join('')).join('');
     }else{
-      marks=series.map((s)=>{const pts=rows.map((r,i)=>[xAt(i),yAt(r.values[s[0]]),r.values[s[0]]]);const path=pts.map((p,i)=>`${i?'L':'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');const area=`${path} L ${xAt(rows.length-1).toFixed(1)} ${(T+plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(T+plotH).toFixed(1)} Z`;const circles=pts.map((p,i)=>`<circle class="line-point" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"><title>${s[1]} · ${rows[i].label}: ${p[2]}</title></circle>`).join('');return `<path class="line-area" d="${area}" fill="${s[2]}"></path><path class="line-path" d="${path}" stroke="${s[2]}"></path>${circles}`}).join('');
+      marks=series.map((s,si)=>{const pts=rows.map((r,i)=>[xAt(i),yAt(r.values[s[0]]),r.values[s[0]]]);const path=pts.map((p,i)=>`${i?'L':'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');const area=`${path} L ${xAt(rows.length-1).toFixed(1)} ${(T+plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(T+plotH).toFixed(1)} Z`;const circles=pts.map((p,i)=>`<circle tabindex="0" role="link" class="line-point chart-hit" data-row="${i}" data-series="${si}" cx="${p[0]}" cy="${p[1]}" r="5" fill="${s[2]}"></circle>`).join('');return `<path class="line-area" d="${area}" fill="${s[2]}"></path><path class="line-path" d="${path}" stroke="${s[2]}"></path>${circles}`}).join('');
     }
-    wrap.innerHTML=`<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(heading)}"><line class="line-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"></line><line class="line-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"></line>${grid}${xLabels}${marks}</svg>`;
-
+    const signature=JSON.stringify({chartMetric,chartPeriod,chartView,W,rows:rows.map(r=>({l:r.label,v:r.values,d:r.details}))});
+    if(signature!==lastChartSignature){
+      wrap.classList.remove('is-stable');
+      wrap.innerHTML=`<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(heading)}"><line class="line-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"></line><line class="line-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"></line>${grid}${xLabels}${marks}<text class="chart-axis-title" x="${L+plotW/2}" y="${H-8}" text-anchor="middle">X-as · ${esc(xAxis)}</text><text class="chart-axis-title" transform="translate(16 ${T+plotH/2}) rotate(-90)" text-anchor="middle">Y-as · ${esc(yAxis)}</text></svg><div class="chart-tooltip" id="chartTooltip"></div>`;
+      lastChartSignature=signature;
+      requestAnimationFrame(()=>wrap.classList.add('is-stable'));
+    }
+    wrap._chartRows=rows;wrap._chartSeries=series;
     const totals=series.map(s=>[s[1],rows.reduce((n,r)=>n+r.values[s[0]],0)]);
-    document.getElementById('chartSummary').innerHTML=`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`;
+    setHTML(document.getElementById('chartSummary'),`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`);
   }
+  function chartInteractionTarget(target){return target?.closest?.('.chart-hit')||null}
+  function showChartTooltip(target,event){
+    const wrap=document.getElementById('chartWrap'),tip=document.getElementById('chartTooltip'),hit=chartInteractionTarget(target);if(!wrap||!tip||!hit)return;
+    const row=wrap._chartRows?.[Number(hit.dataset.row)],series=wrap._chartSeries?.[Number(hit.dataset.series)];if(!row||!series)return;
+    const items=row.details?.[series[0]]||[];
+    tip.innerHTML=`<strong>${esc(series[1])} · ${esc(row.label)} (${row.values[series[0]]})</strong>${items.length?items.map(x=>`<div class="chart-tooltip-row"><div>${esc(x.name)} · ${esc(x.channel)} · ${esc(x.status)}</div><div class="chart-tooltip-preview">${esc(x.preview)}</div></div>`).join(''):'<div class="chart-tooltip-meta">Geen gesprekken in dit punt.</div>'}${items.length?'<div class="chart-tooltip-hint">Klik om het gesprek te openen</div>':''}`;
+    const rect=wrap.getBoundingClientRect(),point=event?.clientX!=null?{x:event.clientX-rect.left,y:event.clientY-rect.top}:{x:Number(hit.getAttribute('cx')||hit.getAttribute('x')||0),y:Number(hit.getAttribute('cy')||hit.getAttribute('y')||0)};
+    tip.style.left=`${Math.max(130,Math.min(rect.width-130,point.x))}px`;tip.style.top=`${Math.max(90,point.y)}px`;tip.classList.add('show');
+  }
+  function hideChartTooltip(){document.getElementById('chartTooltip')?.classList.remove('show')}
+  function openChartConversation(target){const wrap=document.getElementById('chartWrap'),hit=chartInteractionTarget(target);if(!wrap||!hit)return;const row=wrap._chartRows?.[Number(hit.dataset.row)],series=wrap._chartSeries?.[Number(hit.dataset.series)],id=row?.details?.[series?.[0]]?.[0]?.id;if(id)location.href=`/platform/inbox/?conversation=${encodeURIComponent(id)}`}
 
   function render(){
     if(rendering)return;rendering=true;
@@ -947,13 +981,20 @@
       renderChart(d);
     }finally{rendering=false}
   }
+  const chartWrapEl=document.getElementById('chartWrap');
+  chartWrapEl?.addEventListener('mousemove',e=>{if(chartInteractionTarget(e.target))showChartTooltip(e.target,e);else hideChartTooltip()});
+  chartWrapEl?.addEventListener('mouseleave',hideChartTooltip);
+  chartWrapEl?.addEventListener('focusin',e=>showChartTooltip(e.target));
+  chartWrapEl?.addEventListener('focusout',hideChartTooltip);
+  chartWrapEl?.addEventListener('click',e=>openChartConversation(e.target));
+  chartWrapEl?.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&chartInteractionTarget(e.target)){e.preventDefault();openChartConversation(e.target)}});
   document.querySelectorAll('[data-metric]').forEach(btn=>btn.addEventListener('click',()=>{chartMetric=btn.dataset.metric;localStorage.setItem('reactify.dashboardChartMetric',chartMetric);render()}));
   document.querySelectorAll('[data-period]').forEach(btn=>btn.addEventListener('click',()=>{chartPeriod=btn.dataset.period;localStorage.setItem('reactify.dashboardChartPeriod',chartPeriod);render()}));
   document.querySelectorAll('[data-chart-view]').forEach(btn=>btn.addEventListener('click',()=>{chartView=btn.dataset.chartView;localStorage.setItem('reactify.dashboardChartView',chartView);render()}));
   document.querySelectorAll('[data-occupancy-period]').forEach(btn=>btn.addEventListener('click',()=>{occupancyPeriod=btn.dataset.occupancyPeriod;localStorage.setItem('reactify.dashboardOccupancyPeriod',occupancyPeriod);render()}));
   const toggle=document.getElementById('sidebarToggle'),sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));
   let refreshBusy=false;async function refresh(){if(refreshBusy)return;refreshBusy=true;try{await fetchLiveData();render()}catch(e){console.warn('Dashboard live update mislukt',e)}finally{refreshBusy=false}}
-  refresh();setInterval(refresh,8000);
+  refresh();setInterval(refresh,15000);
   window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
   window.addEventListener('storage',e=>{if(!e.key||e.key===STORE)render()});window.addEventListener('reactify:data',render);window.addEventListener('reactify:datachange',render);window.addEventListener('online',refresh);window.addEventListener('reactify:cal-sync',refresh);
 })();
