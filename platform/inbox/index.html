@@ -259,12 +259,27 @@
       overflow: hidden;
     }
 
+
+    .email-message-body{white-space:pre-wrap;word-break:break-word;line-height:1.65}
+    .email-message{padding:1rem 1.1rem}.email-message .chat-msg-subject{font-weight:800;margin-bottom:.55rem;padding-bottom:.45rem;border-bottom:1px solid rgba(156,163,175,.28)}
+
     /* Conversation List */
     .conv-tabs {
       display: flex;
+      flex-wrap: nowrap;
+      gap: .1rem;
       border-bottom: 1px solid var(--gray-100);
-      padding: 0 1rem;
+      padding: 0 .65rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: var(--purple-light) transparent;
+      -webkit-overflow-scrolling: touch;
     }
+    .conv-tabs::-webkit-scrollbar { height: 7px; }
+    .conv-tabs::-webkit-scrollbar-track { background: var(--gray-50); }
+    .conv-tabs::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 999px; }
+    .conv-tabs:hover::-webkit-scrollbar-thumb { background: var(--purple-medium); }
 
     .conv-tab {
       padding: 0.75rem 0.75rem;
@@ -277,6 +292,9 @@
       font-family: var(--font-sans);
       border-bottom: 2px solid transparent;
       transition: all 0.2s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      min-width: max-content;
     }
 
     .conv-tab:hover { color: var(--gray-700); }
@@ -985,6 +1003,8 @@
 .conversation-state.inactive{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
 .profile-description-label{width:100%;text-align:left;font-size:.72rem;font-weight:800;color:var(--gray-800);margin-top:.7rem;margin-bottom:.3rem}
 .chat-header-actions .conversation-state{margin-right:.15rem}
+
+.email-message-body{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:1.58}.chat-msg.email-message{max-width:82%;padding:.9rem 1rem}.chat-msg.email-message .chat-msg-subject{padding-bottom:.45rem;margin-bottom:.5rem;border-bottom:1px solid rgba(107,114,128,.18);font-size:.76rem}.chat-msg.outgoing.email-message .chat-msg-subject{border-bottom-color:rgba(255,255,255,.24)}
 </style>
 <style id="reactify-message-meta-fix">
 .chat-msg-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:.75rem!important;margin-top:.28rem!important;font-size:.58rem!important;line-height:1.15!important;font-weight:500!important;letter-spacing:0!important;opacity:.78!important}
@@ -1050,7 +1070,7 @@
   'use strict';
   const STORE='reactify_platform_data_v3';
   const DELETED='reactify.deletedClients.v3';
-  const START='reactify.inboxStartedAt.v3';
+  const START='reactify.inboxStartedAt.emailCleanV7';
   const NOTIFY_SEEN='reactify.inboxNotificationSeen.v1';
   const API={conversations:'/.netlify/functions/conversations',messages:'/.netlify/functions/conversation-messages',send:'/.netlify/functions/send-message',emailSync:'/.netlify/functions/email-sync',classify:'/.netlify/functions/classify-conversation',eventTypes:'/.netlify/functions/cal-event-types',booking:'/.netlify/functions/conversation-booking'};
   const $=id=>document.getElementById(id);
@@ -1256,15 +1276,37 @@
     renderSelected();
   }
   async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',subject:m.subject||'',channel:String(m.channel||x.channel||'sms').toLowerCase(),time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineTypeFromMessages(x.messages,c.type||'Lead');c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
+  function cleanDisplayedEmail(value){
+    let text=String(value||'').replace(/\r\n?/g,'\n');
+    text=text.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<script[\s\S]*?<\/script>/gi,'');
+    text=text.replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/gi,'$1');
+    text=text.replace(/<https?:\/\/[^>]+>/gi,'');
+    text=text.replace(/https?:\/\/\S+/gi,link=>link.length>55?'':link);
+    text=text.replace(/\{[\s\S]{0,500}?\}/g,'');
+    const markers=[/^\s*On .+ wrote:\s*$/im,/^\s*Op .+ schreef .+:\s*$/im,/^\s*(From|Van):\s+.+$/im,/^\s*-{2,}\s*(Original Message|Oorspronkelijk bericht)\s*-{2,}\s*$/im];
+    let cut=text.length;markers.forEach(rx=>{const m=rx.exec(text);if(m)cut=Math.min(cut,m.index)});text=text.slice(0,cut);
+    const footer=/^\s*(unsubscribe|uitschrijven|manage (your )?email preferences|privacy notice|bekijk in browser|view (this )?email in (your )?browser|this email was sent|you are receiving this email)\b.*$/im.exec(text);
+    if(footer)text=text.slice(0,footer.index);
+    return text.split('\n').filter(line=>{
+      const l=line.trim();
+      if(/^>/.test(l))return false;
+      if(/^(message-id|references|in-reply-to|content-type|mime-version|list-id|list-unsubscribe|x-[a-z-]+):/i.test(l))return false;
+      if(/^(https?:\/\/|[{}[\]<>]{2,}|--[a-z0-9_-]{10,})/i.test(l))return false;
+      if(/^(var|const|let|function|select|insert|update|delete)\b/i.test(l))return false;
+      if(/powered by ai|generated (by|using) (an )?ai|privacy policy|cookie policy|terms (of use|and conditions)|manage (your )?(email )?preferences|unsubscribe/i.test(l))return false;
+      return true;
+    }).join('\n').replace(/```[\s\S]*?```/g,'').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+  }
   function renderSelected(){const {conv,client}=current();if(!conv||!client){$('chatHeader').innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>';$('chatMessages').innerHTML='<div class="empty-state">Selecteer een gesprek.</div>';$('profilePanelContent').innerHTML='<div class="empty-state">Geen profiel geselecteerd.</div>';return}
     const statusMeta=statusInfo(conv.status);const isManual=statusMeta.key==='taken-over';
     const currentState=statusInfo(conv.status).key;
     const needsTakeover=currentState==='needs-takeover';
-    const switchOff=isManual||needsTakeover;
-    const switchLabel=needsTakeover?'Overnemen':(isManual?'AI uit':'AI aan');
-    const switchTitle=needsTakeover?'Markeer het gesprek als overgenomen':(isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen');
-    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span class="channel-pill">${String(conv.channel||'sms').toLowerCase()==='email'?'✉ E-mail':'💬 SMS'}</span>${stateBadge(conv.status)}</div></div><div class="chat-header-actions"><button class="finish-chat-btn" onclick="completeConversation()" title="Zet dit gesprek op afgerond" ${currentState==='completed'?'disabled':''}>✓ Afronden</button><button class="ai-header-switch ${switchOff?'off':'on'}" onclick="toggleTakeover()" title="${switchTitle}" aria-label="AI aan of uit"><span class="ai-header-switch-track"></span><span>${switchLabel}</span></button><button class="btn-small" onclick="markAsSpam()" title="Spam/inbox">${String(conv.folder||'inbox')==='spam'?'↩ Inbox':'⚠ Spam'}</button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
-    $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=!outgoing?'Klant':origin==='ai'?'AI':origin==='manual'?'Manueel':origin==='system'?'Systeem':'Manueel';return `<div class="chat-msg ${m.type||'incoming'}">${m.subject?`<div class="chat-msg-subject">${esc(m.subject)}</div>`:''}${esc(m.text)}<div class="chat-msg-meta"><span class="message-origin ${origin==='ai'?'ai':origin==='manual'?'manual':'customer'}">${label}</span><span>${fmt(m.time)}</span></div></div>`}).join('')||`<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste ${String(conv.channel||'sms').toLowerCase()==='email'?'e-mailbericht':'SMS-bericht'}.</div>`;
+    const restrictedFolder=['spam','trash'].includes(String(conv.folder||'inbox'));
+    const switchOff=restrictedFolder||isManual||needsTakeover;
+    const switchLabel=restrictedFolder?'AI uit':(needsTakeover?'Overnemen':(isManual?'AI uit':'AI aan'));
+    const switchTitle=restrictedFolder?'AI is uitgeschakeld in Spam en Prullenbak':(needsTakeover?'Markeer het gesprek als overgenomen':(isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen'));
+    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span class="channel-pill">${String(conv.channel||'sms').toLowerCase()==='email'?'✉ E-mail':'💬 SMS'}</span>${stateBadge(conv.status)}</div></div><div class="chat-header-actions"><button class="finish-chat-btn" onclick="completeConversation()" title="Zet dit gesprek op afgerond" ${currentState==='completed'?'disabled':''}>✓ Afronden</button><button class="ai-header-switch ${switchOff?'off':'on'}" onclick="toggleTakeover()" title="${switchTitle}" aria-label="AI aan of uit" ${restrictedFolder?'disabled':''}><span class="ai-header-switch-track"></span><span>${switchLabel}</span></button><button class="btn-small" onclick="markAsSpam()" title="Spam/inbox">${String(conv.folder||'inbox')==='spam'?'↩ Inbox':'⚠ Spam'}</button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
+    $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=!outgoing?'Klant':origin==='ai'?'AI':origin==='manual'?'Manueel':origin==='system'?'Systeem':'Manueel';const isEmail=String(m.channel||conv.channel||'sms').toLowerCase()==='email';const body=isEmail?cleanDisplayedEmail(m.text):String(m.text||'');return `<div class="chat-msg ${m.type||'incoming'} ${isEmail?'email-message':''}">${m.subject?`<div class="chat-msg-subject">${esc(m.subject)}</div>`:''}<div class="email-message-body">${esc(body).replace(/\n/g,'<br>')}</div><div class="chat-msg-meta"><span class="message-origin ${origin==='ai'?'ai':origin==='manual'?'manual':'customer'}">${label}</span><span>${fmt(m.time)}</span></div></div>`}).join('')||`<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste ${String(conv.channel||'sms').toLowerCase()==='email'?'e-mailbericht':'SMS-bericht'}.</div>`;
     const fallbackAI=localConversationAnalysis(conv);const backendSummary=String(conv.ai?.summary||conv.summary||'').trim();const aiSummary=(!backendSummary||/nieuw gesprek aangemaakt/i.test(backendSummary))?fallbackAI.summary:backendSummary;const recommended=String(conv.ai?.recommendedAction||'').trim()||fallbackAI.action;const urgency=String((conv.ai?.urgency&&conv.ai.urgency!=='normaal')?conv.ai.urgency:fallbackAI.urgency).toLowerCase();const left=urgency.includes('hoog')?'88%':urgency.includes('medium')?'55%':'25%';
     $('profilePanelContent').innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="profile-name-row"><div class="profile-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="profile-phone">${esc(client.phone||'Geen telefoon')}</div><div class="profile-email">${esc(client.email||'Geen e-mail')}</div><div class="profile-description-label">Klantbeschrijving</div><div class="profile-description">${esc(client.description||description(client,conv)||'Nog geen klantbeschrijving.')}</div><button class="btn-small" onclick="openProfile('${client.id}')">Profiel bekijken</button></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="intent-pill">${esc(conv.ai?.intent||'Onbekend')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Urgentie</span><span>${esc(conv.ai?.urgency||'Normaal')}</span></div><div class="urgency-meter"><span class="urgency-knob" style="left:${left}"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span>${stateBadge(conv.status)}</div><div class="profile-detail-row"><span class="profile-detail-label">Laatste activiteit</span><span>${fmt(conv.updatedAt)}</span></div></div><div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${esc(aiSummary)}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${esc(recommended)}</div></div>`;
     $('chatChannel').value=String(conv.channel||'sms').toLowerCase()==='email'?'email':'sms';const subjectInput=$('chatSubject');if(document.activeElement!==subjectInput)subjectInput.value=conv.subjectDraft??conv.subject??'';subjectInput.style.display=$('chatChannel').value==='email'?'block':'none';$('chatInput').placeholder=$('chatChannel').value==='email'?'Schrijf de e-mailtekst...':'Typ een SMS-bericht...';$('chatMessages').scrollTop=$('chatMessages').scrollHeight;
@@ -1332,11 +1374,11 @@
     }
   };
   window.completeConversation=async()=>{const {d,conv}=current();if(!conv)return;conv.status='afgesloten';conv.ai=conv.ai||{};conv.ai.requiresHuman=false;conv.ai.urgency='normaal';conv.ai.summary='De klant is geholpen en het gesprek is afgerond.';conv.ai.recommendedAction='Geen verdere actie nodig. Het gesprek is afgerond.';conv.summary=conv.ai.summary;conv.updatedAt=now();save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:'afgesloten',aiEnabled:false,channel:conv.channel||'sms',subject:conv.subject||''})});toast('Gesprek is afgerond.');setTimeout(()=>sync({notify:false,forceMessages:true}),250);}catch(e){toast('Gesprek lokaal afgerond, maar backend-update mislukte.');}};
-  window.toggleTakeover=async()=>{const {d,conv}=current();if(!conv)return;const state=statusInfo(conv.status).key;const activateAI=state!=='ai-active';const next=activateAI?'ai-active':'manual_overname';conv.status=next;conv.ai=conv.ai||{};conv.ai.requiresHuman=!activateAI;save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:next,aiEnabled:activateAI,channel:conv.channel||'sms',subject:conv.subject||''})});toast(activateAI?'AI is opnieuw actief.':'Je hebt het gesprek overgenomen.');setTimeout(()=>sync({notify:false,forceMessages:true}),250);}catch(e){toast('Status lokaal aangepast, maar backend-update mislukte.');}};
+  window.toggleTakeover=async()=>{const {d,conv}=current();if(!conv)return;if(['spam','trash'].includes(String(conv.folder||'inbox'))){toast('AI is uitgeschakeld in Spam en Prullenbak.');return;}const state=statusInfo(conv.status).key;const activateAI=state!=='ai-active';const next=activateAI?'ai-active':'manual_overname';conv.status=next;conv.ai=conv.ai||{};conv.ai.requiresHuman=!activateAI;save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:next,aiEnabled:activateAI,channel:conv.channel||'sms',subject:conv.subject||''})});toast(activateAI?'AI is opnieuw actief.':'Je hebt het gesprek overgenomen.');setTimeout(()=>sync({notify:false,forceMessages:true}),250);}catch(e){toast('Status lokaal aangepast, maar backend-update mislukte.');}};
   async function moveConversation(conv,folder){if(!conv?.backendId)return;await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,folder,channel:conv.channel||'sms',subject:conv.subject||''})});}
-  window.deleteCurrent=async()=>{const {d,conv}=current();if(!conv)return;const inTrash=String(conv.folder||'inbox')==='trash';if(!confirm(inTrash?'Dit gesprek definitief verwijderen?':'Dit gesprek naar de prullenbak verplaatsen?'))return;try{if(inTrash){await api(API.conversations,{method:'DELETE',body:JSON.stringify({conversationId:conv.backendId,action:'permanent'})});d.conversations=d.conversations.filter(x=>x.id!==conv.id);}else{await moveConversation(conv,'trash');conv.folder='trash';}save(d);selectedId=null;render();toast(inTrash?'Gesprek definitief verwijderd.':'Gesprek staat in de prullenbak.');}catch(e){toast(e.message||'Verwijderen mislukt.')}};
+  window.deleteCurrent=async()=>{const {d,conv}=current();if(!conv)return;const inTrash=String(conv.folder||'inbox')==='trash';if(!confirm(inTrash?'Dit gesprek definitief verwijderen?':'Dit gesprek naar de prullenbak verplaatsen?'))return;try{if(inTrash){await api(API.conversations,{method:'DELETE',body:JSON.stringify({conversationId:conv.backendId,action:'permanent'})});d.conversations=d.conversations.filter(x=>x.id!==conv.id);}else{await moveConversation(conv,'trash');conv.folder='trash';conv.status='inactive';conv.ai=conv.ai||{};conv.ai.requiresHuman=false;}save(d);selectedId=null;render();toast(inTrash?'Gesprek definitief verwijderd.':'Gesprek staat in de prullenbak.');}catch(e){toast(e.message||'Verwijderen mislukt.')}};
   window.emptyTrash=async()=>{if(!confirm('Prullenbak definitief legen?'))return;try{await api(API.conversations,{method:'DELETE',body:JSON.stringify({action:'empty-trash'})});const d=load();d.conversations=d.conversations.filter(x=>String(x.folder||'inbox')!=='trash');save(d);selectedId=null;render();toast('Prullenbak geleegd.');}catch(e){toast(e.message||'Prullenbak legen mislukt.')}};
-  window.markAsSpam=async()=>{const {d,conv}=current();if(!conv)return;const folder=String(conv.folder||'inbox')==='spam'?'inbox':'spam';try{await moveConversation(conv,folder);conv.folder=folder;save(d);selectedId=null;render();toast(folder==='spam'?'Naar spam verplaatst.':'Teruggezet naar inbox.');}catch(e){toast(e.message||'Verplaatsen mislukt.')}};
+  window.markAsSpam=async()=>{const {d,conv}=current();if(!conv)return;const folder=String(conv.folder||'inbox')==='spam'?'inbox':'spam';try{await moveConversation(conv,folder);conv.folder=folder;if(folder==='spam'){conv.status='inactive';conv.ai=conv.ai||{};conv.ai.requiresHuman=false;}save(d);selectedId=null;render();toast(folder==='spam'?'Naar spam verplaatst.':'Teruggezet naar inbox.');}catch(e){toast(e.message||'Verplaatsen mislukt.')}};
 
   // Shared profile drawer
   let editPhoto='';
@@ -1414,6 +1456,9 @@
     }
   }
   function showTopToast(){let t=document.querySelector('.rf-top-toast');if(!t){t=document.createElement('div');t.className='rf-top-toast';t.innerHTML='<div class="rf-top-toast-icon">💬</div><div><div class="rf-top-toast-title">Nieuw bericht</div><div class="rf-top-toast-body">Open de inbox om het SMS- of e-mailgesprek te bekijken.</div></div>';t.onclick=()=>location.href='/platform/inbox/';document.body.appendChild(t)}t.classList.add('show');setTimeout(()=>t.classList.remove('show'),5000)}
+  const tabsScroller=document.querySelector('.conv-tabs');
+  tabsScroller?.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();tabsScroller.scrollLeft+=e.deltaY;}},{passive:false});
+
   document.querySelectorAll('.conv-tab').forEach(tab=>tab.addEventListener('click',()=>{
     activeFolder=tab.dataset.folder||'inbox';
     activeChannel=tab.dataset.channel||'all';
