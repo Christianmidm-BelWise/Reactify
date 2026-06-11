@@ -97,25 +97,11 @@
         (info.email && normalizeEmail(c.email) === info.email)
       );
 
-      if (!client) {
-        client = {
-          id: uid("client"),
-          name: isUsefulName(info.name) ? info.name : (info.email || info.phone || "Nieuwe lead"),
-          email: info.email,
-          phone: info.phone,
-          type: "Lead",
-          status: "positief",
-          sentiment: "positief",
-          description: "",
-          note: "",
-          source: "Cal.com",
-          createdAt: new Date().toISOString(),
-          updatedAt: booking?.createdAt || booking?.created_at || booking?.start || new Date().toISOString(),
-          color: "#5B2E91",
-        };
-        data.clients.unshift(client);
-        changed = true;
-      } else {
+      // Cal.com is geen bron voor de klantenlijst. Alleen reeds expliciet
+      // opgeslagen contacten mogen worden bijgewerkt. Daardoor keren verwijderde
+      // SMS-contacten of historische deelnemers niet terug na agenda-sync.
+      if (!client) continue;
+      else {
         const before = JSON.stringify([client.name, client.email, client.phone, client.source]);
         if (isUsefulName(info.name) && (!isUsefulName(client.name) || client.name === client.phone)) client.name = info.name;
         if (info.email) client.email = info.email;
