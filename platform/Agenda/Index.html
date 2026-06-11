@@ -49,7 +49,13 @@
 .rf-global-notification{top:1.15rem!important;right:1.25rem!important;display:flex;align-items:center;justify-content:center}
 .rf-global-bell{margin:0!important;transform:none!important}
 @media(max-width:768px){.main-header{padding-right:0}.header-actions{margin-left:0;width:calc(100% - 3.5rem)}.rf-global-notification{top:.85rem!important;right:.85rem!important}}
-</style></head>
+</style>
+<style id="reactify-agenda-bell-and-details-fix">
+.rf-global-notification{top:1.05rem!important;right:1.25rem!important;height:38px!important;display:flex!important;align-items:center!important}
+.rf-global-bell{width:38px!important;height:38px!important;border-radius:9px!important;line-height:1!important;padding:0!important;margin:0!important}
+.booking-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1rem}.booking-detail-row{padding:.7rem .8rem;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px}.booking-detail-row.full{grid-column:1/-1}.booking-detail-label{display:block;font-size:.68rem;font-weight:800;color:var(--gray-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.18rem}.booking-detail-value{font-size:.84rem;font-weight:650;color:var(--gray-900);word-break:break-word}.booking-detail-actions{display:flex;justify-content:flex-end;gap:.65rem;padding-top:1rem;margin-top:1rem;border-top:1px solid var(--gray-100)}@media(max-width:600px){.booking-detail-grid{grid-template-columns:1fr}.booking-detail-row.full{grid-column:auto}}
+</style>
+</head>
 <body>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo"><img alt="Reactify" src="/logo.png"/></div>
@@ -330,10 +336,26 @@ const NOTIFICATION_KEY="reactify.notifications";
     function renderAppointments(){
       const r=getRange(); const list=bookings.filter(b=>inRange(b,r.s,r.e)); const el=$("appointmentList");
       if(!list.length){el.innerHTML=`<div class="appt-empty">Geen afspraken in deze ${r.label.toLowerCase()}.</div>`; return;}
-      el.innerHTML=list.map((b,i)=>{const isPast=new Date(b.end||b.start).getTime()<Date.now();return `<div class="appt-item ${colors[i%colors.length]}${isPast?' past':''}" onclick="openBookingDetails('${escapeHTML(b.meetingUrl||'')}')"><div class="appt-time"><span>${formatTime(b.start)}</span><span class="appt-day-label">${escapeHTML(relativeDayLabel(b.start))}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${isPast?'past':(b.status==='pending'?'pending':'confirmed')}"><span class="dot"></span>${isPast?'Voorbij':(b.status==='pending'?'In aanvraag':'Bevestigd')}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`}).join("");
+      el.innerHTML=list.map((b,i)=>{const isPast=new Date(b.end||b.start).getTime()<Date.now();return `<div class="appt-item ${colors[i%colors.length]}${isPast?' past':''}" onclick="openBookingDetails('${escapeHTML(String(b.uid||b.id||''))}')"><div class="appt-time"><span>${formatTime(b.start)}</span><span class="appt-day-label">${escapeHTML(relativeDayLabel(b.start))}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${isPast?'past':(b.status==='pending'?'pending':'confirmed')}"><span class="dot"></span>${isPast?'Voorbij':(b.status==='pending'?'In aanvraag':'Bevestigd')}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`}).join("");
     }
     function cleanLocationLabel(value){const text=String(value||""); if(text.includes("app.cal.com/video")) return "Cal.com video"; if(text.includes("zoom.us")) return "Zoom meeting"; return text;}
-    function openBookingDetails(url){ if(url) window.open(url,"_blank","noopener,noreferrer"); }
+    function bookingMeetingUrl(b){
+      return b?.meetingUrl || b?.meeting_url || b?.videoCallUrl || b?.video_call_url || b?.metadata?.videoCallUrl || (typeof b?.location==='string' && /^https?:\/\//i.test(b.location) ? b.location : "") || "";
+    }
+    function ensureBookingDetailsModal(){
+      let backdrop=$("bookingDetailsModal"); if(backdrop) return backdrop;
+      backdrop=document.createElement("div");backdrop.id="bookingDetailsModal";backdrop.className="modal-backdrop";
+      backdrop.innerHTML=`<div class="modal" style="width:min(620px,100%)"><div class="modal-header"><div class="modal-title">Afspraakdetails</div><button class="modal-close" type="button" aria-label="Sluiten">×</button></div><div class="modal-body" id="bookingDetailsBody"></div></div>`;
+      document.body.appendChild(backdrop);backdrop.querySelector('.modal-close').onclick=()=>backdrop.classList.remove('open');backdrop.onclick=e=>{if(e.target===backdrop)backdrop.classList.remove('open')};return backdrop;
+    }
+    function openBookingDetails(id){
+      const b=bookings.find(x=>String(x.uid||x.id||'')===String(id));if(!b)return;
+      const start=new Date(b.start),end=new Date(b.end||b.start);const duration=Math.max(0,Math.round((end-start)/60000))||Number(b.duration||b.lengthInMinutes||0)||30;
+      const url=bookingMeetingUrl(b);const modal=ensureBookingDetailsModal();const body=$("bookingDetailsBody");
+      const row=(label,value,full=false)=>`<div class="booking-detail-row${full?' full':''}"><span class="booking-detail-label">${escapeHTML(label)}</span><div class="booking-detail-value">${escapeHTML(value||'Niet beschikbaar')}</div></div>`;
+      body.innerHTML=`<div class="booking-detail-grid">${row('Afspraak',b.title,true)}${row('Contactpersoon',b.customer||b.name)}${row('Status',String(b.status||'accepted')==='pending'?'In aanvraag':'Bevestigd')}${row('Datum',formatDate(b.start))}${row('Tijd',`${formatTime(b.start)} – ${formatTime(b.end||new Date(start.getTime()+duration*60000))}`)}${row('Duur',`${duration} minuten`)}${row('Afspraaktype',b.type||b.source||'Agenda')}${row('Locatie',cleanLocationLabel(b.location||''),true)}${b.email?row('E-mail',b.email):''}${b.phone?row('Telefoon',b.phone):''}</div><div class="booking-detail-actions"><button class="btn-secondary" type="button" id="bookingDetailsClose">Sluiten</button>${url?`<a class="btn-primary" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Naar meeting</a>`:''}</div>`;
+      $("bookingDetailsClose").onclick=()=>modal.classList.remove('open');modal.classList.add('open');
+    }
     async function deleteBooking(uidValue){
       if(!uidValue) return alert("Geen booking id gevonden."); if(!confirm("Wil je deze afspraak verwijderen? In Cal.com wordt dit als annuleren uitgevoerd.")) return;
       try{setSync("laden","Afspraak verwijderen..."); await apiFetch(API.cancelBooking,{method:"POST",body:JSON.stringify({ uid:uidValue, cancellationReason:"Verwijderd via Reactify agenda" })}); bookings=bookings.filter(b=>String(b.uid||b.id)!==String(uidValue)); renderAll(); setSync("ok","Afspraak verwijderd."); await loadAll();}
