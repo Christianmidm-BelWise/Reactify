@@ -171,6 +171,8 @@
     const CAL_USERNAME = "christian-damian-62o7zs";
     const CONTACT_KEY = "reactify.contacts";
     const LOCAL_APPT_KEY = "reactify.localAppointments";
+    const OCCUPANCY_SCHEDULE_KEY = "reactify.occupancySchedule";
+    const PLATFORM_KEY = "reactify_platform_data_v3";
     const monthNames=["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"];
     const dayNames=["Ma","Di","Wo","Do","Vr","Za","Zo"];
     const calDays=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -199,7 +201,8 @@ const NOTIFICATION_KEY="reactify.notifications";
     const initials=name=>String(name||"Klant").split(" ").filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"KL";
     const normalizeEmail=e=>String(e||"").trim().toLowerCase();
     const normalizePhone=v=>{let s=String(v||'').trim().replace(/[^0-9+]/g,'');if(!s)return '';if(s.startsWith('00'))s='+'+s.slice(2);let d=s.replace(/\D/g,'');if(d.startsWith('32'))return '+32'+d.slice(2);if(d.startsWith('0'))return '+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return '+32'+d;return s.startsWith('+')?'+'+d:d};
-    function platformData(){try{const d=JSON.parse(localStorage.getItem('reactify_platform_data_v3')||'{}');return{clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[]}}catch{return{clients:[],conversations:[]}}}
+    function platformData(){try{const d=JSON.parse(localStorage.getItem(PLATFORM_KEY)||'{}');return{...d,clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[],settings:d.settings||{}}}catch{return{clients:[],conversations:[],appointments:[],settings:{}}}}
+    function savePlatformData(data){localStorage.setItem(PLATFORM_KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('reactify:data',{detail:data}));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:PLATFORM_KEY}}));}
     function contactForBooking(b){const d=platformData();const phone=normalizePhone(b.phone||''),email=normalizeEmail(b.email||''),name=String(b.customer||'').trim().toLowerCase();return d.clients.find(c=>(b.contactId&&c.id===b.contactId)||(phone&&normalizePhone(c.phone)===phone)||(email&&normalizeEmail(c.email)===email)||(name&&String(c.name||'').trim().toLowerCase()===name))||null}
     function latestConvFor(client){if(!client)return null;return [...platformData().conversations].filter(c=>c.clientId===client.id).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0))[0]||null}
     function stateInfo(status){const x=String(status||'ai-active').toLowerCase().replaceAll('_','-');if(x.includes('afgesloten')||x.includes('closed')||x.includes('inactive'))return{key:'completed',label:'Afgerond'};if(x.includes('overname')||x.includes('manual')||x.includes('human'))return{key:'manual',label:'Overname nodig'};return{key:'ai-active',label:'AI actief'}}
@@ -213,21 +216,20 @@ const NOTIFICATION_KEY="reactify.notifications";
     }
 
     function getContacts(){
-      if(window.ReactifyStore?.getContacts) return window.ReactifyStore.getContacts();
-      return readJSON(CONTACT_KEY,[]);
+      // Alleen expliciet opgeslagen Reactify-contacten tonen. Oude SMS-gesprekken
+      // en historische Cal.com-deelnemers mogen de keuzelijst niet opnieuw vullen.
+      return platformData().clients;
     }
     function saveContacts(items){
-      if(window.ReactifyStore?.saveContacts) return window.ReactifyStore.saveContacts(items);
-      writeJSON(CONTACT_KEY,items);
+      const data=platformData(); data.clients=Array.isArray(items)?items:[]; savePlatformData(data); return data.clients;
     }
     function upsertContact(data){
-      if(window.ReactifyStore?.upsertContact) return window.ReactifyStore.upsertContact(data);
-      const contacts=getContacts();
+      const platform=platformData(); const contacts=platform.clients;
       const email=normalizeEmail(data.email), phone=normalizePhone(data.phone);
-      let c=contacts.find(x=>(email&&normalizeEmail(x.email)===email)||(phone&&normalizePhone(x.phone)===phone));
-      if(c){Object.assign(c,data,{updatedAt:new Date().toISOString(),lastActivity:data.lastActivity||new Date().toISOString()}); saveContacts(contacts); return c;}
-      c={id:uid("contact"),name:data.name||"Nieuwe klant",email:data.email||"",phone:data.phone||"",status:data.status||"active",source:data.source||"Reactify",notes:data.notes||"",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),lastActivity:data.lastActivity||new Date().toISOString()};
-      contacts.unshift(c); saveContacts(contacts); return c;
+      let c=contacts.find(x=>(data.id&&x.id===data.id)||(email&&normalizeEmail(x.email)===email)||(phone&&normalizePhone(x.phone)===phone));
+      if(c){Object.assign(c,data,{id:c.id,updatedAt:new Date().toISOString(),lastActivity:data.lastActivity||new Date().toISOString()});}
+      else{c={id:uid("client"),name:data.name||"Nieuwe klant",email:data.email||"",phone:data.phone||"",type:data.type||"Lead",status:data.status||"neutraal",sentiment:data.sentiment||"neutraal",description:data.description||"",note:data.notes||data.note||"",source:data.source||"Reactify",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),lastActivity:data.lastActivity||new Date().toISOString(),color:data.color||"#5B2E91"};contacts.unshift(c);}
+      platform.clients=contacts; savePlatformData(platform); return c;
     }
     function saveLocalAppointment(item){ return item; }
 
@@ -261,8 +263,8 @@ const NOTIFICATION_KEY="reactify.notifications";
         if(bookingPayload.status==="fulfilled"){
           bookings=normalizeBookings(bookingPayload.value);
         } else { bookings=[]; throw bookingPayload.reason; }
-        if(typePayload.status==="fulfilled") eventTypes=Array.isArray(typePayload.value.data)?typePayload.value.data:[];
-        if(schedulePayload.status==="fulfilled") schedules=Array.isArray(schedulePayload.value.data)?schedulePayload.value.data:[];
+        if(typePayload.status==="fulfilled") eventTypes=Array.isArray(typePayload.value?.data)?typePayload.value.data:Array.isArray(typePayload.value?.data?.eventTypes)?typePayload.value.data.eventTypes:Array.isArray(typePayload.value?.eventTypes)?typePayload.value.eventTypes:[];
+        if(schedulePayload.status==="fulfilled") schedules=Array.isArray(schedulePayload.value?.data)?schedulePayload.value.data:Array.isArray(schedulePayload.value?.data?.schedules)?schedulePayload.value.data.schedules:Array.isArray(schedulePayload.value?.schedules)?schedulePayload.value.schedules:[];
         renderAll(); fillContactSelect(); fillEventTypeSelects(); fillScheduleSelect(); renderEventTypeList();
         setSync("ok",`Verbonden met Cal.com · ${bookings.length} afspraken · ${eventTypes.length} afspraaktypes · ${schedules.length} schema's`);
       }catch(error){
@@ -289,17 +291,23 @@ const NOTIFICATION_KEY="reactify.notifications";
       return{s,e,period};
     }
     function hmMinutes(value){const m=String(value||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0;}
+    function occupancyPreference(){return readJSON(OCCUPANCY_SCHEDULE_KEY,null);}
     function activeSchedule(){
-      if(!Array.isArray(schedules)||!schedules.length)return null;
-      // Gebruik één werkelijk actief schema. Meerdere Cal.com-schema's mogen
-      // niet bij elkaar worden opgeteld, anders wordt 1 werkdag bv. 40 uur.
-      const referencedIds=new Set((eventTypes||[]).map(t=>String(t.scheduleId||t.schedule?.id||'')).filter(Boolean));
-      return schedules.find(s=>s.isDefault===true||s.is_default===true)
-        || schedules.find(s=>referencedIds.has(String(s.id||s.scheduleId||'')))
-        || schedules[0];
+      const pref=occupancyPreference();
+      if(Array.isArray(schedules)&&schedules.length){
+        const prefId=String(pref?.id||pref?.scheduleId||'');
+        const prefName=String(pref?.name||'').trim().toLowerCase();
+        const referencedIds=new Set((eventTypes||[]).map(t=>String(t.scheduleId||t.schedule?.id||'')).filter(Boolean));
+        return schedules.find(s=>prefId&&String(s.id||s.scheduleId||'')===prefId)
+          || schedules.find(s=>prefName&&String(s.name||'').trim().toLowerCase()===prefName)
+          || schedules.find(s=>s.isDefault===true||s.is_default===true)
+          || schedules.find(s=>referencedIds.has(String(s.id||s.scheduleId||'')))
+          || schedules[0];
+      }
+      return pref||null;
     }
     function scheduleBlocks(){
-      const schedule=activeSchedule();
+      const schedule=activeSchedule()||occupancyPreference();
       const rows=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
       const blocks=[];
       for(const row of rows){
@@ -415,7 +423,10 @@ const NOTIFICATION_KEY="reactify.notifications";
     $("availabilityForm").addEventListener("submit",async e=>{e.preventDefault();
       try{showAlert("availabilityAlert","info","Beschikbaarheid opslaan in Cal.com...");const days=[...document.querySelectorAll('#dayChecks input:checked')].map(i=>i.value); if(!days.length) throw new Error("Kies minstens één dag."); const payload={name:$("scheduleName").value,timeZone:$("scheduleTimeZone").value,isDefault:$("scheduleDefault").checked,availability:[{days,startTime:$("scheduleStart").value,endTime:$("scheduleEnd").value}]};
       if($("overrideDate").value && $("overrideStart").value && $("overrideEnd").value)payload.overrides=[{date:$("overrideDate").value,startTime:$("overrideStart").value,endTime:$("overrideEnd").value}];
-      await apiFetch(API.schedules,{method:"POST",body:JSON.stringify(payload)});showAlert("availabilityAlert","ok","Beschikbaarheid opgeslagen in Cal.com en opnieuw geladen in Reactify.");await loadAll();setTimeout(()=>closeModal("availabilityModal"),900)}catch(error){console.error(error);showAlert("availabilityAlert","error",error.message||"Beschikbaarheid opslaan mislukt.")}});
+      const created=await apiFetch(API.schedules,{method:"POST",body:JSON.stringify(payload)});
+      const createdSchedule=created?.data?.schedule||created?.data||created?.schedule||{};
+      writeJSON(OCCUPANCY_SCHEDULE_KEY,{...payload,...createdSchedule,id:createdSchedule.id||createdSchedule.scheduleId||"",savedAt:new Date().toISOString()});
+      showAlert("availabilityAlert","ok","Beschikbaarheid opgeslagen in Cal.com en opnieuw geladen in Reactify.");await loadAll();renderStats();setTimeout(()=>closeModal("availabilityModal"),900)}catch(error){console.error(error);showAlert("availabilityAlert","error",error.message||"Beschikbaarheid opslaan mislukt.")}});
 
     $("eventTypeForm").addEventListener("submit",async e=>{e.preventDefault();
       try{showAlert("eventTypeAlert","info","Afspraaktype opslaan in Cal.com...");const payload={title:$("typeTitle").value,slug:$("typeSlug").value,lengthInMinutes:$("typeLength").value,slotInterval:$("typeSlot").value,minimumBookingNotice:$("typeNotice").value,beforeEventBuffer:$("typeBefore").value,afterEventBuffer:$("typeAfter").value,scheduleId:$("typeSchedule").value||undefined,description:$("typeDescription").value,hidden:$("typeHidden").checked,locationType:$("typeLocationType").value,locationValue:$("typeLocationValue").value};
