@@ -34,7 +34,7 @@
 .conversation-state{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}.conversation-state.ai-active{background:var(--green-light);color:var(--green)}.conversation-state.manual{background:var(--orange-light);color:var(--orange-dark)}.conversation-state.completed{background:var(--gray-100);color:var(--gray-600)}
 
 /* Reactify bezettingsgraad en afspraakknoppen */
-.occupancy-card{position:relative}.occupancy-period{margin-top:.28rem;border:1px solid var(--gray-200);border-radius:7px;background:#fff;color:var(--gray-700);font-size:.68rem;font-weight:800;padding:.25rem .4rem;outline:none}.occupancy-period:focus{border-color:var(--purple)}
+.occupancy-card{position:relative}.occupancy-switch{display:inline-flex;gap:.12rem;margin-top:.38rem;padding:.2rem;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px}.occupancy-btn{border:0;background:transparent;color:var(--gray-600);padding:.28rem .48rem;border-radius:7px;font-size:.62rem;font-weight:800;cursor:pointer}.occupancy-btn:hover{background:var(--purple-bg);color:var(--purple)}.occupancy-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px 8px rgba(91,46,145,.2)}
 .panel-footer-actions{display:grid;gap:.55rem;justify-items:center}.panel-footer-actions .btn-primary{width:min(220px,100%)}
 </style>
 
@@ -77,7 +77,7 @@
       <article class="stat-card"><div class="stat-icon purple">📅</div><div><div class="stat-label">Afspraken vandaag</div><div class="stat-value" id="statToday">0</div><div class="stat-trend">Live uit Cal.com</div></div></article>
       <article class="stat-card"><div class="stat-icon orange">🗓️</div><div><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeek">0</div><div class="stat-trend">Accepted only</div></div></article>
       <article class="stat-card"><div class="stat-icon green">✓</div><div><div class="stat-label">Totaal deze maand</div><div class="stat-value" id="statMonth">0</div><div class="stat-trend">Gekozen maand</div></div></article>
-      <article class="stat-card occupancy-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div><select class="occupancy-period" id="occupancyPeriod" aria-label="Periode bezettingsgraad"><option value="day">Dag</option><option value="week">Week</option><option value="month" selected>Maand</option><option value="year">Jaar</option></select><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
+      <article class="stat-card occupancy-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div><div class="occupancy-switch" id="occupancyPeriod" aria-label="Periode bezettingsgraad"><button class="occupancy-btn" data-occupancy-period="day" type="button">Dag</button><button class="occupancy-btn" data-occupancy-period="week" type="button">Week</button><button class="occupancy-btn active" data-occupancy-period="month" type="button">Maand</button><button class="occupancy-btn" data-occupancy-period="year" type="button">Jaar</button></div><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
     </section>
 
     <section class="agenda-layout">
@@ -183,6 +183,7 @@
     const dayLabels=["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"];
     const colors=["purple","orange","green","blue"];
     let bookings=[], eventTypes=[], schedules=[], viewMode="month", visibleDate=new Date(), selectedDate=new Date();
+    let occupancyPeriod=localStorage.getItem("reactify.agendaOccupancyPeriod")||"month";if(!["day","week","month","year"].includes(occupancyPeriod))occupancyPeriod="month";
     const $=id=>document.getElementById(id);
     const pad=n=>String(n).padStart(2,"0");
     const uid=(p="id")=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
@@ -288,7 +289,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     const bookingsForDate=d=>bookings.filter(b=>sameDate(b.start,d));
     function renderAll(){renderStats();renderCalendar();renderAppointments();}
     function occupancyRange(){
-      const period=$("occupancyPeriod")?.value||"month";let s,e;
+      const period=occupancyPeriod;let s,e;
       if(period==="day"){s=new Date(selectedDate);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+1);}
       else if(period==="week"){s=new Date(selectedDate);const d=s.getDay()||7;s.setDate(s.getDate()-d+1);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+7);}
       else if(period==="year"){s=new Date(selectedDate.getFullYear(),0,1);e=new Date(selectedDate.getFullYear()+1,0,1);}
@@ -309,7 +310,7 @@ const NOTIFICATION_KEY="reactify.notifications";
       $("statToday").textContent=bookings.filter(b=>inRange(b,today,tomorrow)).length;
       $("statWeek").textContent=bookings.filter(b=>inRange(b,weekStart,weekEnd)).length;
       $("statMonth").textContent=bookings.filter(b=>inRange(b,monthStart,monthEnd)).length;
-      const range=occupancyRange();const available=availableMinutesInRange(range.s,range.e);const booked=bookedMinutesInRange(range.s,range.e);const percentage=available>0?Math.min(100,Math.round(booked/available*100)):0;
+      document.querySelectorAll("[data-occupancy-period]").forEach(b=>b.classList.toggle("active",b.dataset.occupancyPeriod===occupancyPeriod));const range=occupancyRange();const available=availableMinutesInRange(range.s,range.e);const booked=bookedMinutesInRange(range.s,range.e);const percentage=available>0?Math.min(100,Math.round(booked/available*100)):0;
       $("statOccupancy").textContent=`${percentage}%`;if($("occupancyBar"))$("occupancyBar").style.width=`${percentage}%`;$("occupancyDetail").textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
     }
     function renderCalendar(){
@@ -415,7 +416,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     $("prevBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()-1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()-7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()-1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("nextBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()+7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()+1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("todayBtn").onclick=()=>{selectedDate=new Date();visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll()};
-    $("openBookingBtn").onclick=()=>openModal("bookingModal");$("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");$("occupancyPeriod").onchange=renderStats;
+    $("openBookingBtn").onclick=()=>openModal("bookingModal");$("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");document.querySelectorAll("[data-occupancy-period]").forEach(btn=>btn.addEventListener("click",()=>{occupancyPeriod=btn.dataset.occupancyPeriod;localStorage.setItem("reactify.agendaOccupancyPeriod",occupancyPeriod);renderStats();}));
     $("sidebarToggle")?.addEventListener("click",()=>$("sidebar").classList.toggle("open"));
     document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id))});
     const startDefault=new Date();startDefault.setDate(startDefault.getDate()+1);startDefault.setHours(10,0,0,0);$("bookingStart").value=toLocalInputValue(startDefault);
