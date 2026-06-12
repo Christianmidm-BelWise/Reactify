@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-
 <html lang="nl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Reactify Platform - Agenda, afspraken, beschikbaarheid en afspraaktypes via Cal.com." name="description"/>
-<link href="/favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<title>Agenda | Reactify</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Reactify Platform - Agenda, afspraken, beschikbaarheid en afspraaktypes via Cal.com." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>Agenda | Reactify</title>
+  <style>
     :root{--purple-dark:#3D1D72;--purple:#5B2E91;--purple-light:#E8DCF5;--purple-bg:#F5F0FA;--orange:#F5A623;--orange-dark:#E0941A;--orange-light:#FFF3DC;--white:#fff;--gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-300:#D1D5DB;--gray-400:#9CA3AF;--gray-500:#6B7280;--gray-600:#4B5563;--gray-700:#374151;--gray-800:#1F2937;--gray-900:#111827;--green:#16A34A;--green-light:#DCFCE7;--blue:#2563EB;--blue-light:#DBEAFE;--red:#DC2626;--red-light:#FEE2E2;--shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 10px 30px rgba(17,24,39,.12);--font-sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
     *{box-sizing:border-box;margin:0;padding:0}body{font-family:var(--font-sans);color:var(--gray-800);line-height:1.6;background:var(--gray-50);display:flex;-webkit-font-smoothing:antialiased}button,input,select,textarea{font:inherit}.sidebar{width:240px;background:var(--purple-dark);color:#fff;display:flex;flex-direction:column;min-height:100vh;position:fixed;inset:0 auto 0 0;z-index:100}.sidebar-logo{min-height:76px;padding:1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center}.sidebar-logo img{height:28px;filter:brightness(1.8)}.sidebar-nav{flex:1;padding:1rem 0;display:flex;flex-direction:column;gap:.25rem}.sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;color:rgba(255,255,255,.7);text-decoration:none;font-size:.9rem;font-weight:500;border-radius:0 8px 8px 0;margin-right:.75rem;transition:.2s}.sidebar-link:hover,.sidebar-link.active{color:#fff;background:rgba(255,255,255,.1)}.sidebar-link.active{background:var(--purple)}.sidebar-link svg{width:20px;height:20px}.sidebar-spacer{flex:1}.sidebar-user{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}.user-name{font-weight:700;font-size:.9rem}.user-role{font-size:.75rem;color:rgba(255,255,255,.55)}.main{flex:1;margin-left:240px;padding:2rem;min-height:100vh}.mobile-sidebar-toggle{display:none;align-items:center;gap:.5rem;padding:.5rem .75rem;background:var(--purple);color:#fff;border:none;border-radius:8px;font-weight:700;margin-bottom:1rem}.main-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.35rem;flex-wrap:wrap}.page-header h1{font-size:1.55rem;font-weight:800;color:var(--gray-900)}.page-header p{font-size:.875rem;color:var(--gray-500)}.header-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}.btn-secondary,.btn-primary,.btn-danger{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.55rem 1rem;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:none;transition:.2s;min-height:38px;border:none}.btn-secondary{border:1px solid var(--gray-200);color:var(--gray-700);background:#fff}.btn-secondary:hover{border-color:var(--gray-300);background:var(--gray-50);transform:translateY(-1px)}.btn-primary{color:#fff;background:var(--purple);box-shadow:0 6px 14px rgba(91,46,145,.2)}.btn-primary:hover{background:var(--purple-dark);transform:translateY(-1px)}.btn-danger{color:var(--red);background:var(--red-light)}.btn-green{color:#fff;background:var(--green);box-shadow:0 6px 14px rgba(22,163,74,.18)}.btn-green:hover{background:#15803d;transform:translateY(-1px)}.btn-secondary svg,.btn-primary svg{width:16px;height:16px}.status-bar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;padding:.85rem 1rem;border-radius:12px;background:#fff;box-shadow:var(--shadow-sm);font-size:.82rem;color:var(--gray-600)}.status-dot{width:9px;height:9px;border-radius:50%;background:var(--orange)}.status-dot.ok{background:var(--green)}.status-dot.error{background:var(--red)}.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:1.5rem}.stat-card{background:#fff;border-radius:12px;padding:1.25rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow-sm);min-height:92px}.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.stat-icon.purple{background:var(--purple-light);color:var(--purple)}.stat-icon.orange{background:var(--orange-light);color:var(--orange-dark)}.stat-icon.green{background:var(--green-light);color:var(--green)}.stat-icon.blue{background:var(--blue-light);color:var(--blue)}.stat-label{font-size:.75rem;color:var(--gray-600);font-weight:600}.stat-value{font-size:1.5rem;font-weight:800;color:var(--gray-900)}.stat-trend{font-size:.7rem;font-weight:700;color:var(--gray-400)}.agenda-layout{display:grid;grid-template-columns:1.45fr 1fr;gap:1.25rem;align-items:start}.panel{background:#fff;border-radius:12px;box-shadow:var(--shadow-sm);overflow:hidden}.panel-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.25rem 1rem;gap:1rem;flex-wrap:wrap}.panel-header h2{font-size:1.05rem;font-weight:800;color:var(--gray-900)}.cal-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}.cal-today,.cal-nav,.view-btn{border:1px solid var(--gray-200);background:#fff;color:var(--gray-700);cursor:pointer;transition:.2s}.cal-today{padding:.375rem .75rem;border-radius:8px;font-size:.75rem;font-weight:700}.cal-nav{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px}.cal-nav svg{width:16px;height:16px}.view-switch{display:inline-flex;border:1px solid var(--gray-200);border-radius:9px;overflow:hidden;background:#fff}.view-btn{border:0;border-right:1px solid var(--gray-200);padding:.42rem .72rem;font-size:.75rem;font-weight:800}.view-btn:last-child{border-right:0}.view-btn.active{background:var(--purple);color:#fff}.calendar{padding:0 1.25rem 1.25rem}.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem;margin-bottom:.5rem}.cal-weekday{text-align:center;font-size:.7rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;padding:.375rem 0}.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem}.cal-day{position:relative;min-height:54px;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.12rem;font-size:.8rem;font-weight:600;color:var(--gray-700);border-radius:8px;cursor:pointer;transition:.15s;border:1px solid transparent;background:#fff}.cal-day:hover{background:var(--purple-bg)}.cal-day.muted{color:var(--gray-300);cursor:default}.cal-day.muted:hover{background:transparent}.cal-day.selected{background:var(--purple);color:#fff;font-weight:800}.cal-day.today{border-color:var(--purple);color:var(--purple);font-weight:800}.cal-day.today.selected{color:#fff}.cal-marker{width:5px;height:5px;border-radius:50%;background:var(--orange);display:block}.cal-day.selected .cal-marker{background:#fff}.cal-count{font-size:.62rem;line-height:1;color:var(--orange-dark);font-weight:900}.cal-day.selected .cal-count{color:#fff}.week-view,.day-view{display:grid;gap:.75rem}.week-view{grid-template-columns:repeat(7,1fr)}.week-day-card,.day-detail-card{border:1px solid var(--gray-100);background:var(--gray-50);border-radius:12px;padding:.85rem;min-height:150px;cursor:pointer;transition:.15s}.week-day-card:hover,.week-day-card.selected{border-color:var(--purple);background:var(--purple-bg)}.week-day-name{font-size:.72rem;color:var(--gray-500);font-weight:800;text-transform:uppercase}.week-day-number{font-size:1.25rem;color:var(--gray-900);font-weight:900}.week-appt-pill{margin-top:.5rem;padding:.35rem .45rem;border-radius:8px;background:#fff;font-size:.68rem;color:var(--gray-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid var(--purple)}.day-detail-card{cursor:default;min-height:260px}.day-detail-title{font-size:1rem;font-weight:900;color:var(--gray-900);margin-bottom:.25rem}.day-detail-sub{font-size:.82rem;color:var(--gray-500);margin-bottom:1rem}.appt-list{padding:.25rem 0 .5rem}.appt-empty{padding:2rem 1.25rem;text-align:center;color:var(--gray-500);font-size:.85rem}.appt-item{display:flex;align-items:flex-start;gap:.875rem;padding:.875rem 1.25rem;border-left:3px solid transparent;transition:.15s;cursor:pointer}.appt-item:hover{background:var(--gray-50)}.appt-item.purple{border-left-color:var(--purple)}.appt-item.orange{border-left-color:var(--orange)}.appt-item.green{border-left-color:var(--green)}.appt-item.blue{border-left-color:var(--blue)}.appt-time{font-size:.8rem;font-weight:800;color:var(--gray-900);width:52px;flex-shrink:0}.appt-body{flex:1;min-width:0}.appt-title{font-weight:700;font-size:.875rem;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.appt-sub{font-size:.78rem;color:var(--gray-500)}.appt-badge{display:inline-flex;align-items:center;gap:.375rem;padding:.2rem .55rem;border-radius:9999px;font-size:.7rem;font-weight:800;white-space:nowrap;align-self:center}.appt-badge .dot{width:6px;height:6px;border-radius:50%}.appt-badge.confirmed{background:var(--green-light);color:var(--green)}.appt-badge.pending{background:var(--orange-light);color:var(--orange-dark)}.appt-badge .dot{background:currentColor}.appt-actions{display:flex;gap:.35rem;align-items:center}.appt-delete{border:0;background:var(--red-light);color:var(--red);border-radius:8px;padding:.32rem .5rem;font-size:.7rem;font-weight:900;cursor:pointer}.appt-delete:hover{filter:brightness(.96)}.appt-location{font-size:.72rem;color:var(--gray-500);margin-top:.15rem}.panel-footer{padding:.875rem 1.25rem;border-top:1px solid var(--gray-100);text-align:center}.panel-footer a{font-size:.8rem;font-weight:700;color:var(--purple);text-decoration:none}.quick-card{padding:1.25rem;border-top:1px solid var(--gray-100)}.quick-card h3{font-size:.9rem;color:var(--gray-900);margin-bottom:.35rem}.quick-card p{font-size:.8rem;color:var(--gray-500);margin-bottom:.85rem}.quick-grid{display:grid;grid-template-columns:1fr;gap:.5rem}.modal-backdrop{position:fixed;inset:0;background:rgba(17,24,39,.62);display:none;align-items:center;justify-content:center;padding:1.25rem;z-index:500}.modal-backdrop.open{display:flex}.modal{width:min(760px,100%);max-height:92vh;background:#fff;border-radius:16px;box-shadow:var(--shadow-md);overflow:hidden;display:flex;flex-direction:column}.modal.wide{width:min(980px,100%)}.modal-header{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.875rem 1rem;border-bottom:1px solid var(--gray-100)}.modal-title{font-size:.98rem;font-weight:900;color:var(--gray-900)}.modal-close{width:34px;height:34px;border:1px solid var(--gray-200);background:#fff;border-radius:8px;color:var(--gray-700);cursor:pointer}.modal-body{padding:1rem;overflow:auto}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.form-field{display:flex;flex-direction:column;gap:.35rem}.form-field.full{grid-column:1/-1}.form-field label{font-size:.78rem;font-weight:800;color:var(--gray-700)}.form-field input,.form-field select,.form-field textarea{width:100%;border:1px solid var(--gray-200);border-radius:9px;padding:.65rem .75rem;color:var(--gray-800);background:#fff;outline:none}.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.12)}.form-help{font-size:.72rem;color:var(--gray-500)}.checkbox-row{display:flex;align-items:center;gap:.55rem;font-size:.82rem;color:var(--gray-700);font-weight:600}.day-checks{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}.day-check{display:flex;align-items:center;gap:.45rem;padding:.55rem;border:1px solid var(--gray-200);border-radius:9px;font-size:.78rem;font-weight:700;color:var(--gray-700)}.modal-actions{display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100)}.alert{padding:.75rem .9rem;border-radius:10px;font-size:.82rem;margin-bottom:1rem;display:none}.alert.show{display:block}.alert.ok{background:var(--green-light);color:var(--green)}.alert.error{background:var(--red-light);color:var(--red)}.alert.info{background:var(--purple-bg);color:var(--purple)}.type-list{display:grid;gap:.5rem;margin-top:1rem}.type-item{padding:.75rem;border:1px solid var(--gray-100);border-radius:10px;background:var(--gray-50);display:flex;justify-content:space-between;gap:1rem}.type-title{font-size:.84rem;font-weight:800;color:var(--gray-900)}.type-sub{font-size:.74rem;color:var(--gray-500)}
     @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.agenda-layout{grid-template-columns:1fr}.week-view{grid-template-columns:repeat(2,1fr)}}@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:.3s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:1rem}.mobile-sidebar-toggle{display:inline-flex}.header-actions{width:100%}.btn-secondary,.btn-primary{flex:1}.form-grid{grid-template-columns:1fr}.day-checks{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.stats-grid{grid-template-columns:1fr}.week-view{grid-template-columns:1fr}.appt-badge{display:none}}
@@ -35,145 +34,142 @@
 .conversation-state{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}.conversation-state.ai-active{background:var(--green-light);color:var(--green)}.conversation-state.manual{background:var(--orange-light);color:var(--orange-dark)}.conversation-state.completed{background:var(--gray-100);color:var(--gray-600)}
 
 /* Reactify bezettingsgraad en afspraakknoppen */
-.occupancy-card{position:relative}.occupancy-switch{display:inline-flex;gap:.12rem;margin-top:.38rem;padding:.2rem;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px}.occupancy-btn{border:0;background:transparent;color:var(--gray-600);padding:.28rem .48rem;border-radius:7px;font-size:.62rem;font-weight:800;cursor:pointer}.occupancy-btn:hover{background:var(--purple-bg);color:var(--purple)}.occupancy-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px 8px rgba(91,46,145,.2)}
+.occupancy-card{position:relative}.occupancy-period{margin-top:.28rem;border:1px solid var(--gray-200);border-radius:7px;background:#fff;color:var(--gray-700);font-size:.68rem;font-weight:800;padding:.25rem .4rem;outline:none}.occupancy-period:focus{border-color:var(--purple)}
 .panel-footer-actions{display:grid;gap:.55rem;justify-items:center}.panel-footer-actions .btn-primary{width:min(220px,100%)}
 </style>
-<style id="reactify-final-agenda-time-style">.appt-time{width:72px!important;line-height:1.2}.appt-day-label{display:block;font-size:.66rem;color:var(--gray-500);font-weight:800;margin-top:.15rem}.appt-sub{margin-top:.1rem}</style>
-<style id="reactify-agenda-final-visuals">
-.metric-progress{margin-top:.42rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}.metric-progress-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}.metric-progress-fill.purple{background:var(--purple)}
-.appt-item.past{opacity:.62;background:#FAFAFB}.appt-item.past:hover{opacity:.82}.appt-item.past .appt-title{text-decoration:none;color:var(--gray-600)}.appt-badge.past{background:var(--gray-100);color:var(--gray-500)}
-</style>
-<style id="reactify-agenda-header-fix">
-/* Final agenda header alignment */
-.main-header{padding-right:3.7rem}
-.header-actions{margin-left:auto;margin-right:0;justify-content:flex-end}
-.rf-global-notification{top:1.15rem!important;right:1.25rem!important;display:flex;align-items:center;justify-content:center}
-.rf-global-bell{margin:0!important;transform:none!important}
-@media(max-width:768px){
-  .main-header{padding-right:0}
-  .header-actions{margin-left:0;width:calc(100% - 3.5rem)}
-  .rf-global-notification{top:.85rem!important;right:.85rem!important}
-}
-</style></head>
-<body>
-<aside class="sidebar" id="sidebar">
-<div class="sidebar-logo"><img alt="Reactify" src="/logo.png"/></div>
-<nav class="sidebar-nav">
-<a class="sidebar-link" href="/platform/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Dashboard</a>
-<a class="sidebar-link" href="/platform/klantenlijst/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Contactpersonen</a>
-<a class="sidebar-link" href="/platform/inbox/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>Inbox</a>
-<a class="sidebar-link active" href="/platform/agenda/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>Agenda</a>
-<div class="sidebar-spacer"></div>
-<a class="sidebar-link" href="#">Instellingen</a><a class="sidebar-link" href="#">Help</a>
-</nav>
-<div class="sidebar-user"><div class="user-avatar">BD</div><div><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div>
-</aside>
-<main class="main">
-<button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button>
-<div class="main-header">
-<div class="page-header"><h1>Agenda</h1><p>Afspraken, beschikbaarheid en afspraaktypes beheren via Cal.com.</p></div>
-<div class="header-actions">
 
-<button class="btn-secondary" id="openAvailabilityBtn" type="button">Beschikbaarheid instellen</button>
-<button class="btn-secondary" id="openEventTypeBtn" type="button">Afspraaktypes beheren</button>
-</div>
-</div>
-<div class="status-bar"><span class="status-dot" id="syncDot"></span><span id="syncStatus">Cal.com data laden...</span></div>
-<section aria-label="Agenda statistieken" class="stats-grid">
-<article class="stat-card"><div class="stat-icon purple">📅</div><div><div class="stat-label">Afspraken vandaag</div><div class="stat-value" id="statToday">0</div><div class="stat-trend">Live uit Cal.com</div></div></article>
-<article class="stat-card"><div class="stat-icon orange">🗓️</div><div><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeek">0</div><div class="stat-trend">Accepted only</div></div></article>
-<article class="stat-card"><div class="stat-icon green">✓</div><div><div class="stat-label">Totaal deze maand</div><div class="stat-value" id="statMonth">0</div><div class="stat-trend">Gekozen maand</div></div></article>
-<article class="stat-card occupancy-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div><div aria-label="Periode bezettingsgraad" class="occupancy-switch" id="occupancyPeriod"><button class="occupancy-btn" data-occupancy-period="day" type="button">Dag</button><button class="occupancy-btn" data-occupancy-period="week" type="button">Week</button><button class="occupancy-btn active" data-occupancy-period="month" type="button">Maand</button><button class="occupancy-btn" data-occupancy-period="year" type="button">Jaar</button></div><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
-</section>
-<section class="agenda-layout">
-<article class="panel">
-<div class="panel-header">
-<h2 id="calendarTitle">Agenda</h2>
-<div class="cal-controls">
-<div aria-label="Weergave" class="view-switch">
-<button class="view-btn active" data-view="month" type="button">Maand</button>
-<button class="view-btn" data-view="week" type="button">Week</button>
-<button class="view-btn" data-view="day" type="button">Dag</button>
-</div>
-<button class="cal-today" id="todayBtn" type="button">Vandaag</button>
-<button aria-label="Vorige" class="cal-nav" id="prevBtn" type="button">‹</button>
-<button aria-label="Volgende" class="cal-nav" id="nextBtn" type="button">›</button>
-</div>
-</div>
-<div class="calendar" id="calendarContainer"></div>
-</article>
-<article class="panel">
-<div class="panel-header"><h2 id="appointmentsTitle">Maand</h2></div>
-<div class="appt-list" id="appointmentList"></div>
-<div class="panel-footer panel-footer-actions"><button class="btn-primary" onclick="openModal('bookingModal')" type="button">＋ Afspraak maken</button><a href="https://app.cal.com/bookings" rel="noopener noreferrer" target="_blank">Bekijk alles in Cal.com</a></div>
-</article>
-</section>
-</main>
-<div aria-hidden="true" class="modal-backdrop" id="bookingModal">
-<div class="modal wide"><div class="modal-header"><div class="modal-title">Nieuwe afspraak maken</div><button class="modal-close" onclick="closeModal('bookingModal')" type="button">×</button></div>
-<div class="modal-body">
-<div class="alert" id="bookingAlert"></div>
-<form class="form-grid" id="bookingForm">
-<div class="form-field"><label>Afspraaktype</label><select id="bookingEventType" required=""></select><div class="form-help">Wordt live opgehaald uit Cal.com.</div></div>
-<div class="form-field"><label>Startdatum en tijd</label><input id="bookingStart" required="" type="datetime-local"/><div class="form-help">Gebruikt automatisch de gekozen datum uit de kalender.</div></div>
-<div class="form-field full"><label>Klant kiezen</label><select id="bookingContact" required=""></select><div class="form-help">Komt uit je Reactify klantenlijst. Kies “Nieuwe contactpersoon” als de klant nog niet bestaat.</div></div>
-<div class="form-field"><label>Naam contactpersoon</label><input id="bookingName" placeholder="Bijv. Mike" required="" type="text"/></div>
-<div class="form-field"><label>E-mail klant</label><input id="bookingEmail" placeholder="klant@email.be" required="" type="email"/></div>
-<div class="form-field"><label>Telefoon klant</label><input id="bookingPhone" placeholder="optioneel" type="tel"/></div>
-<div class="form-field"><label>Plaats</label><select id="bookingLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="custom">Andere plaats</option></select></div>
-<div class="form-field"><label>Plaats detail</label><input id="bookingLocationValue" placeholder="Link, telefoonnummer of adres" type="text"/><div class="form-help">Bij Cal.com video mag dit leeg blijven.</div></div>
-<div class="form-field"><label>Duur</label><input id="bookingLength" min="5" placeholder="Automatisch" step="5" type="number"/></div>
-<div class="form-field full"><label>Opmerking</label><textarea id="bookingNotes" placeholder="Bijv. afspraak ingepland via Reactify" rows="3"></textarea></div>
-<label class="checkbox-row full"><input id="bookingForce" type="checkbox"/> Forceer afspraak buiten beschikbaarheid of bij conflict</label>
-<div class="modal-actions full"><button class="btn-secondary" onclick="closeModal('bookingModal')" type="button">Annuleren</button><button class="btn-primary" type="submit">Afspraak aanmaken</button></div>
-</form>
-</div>
-</div>
-</div>
-<div aria-hidden="true" class="modal-backdrop" id="availabilityModal">
-<div class="modal"><div class="modal-header"><div class="modal-title">Beschikbaarheid instellen</div><button class="modal-close" onclick="closeModal('availabilityModal')" type="button">×</button></div>
-<div class="modal-body">
-<div class="alert info show">Dit maakt een nieuw beschikbaarheidsschema in Cal.com. Je kan dit schema daarna koppelen aan een afspraaktype.</div>
-<div class="alert" id="availabilityAlert"></div>
-<form class="form-grid" id="availabilityForm">
-<div class="form-field"><label>Naam schema</label><input id="scheduleName" required="" type="text" value="Reactify beschikbaarheid"/></div>
-<div class="form-field"><label>Tijdzone</label><input id="scheduleTimeZone" required="" type="text" value="Europe/Brussels"/></div>
-<div class="form-field"><label>Startuur</label><input id="scheduleStart" required="" type="time" value="09:00"/></div>
-<div class="form-field"><label>Einduur</label><input id="scheduleEnd" required="" type="time" value="17:00"/></div>
-<div class="form-field full"><label>Dagen</label><div class="day-checks" id="dayChecks"></div></div>
-<label class="checkbox-row full"><input id="scheduleDefault" type="checkbox"/> Instellen als standaard beschikbaarheid</label>
-<div class="form-field"><label>Uitzondering datum</label><input id="overrideDate" type="date"/><div class="form-help">Optioneel: specifieke dag met andere uren.</div></div>
-<div class="form-field"><label>Uitzondering uren</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"><input id="overrideStart" type="time"/><input id="overrideEnd" type="time"/></div></div>
-<div class="modal-actions full"><button class="btn-secondary" onclick="closeModal('availabilityModal')" type="button">Annuleren</button><button class="btn-primary" type="submit">Beschikbaarheid opslaan</button></div>
-</form>
-</div>
-</div>
-</div>
-<div aria-hidden="true" class="modal-backdrop" id="eventTypeModal">
-<div class="modal wide"><div class="modal-header"><div class="modal-title">Afspraaktypes beheren</div><button class="modal-close" onclick="closeModal('eventTypeModal')" type="button">×</button></div>
-<div class="modal-body">
-<div class="alert" id="eventTypeAlert"></div>
-<form class="form-grid" id="eventTypeForm">
-<div class="form-field"><label>Titel</label><input id="typeTitle" placeholder="Bijv. Introductie &amp; demo" required="" type="text"/></div>
-<div class="form-field"><label>Slug</label><input id="typeSlug" placeholder="introductie-demo" type="text"/><div class="form-help">Leeg laten = automatisch.</div></div>
-<div class="form-field"><label>Duur in minuten</label><input id="typeLength" min="5" required="" step="5" type="number" value="30"/></div>
-<div class="form-field"><label>Slot interval</label><input id="typeSlot" min="5" step="5" type="number" value="30"/></div>
-<div class="form-field"><label>Minimum vooraf boeken</label><input id="typeNotice" min="0" step="15" type="number" value="60"/></div>
-<div class="form-field"><label>Beschikbaarheidsschema</label><select id="typeSchedule"><option value="">Standaard Cal.com schema</option></select></div>
-<div class="form-field"><label>Plaats afspraaktype</label><select id="typeLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="link">Externe link</option><option value="none">Geen vaste plaats</option></select></div>
-<div class="form-field"><label>Plaats detail</label><input id="typeLocationValue" placeholder="Link, telefoonnummer of adres" type="text"/></div>
-<div class="form-field"><label>Buffer voor</label><input id="typeBefore" min="0" step="5" type="number" value="0"/></div>
-<div class="form-field"><label>Buffer na</label><input id="typeAfter" min="0" step="5" type="number" value="0"/></div>
-<div class="form-field full"><label>Beschrijving</label><textarea id="typeDescription" placeholder="Korte omschrijving van dit afspraaktype" rows="3"></textarea></div>
-<label class="checkbox-row full"><input id="typeHidden" type="checkbox"/> Verborgen afspraaktype maken</label>
-<div class="modal-actions full"><button class="btn-secondary" onclick="closeModal('eventTypeModal')" type="button">Annuleren</button><button class="btn-primary" type="submit">Afspraaktype opslaan</button></div>
-</form>
-<div class="type-list" id="eventTypeList"></div>
-</div>
-</div>
-</div>
-<script>
+<style id="reactify-final-agenda-time-style">.appt-time{width:72px!important;line-height:1.2}.appt-day-label{display:block;font-size:.66rem;color:var(--gray-500);font-weight:800;margin-top:.15rem}.appt-sub{margin-top:.1rem}</style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><img src="/logo.png" alt="Reactify" /></div>
+    <nav class="sidebar-nav">
+      <a href="/platform/" class="sidebar-link"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
+      <a href="/platform/klantenlijst/" class="sidebar-link"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
+      <a href="/platform/inbox/" class="sidebar-link"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>Inbox</a>
+      <a href="/platform/agenda/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>Agenda</a>
+      <div class="sidebar-spacer"></div>
+      <a href="#" class="sidebar-link">Instellingen</a><a href="#" class="sidebar-link">Help</a>
+    </nav>
+    <div class="sidebar-user"><div class="user-avatar">BD</div><div><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div>
+  </aside>
+
+  <main class="main">
+    <button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button>
+    <div class="main-header">
+      <div class="page-header"><h1>Agenda</h1><p>Afspraken, beschikbaarheid en afspraaktypes beheren via Cal.com.</p></div>
+      <div class="header-actions">
+        <button id="openBookingBtn" class="btn-primary" type="button">＋ Afspraak maken</button>
+        <button id="openAvailabilityBtn" class="btn-secondary" type="button">Beschikbaarheid instellen</button>
+        <button id="openEventTypeBtn" class="btn-secondary" type="button">Afspraaktypes beheren</button>
+        
+      </div>
+    </div>
+
+    <div class="status-bar"><span class="status-dot" id="syncDot"></span><span id="syncStatus">Cal.com data laden...</span></div>
+
+    <section class="stats-grid" aria-label="Agenda statistieken">
+      <article class="stat-card"><div class="stat-icon purple">📅</div><div><div class="stat-label">Afspraken vandaag</div><div class="stat-value" id="statToday">0</div><div class="stat-trend">Live uit Cal.com</div></div></article>
+      <article class="stat-card"><div class="stat-icon orange">🗓️</div><div><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeek">0</div><div class="stat-trend">Accepted only</div></div></article>
+      <article class="stat-card"><div class="stat-icon green">✓</div><div><div class="stat-label">Totaal deze maand</div><div class="stat-value" id="statMonth">0</div><div class="stat-trend">Gekozen maand</div></div></article>
+      <article class="stat-card occupancy-card"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><select class="occupancy-period" id="occupancyPeriod" aria-label="Periode bezettingsgraad"><option value="day">Dag</option><option value="week">Week</option><option value="month" selected>Maand</option><option value="year">Jaar</option></select><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
+    </section>
+
+    <section class="agenda-layout">
+      <article class="panel">
+        <div class="panel-header">
+          <h2 id="calendarTitle">Agenda</h2>
+          <div class="cal-controls">
+            <div class="view-switch" aria-label="Weergave">
+              <button class="view-btn active" data-view="month" type="button">Maand</button>
+              <button class="view-btn" data-view="week" type="button">Week</button>
+              <button class="view-btn" data-view="day" type="button">Dag</button>
+            </div>
+            <button class="cal-today" id="todayBtn" type="button">Vandaag</button>
+            <button class="cal-nav" id="prevBtn" type="button" aria-label="Vorige">‹</button>
+            <button class="cal-nav" id="nextBtn" type="button" aria-label="Volgende">›</button>
+          </div>
+        </div>
+        <div class="calendar" id="calendarContainer"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header"><h2 id="appointmentsTitle">Maand</h2></div>
+        <div class="appt-list" id="appointmentList"></div>
+        <div class="panel-footer panel-footer-actions"><button class="btn-primary" type="button" onclick="openModal('bookingModal')">＋ Afspraak maken</button><a href="https://app.cal.com/bookings" target="_blank" rel="noopener noreferrer">Bekijk alles in Cal.com</a></div>
+      </article>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="bookingModal" aria-hidden="true">
+    <div class="modal wide"><div class="modal-header"><div class="modal-title">Nieuwe afspraak maken</div><button class="modal-close" type="button" onclick="closeModal('bookingModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert" id="bookingAlert"></div>
+        <form id="bookingForm" class="form-grid">
+          <div class="form-field"><label>Afspraaktype</label><select id="bookingEventType" required></select><div class="form-help">Wordt live opgehaald uit Cal.com.</div></div>
+          <div class="form-field"><label>Startdatum en tijd</label><input id="bookingStart" type="datetime-local" required /><div class="form-help">Gebruikt automatisch de gekozen datum uit de kalender.</div></div>
+          <div class="form-field full"><label>Klant kiezen</label><select id="bookingContact" required></select><div class="form-help">Komt uit je Reactify klantenlijst. Kies “Nieuwe contactpersoon” als de klant nog niet bestaat.</div></div>
+          <div class="form-field"><label>Klantnaam</label><input id="bookingName" type="text" placeholder="Bijv. Mike" required /></div>
+          <div class="form-field"><label>E-mail klant</label><input id="bookingEmail" type="email" placeholder="klant@email.be" required /></div>
+          <div class="form-field"><label>Telefoon klant</label><input id="bookingPhone" type="tel" placeholder="optioneel" /></div>
+          <div class="form-field"><label>Plaats</label><select id="bookingLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="custom">Andere plaats</option></select></div>
+          <div class="form-field"><label>Plaats detail</label><input id="bookingLocationValue" type="text" placeholder="Link, telefoonnummer of adres" /><div class="form-help">Bij Cal.com video mag dit leeg blijven.</div></div>
+          <div class="form-field"><label>Duur</label><input id="bookingLength" type="number" min="5" step="5" placeholder="Automatisch" /></div>
+          <div class="form-field full"><label>Opmerking</label><textarea id="bookingNotes" rows="3" placeholder="Bijv. afspraak ingepland via Reactify"></textarea></div>
+          <label class="checkbox-row full"><input id="bookingForce" type="checkbox" /> Forceer afspraak buiten beschikbaarheid of bij conflict</label>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="closeModal('bookingModal')">Annuleren</button><button class="btn-primary" type="submit">Afspraak aanmaken</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="availabilityModal" aria-hidden="true">
+    <div class="modal"><div class="modal-header"><div class="modal-title">Beschikbaarheid instellen</div><button class="modal-close" type="button" onclick="closeModal('availabilityModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert info show">Dit maakt een nieuw beschikbaarheidsschema in Cal.com. Je kan dit schema daarna koppelen aan een afspraaktype.</div>
+        <div class="alert" id="availabilityAlert"></div>
+        <form id="availabilityForm" class="form-grid">
+          <div class="form-field"><label>Naam schema</label><input id="scheduleName" type="text" value="Reactify beschikbaarheid" required /></div>
+          <div class="form-field"><label>Tijdzone</label><input id="scheduleTimeZone" type="text" value="Europe/Brussels" required /></div>
+          <div class="form-field"><label>Startuur</label><input id="scheduleStart" type="time" value="09:00" required /></div>
+          <div class="form-field"><label>Einduur</label><input id="scheduleEnd" type="time" value="17:00" required /></div>
+          <div class="form-field full"><label>Dagen</label><div class="day-checks" id="dayChecks"></div></div>
+          <label class="checkbox-row full"><input id="scheduleDefault" type="checkbox" /> Instellen als standaard beschikbaarheid</label>
+          <div class="form-field"><label>Uitzondering datum</label><input id="overrideDate" type="date" /><div class="form-help">Optioneel: specifieke dag met andere uren.</div></div>
+          <div class="form-field"><label>Uitzondering uren</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"><input id="overrideStart" type="time" /><input id="overrideEnd" type="time" /></div></div>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="closeModal('availabilityModal')">Annuleren</button><button class="btn-primary" type="submit">Beschikbaarheid opslaan</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="eventTypeModal" aria-hidden="true">
+    <div class="modal wide"><div class="modal-header"><div class="modal-title">Afspraaktypes beheren</div><button class="modal-close" type="button" onclick="closeModal('eventTypeModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert" id="eventTypeAlert"></div>
+        <form id="eventTypeForm" class="form-grid">
+          <div class="form-field"><label>Titel</label><input id="typeTitle" type="text" placeholder="Bijv. Introductie & demo" required /></div>
+          <div class="form-field"><label>Slug</label><input id="typeSlug" type="text" placeholder="introductie-demo" /><div class="form-help">Leeg laten = automatisch.</div></div>
+          <div class="form-field"><label>Duur in minuten</label><input id="typeLength" type="number" value="30" min="5" step="5" required /></div>
+          <div class="form-field"><label>Slot interval</label><input id="typeSlot" type="number" value="30" min="5" step="5" /></div>
+          <div class="form-field"><label>Minimum vooraf boeken</label><input id="typeNotice" type="number" value="60" min="0" step="15" /></div>
+          <div class="form-field"><label>Beschikbaarheidsschema</label><select id="typeSchedule"><option value="">Standaard Cal.com schema</option></select></div>
+          <div class="form-field"><label>Plaats afspraaktype</label><select id="typeLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="link">Externe link</option><option value="none">Geen vaste plaats</option></select></div>
+          <div class="form-field"><label>Plaats detail</label><input id="typeLocationValue" type="text" placeholder="Link, telefoonnummer of adres" /></div>
+          <div class="form-field"><label>Buffer voor</label><input id="typeBefore" type="number" value="0" min="0" step="5" /></div>
+          <div class="form-field"><label>Buffer na</label><input id="typeAfter" type="number" value="0" min="0" step="5" /></div>
+          <div class="form-field full"><label>Beschrijving</label><textarea id="typeDescription" rows="3" placeholder="Korte omschrijving van dit afspraaktype"></textarea></div>
+          <label class="checkbox-row full"><input id="typeHidden" type="checkbox" /> Verborgen afspraaktype maken</label>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="closeModal('eventTypeModal')">Annuleren</button><button class="btn-primary" type="submit">Afspraaktype opslaan</button></div>
+        </form>
+        <div class="type-list" id="eventTypeList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
     const API = { bookings:"/.netlify/functions/cal-bookings", cancelBooking:"/.netlify/functions/cal-cancel-booking", schedules:"/.netlify/functions/cal-schedules", eventTypes:"/.netlify/functions/cal-event-types" };
+    const OCCUPANCY_SCHEDULE_KEY="reactify.occupancySchedule";
     const CAL_USERNAME = "christian-damian-62o7zs";
     const CONTACT_KEY = "reactify.contacts";
     const LOCAL_APPT_KEY = "reactify.localAppointments";
@@ -193,7 +189,6 @@
     const localToUTCISO=value=>new Date(value).toISOString();
     const formatTime=d=>new Date(d).toLocaleTimeString("nl-BE",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Brussels"});
     const formatDate=d=>new Date(d).toLocaleDateString("nl-BE",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Brussels"});
-    const relativeDayLabel=d=>{const x=new Date(d),today=new Date();today.setHours(0,0,0,0);const day=new Date(x);day.setHours(0,0,0,0);const diff=Math.round((day-today)/86400000);if(diff===0)return"Vandaag";if(diff===1)return"Morgen";if(diff===2)return"Overmorgen";if(diff===-1)return"Gisteren";return x.toLocaleDateString("nl-BE",{weekday:"long",day:"numeric",month:"short",timeZone:"Europe/Brussels"});};
     const readJSON=(key, fallback=[])=>{try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback}catch(e){return fallback}};
     const writeJSON=(key,val)=>{localStorage.setItem(key,JSON.stringify(val));window.dispatchEvent(new CustomEvent("reactify:datachange",{detail:{key}}))};
 const NOTIFICATION_KEY="reactify.notifications";
@@ -213,19 +208,15 @@ const NOTIFICATION_KEY="reactify.notifications";
     function badgesForBooking(b){const c=contactForBooking(b);if(!c)return '<span class="contact-type lead">Lead</span>';const cv=latestConvFor(c),st=cv?stateInfo(cv.status):null;return `<span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${escapeHTML(c.type||'Lead')}</span>${st?`<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`:''}`}
 
     async function apiFetch(url, options={}){
-      const separator=url.includes("?")?"&":"?";
-      const freshUrl=`${url}${separator}_=${Date.now()}`;
-      const res=await fetch(freshUrl,{cache:"no-store",headers:{"Content-Type":"application/json","Cache-Control":"no-cache"},...options});
+      const res=await fetch(url,{headers:{"Content-Type":"application/json"},...options});
       const data=await res.json().catch(()=>({status:"error",error:"Kon response niet lezen."}));
       if(!res.ok || data.status==="error") throw new Error(data.error || data.message || (typeof data.details==="string"?data.details:JSON.stringify(data.details||"")) || "API request mislukt.");
       return data;
     }
 
     function getContacts(){
-      // De Contactpersonenpagina gebruikt reactify_platform_data_v3 als actuele bron.
-      // Gebruik hier exact dezelfde lijst en nooit meer de verouderde reactify.contacts-cache.
-      const clients=platformData().clients;
-      return clients.filter(c=>c && c.id && String(c.name||c.email||c.phone||"").trim());
+      if(window.ReactifyStore?.getContacts) return window.ReactifyStore.getContacts();
+      return readJSON(CONTACT_KEY,[]);
     }
     function saveContacts(items){
       if(window.ReactifyStore?.saveContacts) return window.ReactifyStore.saveContacts(items);
@@ -273,7 +264,7 @@ const NOTIFICATION_KEY="reactify.notifications";
           bookings=normalizeBookings(bookingPayload.value);
         } else { bookings=[]; throw bookingPayload.reason; }
         if(typePayload.status==="fulfilled") eventTypes=Array.isArray(typePayload.value.data)?typePayload.value.data:[];
-        if(schedulePayload.status==="fulfilled"){const sp=schedulePayload.value;schedules=Array.isArray(sp.data)?sp.data:Array.isArray(sp.data?.schedules)?sp.data.schedules:Array.isArray(sp.schedules)?sp.schedules:[];}
+        if(schedulePayload.status==="fulfilled") schedules=Array.isArray(schedulePayload.value.data)?schedulePayload.value.data:[];
         renderAll(); fillContactSelect(); fillEventTypeSelects(); fillScheduleSelect(); renderEventTypeList();
         setSync("ok",`Verbonden met Cal.com · ${bookings.length} afspraken · ${eventTypes.length} afspraaktypes · ${schedules.length} schema's`);
       }catch(error){
@@ -292,7 +283,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     const bookingsForDate=d=>bookings.filter(b=>sameDate(b.start,d));
     function renderAll(){renderStats();renderCalendar();renderAppointments();}
     function occupancyRange(){
-      const period=occupancyPeriod;let s,e;
+      const period=$("occupancyPeriod")?.value||"month";let s,e;
       if(period==="day"){s=new Date(selectedDate);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+1);}
       else if(period==="week"){s=new Date(selectedDate);const d=s.getDay()||7;s.setDate(s.getDate()-d+1);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+7);}
       else if(period==="year"){s=new Date(selectedDate.getFullYear(),0,1);e=new Date(selectedDate.getFullYear()+1,0,1);}
@@ -300,20 +291,25 @@ const NOTIFICATION_KEY="reactify.notifications";
       return{s,e,period};
     }
     function hmMinutes(value){const m=String(value||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0;}
-    function activeSchedule(){
-      const ranked=[...schedules].sort((a,b)=>{
-        const ad=new Date(a.updatedAt||a.updated_at||a.createdAt||a.created_at||0).getTime()||Number(a.id)||0;
-        const bd=new Date(b.updatedAt||b.updated_at||b.createdAt||b.created_at||0).getTime()||Number(b.id)||0;
-        return bd-ad;
-      });
-      // Neem het recentst gewijzigde standaardschema; als er geen standaard is, het recentste schema.
-      return ranked.find(s=>s.isDefault===true||s.is_default===true)||ranked[0]||null;
+    function readOccupancySchedule(){try{return JSON.parse(localStorage.getItem(OCCUPANCY_SCHEDULE_KEY)||"null")}catch(_){return null}}
+    function scheduleTimestamp(schedule){const raw=schedule?.updatedAt||schedule?.updated_at||schedule?.createdAt||schedule?.created_at||0;const t=new Date(raw).getTime();return Number.isFinite(t)?t:Number(schedule?.id||schedule?.scheduleId||0)||0}
+    function selectedOccupancySchedule(){
+      const pref=readOccupancySchedule();
+      const prefId=String(pref?.id||pref?.scheduleId||pref?.schedule_id||"");
+      const exact=prefId?schedules.find(sc=>String(sc.id||sc.scheduleId||sc.schedule_id||"")===prefId):null;
+      if(exact)return exact;
+      if(Array.isArray(pref?.availability)&&pref.availability.length)return pref;
+      if(!schedules.length)return null;
+      return [...schedules].sort((a,b)=>scheduleTimestamp(b)-scheduleTimestamp(a))[0];
     }
-    function scheduleRows(schedule){const direct=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];if(direct.length)return direct;const nested=schedule?.availability||schedule?.availabilities||{};const rows=[];if(nested&&typeof nested==='object'&&!Array.isArray(nested)){for(const [day,blocks] of Object.entries(nested)){for(const b of (Array.isArray(blocks)?blocks:[blocks]))if(b)rows.push({...b,days:b.days||[day]});}}return rows;}
-    function scheduleBlocks(){return scheduleRows(activeSchedule()).map(row=>({days:Array.isArray(row.days)?row.days:[row.day||row.weekday].filter(Boolean),start:hmMinutes(row.startTime||row.start||row.start_time),end:hmMinutes(row.endTime||row.end||row.end_time)})).filter(block=>block.days.length&&block.end>block.start);}
+    function scheduleBlocks(){
+      const schedule=selectedOccupancySchedule();
+      const rows=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
+      return rows.map(row=>({days:Array.isArray(row.days)?row.days:[row.day||row.weekday].filter(Boolean),start:hmMinutes(row.startTime||row.start||row.start_time),end:hmMinutes(row.endTime||row.end||row.end_time)})).filter(block=>block.days.length&&block.end>block.start);
+    }
     function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const index=date.getDay();return days.some(d=>{if(typeof d==='number')return d===index||d===((index+6)%7);const v=String(d).trim().toLowerCase();return v===names[index].toLowerCase()||v===short[index].toLowerCase()||v===String(index)||v===String((index+6)%7);});}
     function availableMinutesInRange(s,e){let total=0;const blocks=scheduleBlocks();for(let d=new Date(s);d<e;d.setDate(d.getDate()+1)){for(const block of blocks){if(dayMatches(block.days,d))total+=Math.max(0,block.end-block.start);}}return total;}
-    function bookedMinutesInRange(s,e){return bookings.reduce((total,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return total;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return total;let duration=(be-bs)/60000;if(!(duration>0))duration=Number(b.duration||b.lengthInMinutes||0)||30;const overlapStart=Math.max(bs.getTime(),s.getTime());const overlapEnd=Math.min(bs.getTime()+duration*60000,e.getTime());return total+Math.max(0,(overlapEnd-overlapStart)/60000);},0);}
+    function bookedMinutesInRange(s,e){return bookings.reduce((total,b)=>{const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return total;let duration=(be-bs)/60000;if(!(duration>0))duration=Number(b.duration||0)||30;const overlapStart=Math.max(bs.getTime(),s.getTime());const overlapEnd=Math.min(bs.getTime()+duration*60000,e.getTime());return total+Math.max(0,(overlapEnd-overlapStart)/60000);},0);}
     function renderStats(){
       const today=new Date();today.setHours(0,0,0,0);const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
       const weekStart=new Date(today);const day=weekStart.getDay()||7;weekStart.setDate(weekStart.getDate()-day+1);weekStart.setHours(0,0,0,0);const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+7);
@@ -321,8 +317,8 @@ const NOTIFICATION_KEY="reactify.notifications";
       $("statToday").textContent=bookings.filter(b=>inRange(b,today,tomorrow)).length;
       $("statWeek").textContent=bookings.filter(b=>inRange(b,weekStart,weekEnd)).length;
       $("statMonth").textContent=bookings.filter(b=>inRange(b,monthStart,monthEnd)).length;
-      document.querySelectorAll("[data-occupancy-period]").forEach(b=>b.classList.toggle("active",b.dataset.occupancyPeriod===occupancyPeriod));const range=occupancyRange();const available=availableMinutesInRange(range.s,range.e);const booked=bookedMinutesInRange(range.s,range.e);const percentage=available>0?Math.min(100,Math.round(booked/available*100)):0;
-      $("statOccupancy").textContent=`${percentage}%`;if($("occupancyBar"))$("occupancyBar").style.width=`${percentage}%`;$("occupancyDetail").textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
+      const range=occupancyRange();const available=availableMinutesInRange(range.s,range.e);const booked=bookedMinutesInRange(range.s,range.e);const percentage=available>0?Math.min(100,Math.round(booked/available*100)):0;
+      $("statOccupancy").textContent=`${percentage}%`;$("occupancyDetail").textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
     }
     function renderCalendar(){
       const c=$("calendarContainer");c.innerHTML="";document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===viewMode));
@@ -346,7 +342,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     function renderAppointments(){
       const r=getRange(); const list=bookings.filter(b=>inRange(b,r.s,r.e)); const el=$("appointmentList");
       if(!list.length){el.innerHTML=`<div class="appt-empty">Geen afspraken in deze ${r.label.toLowerCase()}.</div>`; return;}
-      el.innerHTML=list.map((b,i)=>{const isPast=new Date(b.end||b.start).getTime()<Date.now();return `<div class="appt-item ${colors[i%colors.length]}${isPast?' past':''}" onclick="openBookingDetails('${escapeHTML(b.meetingUrl||'')}')"><div class="appt-time"><span>${formatTime(b.start)}</span><span class="appt-day-label">${escapeHTML(relativeDayLabel(b.start))}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${isPast?'past':(b.status==='pending'?'pending':'confirmed')}"><span class="dot"></span>${isPast?'Voorbij':(b.status==='pending'?'In aanvraag':'Bevestigd')}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`}).join("");
+      el.innerHTML=list.map((b,i)=>`<div class="appt-item ${colors[i%colors.length]}" onclick="openBookingDetails('${escapeHTML(b.meetingUrl||'')}')"><div class="appt-time">${formatTime(b.start)}</div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${formatDate(b.start)} · ${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${b.status==='pending'?'pending':'confirmed'}"><span class="dot"></span>${b.status==='pending'?'In aanvraag':'Bevestigd'}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`).join("");
     }
     function cleanLocationLabel(value){const text=String(value||""); if(text.includes("app.cal.com/video")) return "Cal.com video"; if(text.includes("zoom.us")) return "Zoom meeting"; return text;}
     function openBookingDetails(url){ if(url) window.open(url,"_blank","noopener,noreferrer"); }
@@ -416,7 +412,10 @@ const NOTIFICATION_KEY="reactify.notifications";
     $("availabilityForm").addEventListener("submit",async e=>{e.preventDefault();
       try{showAlert("availabilityAlert","info","Beschikbaarheid opslaan in Cal.com...");const days=[...document.querySelectorAll('#dayChecks input:checked')].map(i=>i.value); if(!days.length) throw new Error("Kies minstens één dag."); const payload={name:$("scheduleName").value,timeZone:$("scheduleTimeZone").value,isDefault:$("scheduleDefault").checked,availability:[{days,startTime:$("scheduleStart").value,endTime:$("scheduleEnd").value}]};
       if($("overrideDate").value && $("overrideStart").value && $("overrideEnd").value)payload.overrides=[{date:$("overrideDate").value,startTime:$("overrideStart").value,endTime:$("overrideEnd").value}];
-      await apiFetch(API.schedules,{method:"POST",body:JSON.stringify(payload)});showAlert("availabilityAlert","ok","Beschikbaarheid opgeslagen in Cal.com en opnieuw geladen in Reactify.");await loadAll();setTimeout(()=>closeModal("availabilityModal"),900)}catch(error){console.error(error);showAlert("availabilityAlert","error",error.message||"Beschikbaarheid opslaan mislukt.")}});
+      const created=await apiFetch(API.schedules,{method:"POST",body:JSON.stringify(payload)});
+      const saved=created?.data?.schedule||created?.data||created?.schedule||{};
+      localStorage.setItem(OCCUPANCY_SCHEDULE_KEY,JSON.stringify({id:saved?.id||saved?.scheduleId||saved?.schedule_id||"",name:saved?.name||payload.name,availability:saved?.availability||payload.availability,updatedAt:new Date().toISOString()}));
+      showAlert("availabilityAlert","ok","Beschikbaarheid opgeslagen in Cal.com en opnieuw geladen in Reactify.");await loadAll();renderStats();setTimeout(()=>closeModal("availabilityModal"),900)}catch(error){console.error(error);showAlert("availabilityAlert","error",error.message||"Beschikbaarheid opslaan mislukt.")}});
 
     $("eventTypeForm").addEventListener("submit",async e=>{e.preventDefault();
       try{showAlert("eventTypeAlert","info","Afspraaktype opslaan in Cal.com...");const payload={title:$("typeTitle").value,slug:$("typeSlug").value,lengthInMinutes:$("typeLength").value,slotInterval:$("typeSlot").value,minimumBookingNotice:$("typeNotice").value,beforeEventBuffer:$("typeBefore").value,afterEventBuffer:$("typeAfter").value,scheduleId:$("typeSchedule").value||undefined,description:$("typeDescription").value,hidden:$("typeHidden").checked,locationType:$("typeLocationType").value,locationValue:$("typeLocationValue").value};
@@ -427,7 +426,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     $("prevBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()-1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()-7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()-1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("nextBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()+7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()+1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
     $("todayBtn").onclick=()=>{selectedDate=new Date();visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll()};
-    $("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");document.querySelectorAll("[data-occupancy-period]").forEach(btn=>btn.addEventListener("click",()=>{occupancyPeriod=btn.dataset.occupancyPeriod;localStorage.setItem("reactify.agendaOccupancyPeriod",occupancyPeriod);renderStats();}));
+    $("openBookingBtn").onclick=()=>openModal("bookingModal");$("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");$("occupancyPeriod").onchange=renderStats;
     $("sidebarToggle")?.addEventListener("click",()=>$("sidebar").classList.toggle("open"));
     document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id))});
     const startDefault=new Date();startDefault.setDate(startDefault.getDate()+1);startDefault.setHours(10,0,0,0);$("bookingStart").value=toLocalInputValue(startDefault);
@@ -435,6 +434,7 @@ const NOTIFICATION_KEY="reactify.notifications";
     if("Notification" in window && Notification.permission==="default") Notification.requestPermission().catch(()=>{});
     visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll();loadAll().then(()=>setTimeout(applyAppointmentQuery,0));
   </script>
+
 <script>
 (function(){
   if(window.ReactifyGlobalNotificationsLoaded) return;
@@ -559,6 +559,7 @@ const NOTIFICATION_KEY="reactify.notifications";
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
 </script>
+
 <script src="/platform/assets/cal-sync.js"></script>
 <script src="/platform-ui.js"></script>
 </body>
