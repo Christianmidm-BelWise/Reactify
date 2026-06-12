@@ -4,10 +4,26 @@ function clean(obj) {
   if (Array.isArray(obj)) return obj.map(clean).filter(v => v !== undefined && v !== null && v !== "");
   if (obj && typeof obj === "object") {
     const out = {};
-    for (const [k, v] of Object.entries(obj)) { const c = clean(v); if (c !== undefined && c !== null && c !== "" && !(Array.isArray(c) && !c.length)) out[k] = c; }
+    for (const [k, v] of Object.entries(obj)) {
+      const c = clean(v);
+      if (c !== undefined && c !== null && c !== "" && !(Array.isArray(c) && !c.length)) out[k] = c;
+    }
     return out;
   }
   return obj;
+}
+
+function extractSchedules(payload) {
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.data?.schedules)) return payload.data.schedules;
+  if (Array.isArray(payload?.schedules)) return payload.schedules;
+  return [];
+}
+
+function extractSchedule(payload) {
+  if (payload?.data && !Array.isArray(payload.data)) return payload.data;
+  if (payload?.schedule) return payload.schedule;
+  return payload || {};
 }
 
 exports.handler = async function (event) {
@@ -15,8 +31,41 @@ exports.handler = async function (event) {
 
   try {
     if (event.httpMethod === "GET") {
-      const response = await calRequest("/schedules", { method: "GET", version: "2024-06-11", auth: true });
-      return json(response.status, response.data);
+      // /schedules geeft doorgaans alleen samenvattingen terug. Haal daarom
+      // ieder schema afzonderlijk op, zodat availability altijd actueel is.
+      const listResponse = await calRequest("/schedules", {
+        method: "GET",
+        version: "2024-06-11",
+        auth: true,
+      });
+      if (!listResponse.ok) return json(listResponse.status, listResponse.data);
+
+      const summaries = extractSchedules(listResponse.data);
+      const enriched = await Promise.all(summaries.map(async summary => {
+        const id = summary?.id || summary?.scheduleId || summary?.schedule_id;
+        if (!id) return summary;
+
+        const detailResponse = await calRequest(`/schedules/${encodeURIComponent(id)}`, {
+          method: "GET",
+          version: "2024-06-11",
+          auth: true,
+        });
+        if (!detailResponse.ok) return summary;
+
+        const detail = extractSchedule(detailResponse.data);
+        return {
+          ...summary,
+          ...detail,
+          availability: detail.availability || detail.availabilities || summary.availability || summary.availabilities || [],
+          overrides: detail.overrides || summary.overrides || [],
+        };
+      }));
+
+      return json(200, {
+        status: "success",
+        data: enriched,
+        schedules: enriched,
+      });
     }
 
     if (event.httpMethod === "POST") {
