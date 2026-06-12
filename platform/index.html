@@ -445,6 +445,13 @@
   .chart-group{flex:1;height:100%;min-width:42px;display:flex;align-items:flex-end;justify-content:center;gap:.18rem;position:relative}.chart-bar{min-width:10px;max-width:24px;flex:1;border-radius:6px 6px 2px 2px;min-height:2px;transition:height .45s ease,filter .2s;position:relative;cursor:default}.chart-bar:hover{filter:brightness(.95)}.chart-bar:after{content:attr(data-value);position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);font-size:.62rem;font-weight:800;color:var(--gray-700);opacity:0;transition:.15s;white-space:nowrap}.chart-bar:hover:after{opacity:1}
   .chart-x{position:absolute;left:0;right:0;bottom:2px;display:flex;gap:.55rem;padding:0 .55rem}.chart-x span{flex:1;min-width:42px;text-align:center;font-size:.65rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chart-empty{margin:auto;text-align:center;color:var(--gray-500);font-size:.82rem}.chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}
   @media(max-width:900px){.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.chart-wrap{height:280px;overflow-x:auto}.chart-plot{min-width:620px}}
+
+  .chart-mode-switch{display:inline-flex;gap:.18rem;padding:.24rem;background:#fff;border:1px solid var(--gray-200);border-radius:10px}
+  .chart-mode-btn{width:34px;height:34px;border:0;border-radius:7px;background:transparent;color:var(--gray-600);display:grid;place-items:center;cursor:pointer;font-weight:900}.chart-mode-btn:hover{background:var(--purple-bg);color:var(--purple)}.chart-mode-btn.active{background:var(--purple);color:#fff;box-shadow:0 4px 10px rgba(91,46,145,.2)}
+  .chart-wrap.modern{height:410px;display:block;padding:0;border:1px solid var(--gray-100);border-radius:14px;background:linear-gradient(180deg,#fff,#FCFAFE);overflow:hidden}
+  .modern-chart{display:block;width:100%;height:100%;font-family:var(--font-sans)}
+  .modern-grid{stroke:#E5E7EB;stroke-width:1;stroke-dasharray:4 5}.modern-axis{stroke:#D1D5DB;stroke-width:1}.modern-label{fill:#6B7280;font-size:11px}.modern-axis-title{fill:#4B5563;font-size:11px;font-weight:800}.modern-line{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.modern-area{opacity:.08}.modern-point{stroke:#fff;stroke-width:2.5;cursor:pointer}.modern-point:hover{r:6}.modern-bar{rx:5;cursor:pointer;opacity:.92}.modern-bar:hover{opacity:1}
+  .chart-tooltip{position:absolute;z-index:20;pointer-events:none;background:#111827;color:#fff;border-radius:9px;padding:.55rem .65rem;font-size:.7rem;line-height:1.45;box-shadow:0 12px 30px rgba(17,24,39,.22);display:none;max-width:250px}
 </style>
 </head>
 <body>
@@ -580,6 +587,10 @@
         <button class="analytics-btn active" data-metric="sentiment" type="button">Sentiment</button>
         <button class="analytics-btn" data-metric="handling" type="button">AI / manueel</button>
         <button class="analytics-btn" data-metric="completed" type="button">Afgehandeld</button>
+      </div>
+      <div class="chart-mode-switch" aria-label="Grafiekweergave">
+        <button class="chart-mode-btn active" data-chart-mode="line" type="button" title="Lijndiagram">⌁</button>
+        <button class="chart-mode-btn" data-chart-mode="bar" type="button" title="Staafdiagram">▥</button>
       </div>
       <div class="analytics-switch" aria-label="Periode">
         <button class="analytics-btn" data-period="day" type="button">Dag</button>
@@ -729,7 +740,6 @@
 (function(){
   const STORE='reactify_platform_data_v3';
   const API={bookings:'/.netlify/functions/cal-bookings',schedules:'/.netlify/functions/cal-schedules'};
-  const OCCUPANCY_SCHEDULE_KEY='reactify.occupancySchedule';
   const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb'];
   const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a'};
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
@@ -747,6 +757,7 @@
   let remoteBookings=[],schedules=[],rendering=false;
   let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'sentiment';
   let chartPeriod=localStorage.getItem('reactify.dashboardChartPeriod')||'month';
+  let chartMode=localStorage.getItem('reactify.dashboardChartMode')||'line';
   if(!['sentiment','handling','completed'].includes(chartMetric))chartMetric='sentiment';
   if(!['day','week','month'].includes(chartPeriod))chartPeriod='month';
 
@@ -768,18 +779,8 @@
     const seen=new Set();return cal.filter(a=>a&&a.start&&new Date(a.start).getTime()>=now).filter(a=>{const k=String(a.id||a.start);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>new Date(a.start)-new Date(b.start));
   }
   function hmMinutes(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0}
-  function readOccupancySchedule(){try{return JSON.parse(localStorage.getItem(OCCUPANCY_SCHEDULE_KEY)||'null')}catch(_){return null}}
-  function scheduleTimestamp(schedule){const raw=schedule?.updatedAt||schedule?.updated_at||schedule?.createdAt||schedule?.created_at||0;const t=new Date(raw).getTime();return Number.isFinite(t)?t:Number(schedule?.id||schedule?.scheduleId||0)||0}
-  function activeSchedule(){
-    const pref=readOccupancySchedule();
-    const prefId=String(pref?.id||pref?.scheduleId||pref?.schedule_id||'');
-    const exact=prefId?schedules.find(sc=>String(sc.id||sc.scheduleId||sc.schedule_id||'')===prefId):null;
-    if(exact)return exact;
-    if(Array.isArray(pref?.availability)&&pref.availability.length)return pref;
-    if(!schedules.length)return null;
-    return [...schedules].sort((a,b)=>scheduleTimestamp(b)-scheduleTimestamp(a))[0];
-  }
-  function scheduleBlocks(){const s=activeSchedule();const rows=Array.isArray(s?.availability)?s.availability:Array.isArray(s?.availabilities)?s.availabilities:[];return rows.map(r=>({days:Array.isArray(r.days)?r.days:[r.day||r.weekday].filter(Boolean),start:hmMinutes(r.startTime||r.start||r.start_time),end:hmMinutes(r.endTime||r.end||r.end_time)})).filter(r=>r.days.length&&r.end>r.start)}
+  function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null}
+  function scheduleBlocks(){const s=activeSchedule();const rows=Array.isArray(s?.availability)?s.availability:Array.isArray(s?.availabilities)?s.availabilities:[];return rows.map(r=>({days:Array.isArray(r.days)?r.days:[],start:hmMinutes(r.startTime||r.start),end:hmMinutes(r.endTime||r.end)})).filter(r=>r.days.length&&r.end>r.start)}
   function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const i=date.getDay();return days.some(d=>{if(typeof d==='number')return d===i||d===((i+6)%7);const v=String(d).trim().toLowerCase();return v===names[i].toLowerCase()||v===short[i].toLowerCase()||v===String(i)||v===String((i+6)%7)})}
   function monthRange(){const n=new Date();return{start:new Date(n.getFullYear(),n.getMonth(),1),end:new Date(n.getFullYear(),n.getMonth()+1,1)}}
   function availableMinutes(start,end){let total=0,blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1))for(const b of blocks)if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start);return total}
@@ -805,23 +806,44 @@
   function renderChart(d){
     document.querySelectorAll('[data-metric]').forEach(b=>b.classList.toggle('active',b.dataset.metric===chartMetric));
     document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===chartPeriod));
+    document.querySelectorAll('[data-chart-mode]').forEach(b=>b.classList.toggle('active',b.dataset.chartMode===chartMode));
     const buckets=chartBuckets(chartPeriod);
-    const series=chartMetric==='sentiment'?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]:chartMetric==='handling'?[['ai','AI opgevolgd',chartColors.ai],['manual','Manueel opgevolgd',chartColors.manual]]:[['completed','Afgehandeld',chartColors.completed]];
+    const series=chartMetric==='sentiment'?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]:chartMetric==='handling'?[['ai','AI chat',chartColors.ai],['manual','Manueel',chartColors.manual]]:[['completed','Afgehandeld',chartColors.completed],['open','Open',chartColors.manual]];
     const rows=buckets.map(bucket=>{
       const convs=d.conversations.filter(c=>{const x=new Date(c.updatedAt||c.createdAt||0);return x>=bucket.start&&x<bucket.end});
-      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0};
-      convs.forEach(c=>{values[sentimentOf(d,c)]++;const state=statusKey(c.status);if(state==='manual')values.manual++;else values.ai++;if(state==='completed')values.completed++});
-      return{...bucket,values,total:convs.length};
+      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0};
+      convs.forEach(c=>{values[sentimentOf(d,c)]++;const state=statusKey(c.status);if(state==='manual')values.manual++;else values.ai++;if(state==='completed')values.completed++;else values.open++});
+      return{...bucket,values,total:convs.length,conversations:convs};
     });
     const max=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
-    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI versus manuele opvolging':'Afgehandelde gesprekken';
+    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI chat vs manuele opvolging':'Afgehandelde gesprekken';
     const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
     document.getElementById('analyticsHeading').textContent=heading;
-    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
+    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · X-as: tijd · Y-as: aantal gesprekken.`;
     document.getElementById('chartLegend').innerHTML=series.map(s=>`<span class="legend-item"><span class="legend-dot" style="background:${s[2]}"></span>${s[1]}</span>`).join('');
-    const wrap=document.getElementById('chartWrap');
-    const y=[max,Math.round(max*.75),Math.round(max*.5),Math.round(max*.25),0];
-    wrap.innerHTML=`<div class="chart-y">${y.map(v=>`<span>${v}</span>`).join('')}</div><div class="chart-plot">${rows.map(r=>`<div class="chart-group">${series.map(s=>{const v=r.values[s[0]];return`<div class="chart-bar" data-value="${v}" title="${s[1]}: ${v}" style="height:${Math.max(v?3:0,(v/max)*100)}%;background:${s[2]}"></div>`}).join('')}</div>`).join('')}<div class="chart-x">${rows.map(r=>`<span title="${esc(r.label)}">${esc(r.label)}</span>`).join('')}</div></div>`;
+    const wrap=document.getElementById('chartWrap');wrap.className='chart-wrap modern';
+    const W=1400,H=410,L=62,R=28,T=26,B=58,plotW=W-L-R,plotH=H-T-B;
+    const x=i=>rows.length===1?L+plotW/2:L+(i/(rows.length-1))*plotW;
+    const y=v=>T+plotH-(v/max)*plotH;
+    let svg=`<svg class="modern-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(heading)}">`;
+    for(let i=0;i<=4;i++){const val=Math.round(max*(4-i)/4),yy=T+plotH*i/4;svg+=`<line class="modern-grid" x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/><text class="modern-label" x="${L-12}" y="${yy+4}" text-anchor="end">${val}</text>`}
+    svg+=`<line class="modern-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"/><line class="modern-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"/><text class="modern-axis-title" x="18" y="${T+plotH/2}" transform="rotate(-90 18 ${T+plotH/2})" text-anchor="middle">Aantal gesprekken</text><text class="modern-axis-title" x="${L+plotW/2}" y="${H-8}" text-anchor="middle">Tijd</text>`;
+    rows.forEach((r,i)=>svg+=`<text class="modern-label" x="${x(i)}" y="${T+plotH+23}" text-anchor="middle">${esc(r.label)}</text>`);
+    series.forEach((s,si)=>{
+      if(chartMode==='bar'){
+        const groupW=Math.max(18,Math.min(72,plotW/rows.length*.65)),barW=groupW/series.length;
+        rows.forEach((r,i)=>{const v=r.values[s[0]],h=(v/max)*plotH,bx=x(i)-groupW/2+si*barW;svg+=`<rect class="modern-bar chart-hit" data-row="${i}" data-series="${si}" x="${bx}" y="${T+plotH-h}" width="${Math.max(4,barW-3)}" height="${Math.max(v?3:1,h)}" fill="${s[2]}"/>`});
+      }else{
+        const pts=rows.map((r,i)=>[x(i),y(r.values[s[0]])]);
+        const dpath=pts.map((p,i)=>`${i?'L':'M'} ${p[0]} ${p[1]}`).join(' ');
+        const area=`${dpath} L ${pts.at(-1)[0]} ${T+plotH} L ${pts[0][0]} ${T+plotH} Z`;
+        svg+=`<path class="modern-area" d="${area}" fill="${s[2]}"/><path class="modern-line" d="${dpath}" stroke="${s[2]}"/>`;
+        pts.forEach((p,i)=>svg+=`<circle class="modern-point chart-hit" data-row="${i}" data-series="${si}" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"/>`);
+      }
+    });
+    svg+='</svg><div class="chart-tooltip" id="chartTooltip"></div>';wrap.innerHTML=svg;
+    const tooltip=wrap.querySelector('#chartTooltip');
+    wrap.querySelectorAll('.chart-hit').forEach(el=>{const show=e=>{const r=rows[Number(el.dataset.row)],ser=series[Number(el.dataset.series)],value=r.values[ser[0]];tooltip.innerHTML=`<strong>${esc(ser[1])}: ${value}</strong><br>${esc(r.label)}<br>${r.total} gesprek${r.total===1?'':'ken'}`;tooltip.style.display='block';const box=wrap.getBoundingClientRect();tooltip.style.left=`${Math.min(box.width-260,Math.max(8,e.clientX-box.left+12))}px`;tooltip.style.top=`${Math.max(8,e.clientY-box.top-62)}px`;};el.addEventListener('mousemove',show);el.addEventListener('mouseenter',show);el.addEventListener('mouseleave',()=>tooltip.style.display='none');el.addEventListener('click',()=>{const r=rows[Number(el.dataset.row)];const c=r.conversations[0];if(c)location.href=`/platform/inbox/?conversation=${encodeURIComponent(c.id||c.backendId||'')}`;});});
     const totals=series.map(s=>[s[1],rows.reduce((n,r)=>n+r.values[s[0]],0)]);
     document.getElementById('chartSummary').innerHTML=`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`;
   }
@@ -851,6 +873,7 @@
   }
   document.querySelectorAll('[data-metric]').forEach(btn=>btn.addEventListener('click',()=>{chartMetric=btn.dataset.metric;localStorage.setItem('reactify.dashboardChartMetric',chartMetric);render()}));
   document.querySelectorAll('[data-period]').forEach(btn=>btn.addEventListener('click',()=>{chartPeriod=btn.dataset.period;localStorage.setItem('reactify.dashboardChartPeriod',chartPeriod);render()}));
+  document.querySelectorAll('[data-chart-mode]').forEach(btn=>btn.addEventListener('click',()=>{chartMode=btn.dataset.chartMode;localStorage.setItem('reactify.dashboardChartMode',chartMode);render()}));
   const toggle=document.getElementById('sidebarToggle'),sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));
   async function refresh(){await fetchLiveData().catch(()=>{});render()}
   refresh();setInterval(refresh,30000);
