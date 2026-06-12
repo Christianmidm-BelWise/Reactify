@@ -200,7 +200,7 @@
     /* Stats Grid */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns:repeat(4, 1fr);
       gap: 1.25rem;
       margin-bottom: 2rem;
     }
@@ -387,6 +387,8 @@
       font-family: var(--font-sans);
     }
 
+    @media (max-width: 1250px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+
     @media (max-width: 1024px) {
       .dashboard-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -426,32 +428,72 @@
 .contact-type{display:inline-flex;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:#dbeafe;color:#2563eb}
 .conversation-state{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}.conversation-state.ai-active{background:#dcfce7;color:#16a34a}.conversation-state.manual{background:var(--orange-light);color:var(--orange-dark)}.conversation-state.completed{background:var(--gray-100);color:var(--gray-600)}
 </style>
-
 <style id="reactify-dashboard-analytics-style">
   .stat-info{flex:1;min-width:0}
-  .stat-progress{margin-top:.55rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}
-  .stat-progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--orange));width:0;transition:width .45s ease}
-  .stat-progress-fill.green{background:linear-gradient(90deg,#16a34a,#22c55e)}
+  .stat-progress{margin-top:.55rem;width:100%;height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden}
+  .stat-progress-fill{height:100%;border-radius:3px;background:var(--purple);width:0;transition:width .35s ease}
+  .stat-progress-fill.green{background:var(--green,#16a34a)}
   .stat-meta{font-size:.68rem;color:var(--gray-600);margin-top:.28rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .dashboard-card .card-body{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--purple-light) transparent}
   .dashboard-card .card-body::-webkit-scrollbar{width:7px}.dashboard-card .card-body::-webkit-scrollbar-thumb{background:var(--purple-light);border-radius:999px}.dashboard-card .card-body:hover::-webkit-scrollbar-thumb{background:var(--purple)}
-  .analytics-card{grid-column:1/-1;margin-top:1.25rem;background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
-  .analytics-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.15rem 1.25rem;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
-  .analytics-title h2{font-size:1.05rem;color:var(--gray-900);margin-bottom:.18rem}.analytics-title p{font-size:.76rem;color:var(--gray-600)}
-  .analytics-controls{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}.analytics-switch{display:inline-flex;gap:.2rem;padding:.24rem;background:var(--purple-bg);border:1px solid var(--purple-light);border-radius:10px}
-  .analytics-btn{border:0;background:transparent;color:var(--gray-600);border-radius:7px;padding:.38rem .65rem;font-size:.72rem;font-weight:800;cursor:pointer;transition:.18s}.analytics-btn:hover{background:#fff;color:var(--purple)}.analytics-btn.active{background:var(--purple);color:#fff;box-shadow:0 4px 10px rgba(91,46,145,.2)}
-  .analytics-body{padding:1.2rem 1.25rem 1.35rem}.chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem;min-height:22px}.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--gray-600);font-weight:700}.legend-dot{width:9px;height:9px;border-radius:999px}
-  .chart-wrap{height:310px;display:flex;align-items:stretch;gap:.75rem;position:relative;padding:0 .25rem}.chart-y{width:34px;display:flex;flex-direction:column;justify-content:space-between;color:var(--gray-400);font-size:.65rem;text-align:right;padding-bottom:28px}.chart-plot{position:relative;flex:1;border-left:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);display:flex;align-items:flex-end;gap:.55rem;padding:.5rem .55rem 28px;background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--gray-100) 25%)}
-  .chart-group{flex:1;height:100%;min-width:42px;display:flex;align-items:flex-end;justify-content:center;gap:.18rem;position:relative}.chart-bar{min-width:10px;max-width:24px;flex:1;border-radius:6px 6px 2px 2px;min-height:2px;transition:height .45s ease,filter .2s;position:relative;cursor:default}.chart-bar:hover{filter:brightness(.95)}.chart-bar:after{content:attr(data-value);position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);font-size:.62rem;font-weight:800;color:var(--gray-700);opacity:0;transition:.15s;white-space:nowrap}.chart-bar:hover:after{opacity:1}
-  .chart-x{position:absolute;left:0;right:0;bottom:2px;display:flex;gap:.55rem;padding:0 .55rem}.chart-x span{flex:1;min-width:42px;text-align:center;font-size:.65rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chart-empty{margin:auto;text-align:center;color:var(--gray-500);font-size:.82rem}.chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}
-  @media(max-width:900px){.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.chart-wrap{height:280px;overflow-x:auto}.chart-plot{min-width:620px}}
+  .analytics-card{grid-column:1/-1;width:calc(100% + .8rem);margin:1.25rem -.4rem 0;background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;font-family:var(--font-sans)}
+  .analytics-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.2rem 1.3rem;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
+  .analytics-title h2{font-size:1.05rem;font-weight:800;color:var(--gray-900);margin-bottom:.18rem;letter-spacing:-.01em}.analytics-title p{font-size:.76rem;color:var(--gray-600)}
+  .analytics-controls{display:flex;gap:.65rem;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+  .analytics-switch{display:inline-flex;gap:.22rem;padding:.28rem;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 1px 2px rgba(17,24,39,.04)}
+  .analytics-btn{appearance:none;border:0;background:transparent;color:var(--gray-600);border-radius:9px;padding:.46rem .78rem;font-family:var(--font-sans);font-size:.72rem;font-weight:750;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s,transform .18s;white-space:nowrap}
+  .analytics-btn:hover{background:var(--purple-bg);color:var(--purple);transform:translateY(-1px)}
+  .analytics-btn.active{background:var(--purple);color:#fff;box-shadow:0 5px 14px rgba(91,46,145,.24)}
+  .analytics-body{padding:1.25rem .9rem 1.45rem}
+  .chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem;min-height:22px}.legend-item{display:flex;align-items:center;gap:.42rem;font-size:.72rem;color:var(--gray-600);font-weight:700}.legend-dot{width:9px;height:9px;border-radius:999px;box-shadow:0 0 0 3px rgba(17,24,39,.035)}
+  .chart-wrap{height:430px;width:100%;position:relative;overflow:hidden;border:1px solid var(--gray-100);border-radius:14px;background:linear-gradient(180deg,#fff 0%,#FCFAFE 100%)}
+  .line-chart{width:100%;height:100%;display:block;font-family:var(--font-sans)}
+  .line-grid{stroke:#E5E7EB;stroke-width:1;stroke-dasharray:4 5}.line-axis{stroke:#D1D5DB;stroke-width:1}.line-label{fill:#6B7280;font-size:11px;font-family:var(--font-sans)}.line-y-label{fill:#9CA3AF;font-size:10px;font-family:var(--font-sans)}
+  .line-path{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 4px 8px rgba(91,46,145,.12))}.line-area{opacity:.075}.line-point{stroke:#fff;stroke-width:2.5;cursor:pointer;transition:r .15s}.line-point:hover{r:6}
+  .chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}.chart-summary strong{color:var(--gray-900);font-weight:800}
+  @media(max-width:900px){.analytics-card{width:100%;margin-left:0;margin-right:0}.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.analytics-switch{overflow-x:auto;max-width:100%}.chart-wrap{height:340px;overflow-x:auto}.line-chart{min-width:760px}}
 
-  .chart-mode-switch{display:inline-flex;gap:.18rem;padding:.24rem;background:#fff;border:1px solid var(--gray-200);border-radius:10px}
-  .chart-mode-btn{width:34px;height:34px;border:0;border-radius:7px;background:transparent;color:var(--gray-600);display:grid;place-items:center;cursor:pointer;font-weight:900}.chart-mode-btn:hover{background:var(--purple-bg);color:var(--purple)}.chart-mode-btn.active{background:var(--purple);color:#fff;box-shadow:0 4px 10px rgba(91,46,145,.2)}
-  .chart-wrap.modern{height:410px;display:block;padding:0;border:1px solid var(--gray-100);border-radius:14px;background:linear-gradient(180deg,#fff,#FCFAFE);overflow:hidden}
-  .modern-chart{display:block;width:100%;height:100%;font-family:var(--font-sans)}
-  .modern-grid{stroke:#E5E7EB;stroke-width:1;stroke-dasharray:4 5}.modern-axis{stroke:#D1D5DB;stroke-width:1}.modern-label{fill:#6B7280;font-size:11px}.modern-axis-title{fill:#4B5563;font-size:11px;font-weight:800}.modern-line{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.modern-area{opacity:.08}.modern-point{stroke:#fff;stroke-width:2.5;cursor:pointer}.modern-point:hover{r:6}.modern-bar{rx:5;cursor:pointer;opacity:.92}.modern-bar:hover{opacity:1}
-  .chart-tooltip{position:absolute;z-index:20;pointer-events:none;background:#111827;color:#fff;border-radius:9px;padding:.55rem .65rem;font-size:.7rem;line-height:1.45;box-shadow:0 12px 30px rgba(17,24,39,.22);display:none;max-width:250px}
+  /* Professionele analytics-bediening */
+  .analytics-controls{gap:.8rem}
+  .analytics-switch{position:relative;display:inline-flex;align-items:center;gap:.18rem;padding:.32rem;background:linear-gradient(180deg,#fff,#F9FAFB);border:1px solid #E5E7EB;border-radius:13px;box-shadow:0 5px 16px rgba(17,24,39,.06)}
+  .analytics-btn{min-height:36px;padding:.5rem .9rem;border-radius:9px;font-weight:800;letter-spacing:-.01em;color:#4B5563}
+  .analytics-btn:hover{background:#F5F0FA;color:#5B2E91;transform:none}
+  .analytics-btn.active{background:linear-gradient(180deg,#6B38A5,#5B2E91);color:#fff;box-shadow:0 6px 16px rgba(91,46,145,.28),inset 0 1px 0 rgba(255,255,255,.18)}
+  .chart-wrap{padding:0!important}
+  .chart-mode-switch{display:inline-flex;align-items:center;gap:.18rem;padding:.32rem;background:linear-gradient(180deg,#fff,#F9FAFB);border:1px solid var(--gray-200);border-radius:13px;box-shadow:0 5px 16px rgba(17,24,39,.06)}
+  .chart-icon-btn{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:var(--gray-600);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s}
+  .chart-icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .chart-icon-btn:hover{background:var(--purple-bg);color:var(--purple)}
+  .chart-icon-btn.active{background:linear-gradient(180deg,#6B38A5,#5B2E91);color:#fff;box-shadow:0 6px 16px rgba(91,46,145,.28)}
+  .metric-period-switch{display:inline-flex;gap:.12rem;margin-top:.38rem;padding:.2rem;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px}
+  .metric-period-btn{border:0;background:transparent;color:var(--gray-600);padding:.28rem .48rem;border-radius:7px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:var(--font-sans)}
+  .metric-period-btn:hover{background:var(--purple-bg);color:var(--purple)}
+  .metric-period-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px 8px rgba(91,46,145,.2)}
+</style>
+<style id="reactify-shared-metric-cards">
+.contact-total-values{display:flex;align-items:center;gap:.85rem;margin-top:.15rem}.contact-total-values>div{display:flex;align-items:baseline;gap:.35rem}.contact-total-label{font-size:.68rem;color:var(--gray-600);font-weight:700}.contact-total-divider{width:1px;height:28px;background:var(--gray-200)}
+.metric-progress{margin-top:.5rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}.metric-progress-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}.metric-progress-fill.purple{background:var(--purple)}.metric-progress-fill.green{background:#16a34a}.metric-meta{font-size:.68rem;color:var(--gray-600);margin-top:.28rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+<style id="reactify-requested-layout-fixes">
+.analytics-head{align-items:center!important}
+.analytics-head>.chart-mode-switch{order:0;flex:0 0 auto;margin-right:.1rem}
+.analytics-head>.analytics-title{order:1;flex:1 1 260px}
+.analytics-head>.analytics-controls{order:2;flex:0 1 auto}
+@media(max-width:900px){.analytics-head>.analytics-title{flex-basis:calc(100% - 92px)}.analytics-head>.analytics-controls{width:100%;justify-content:flex-start}}
+</style>
+<style id="reactify-dashboard-live-smooth-style">
+.stat-card,.dashboard-card,.analytics-card{transition:transform .28s ease,box-shadow .28s ease,opacity .28s ease}
+.stat-card:hover,.dashboard-card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(17,24,39,.08)}
+.stat-value,.stat-meta,.client-item,.inbox-item,.agenda-item{transition:opacity .22s ease,transform .22s ease,background-color .22s ease}
+.rf-updating{opacity:.58;transform:translateY(2px)}
+.rf-updated{animation:rfSoftPulse .55s ease}
+@keyframes rfSoftPulse{0%{transform:scale(.985);opacity:.72}55%{transform:scale(1.01);opacity:1}100%{transform:scale(1);opacity:1}}
+.line-path{stroke-dasharray:2400;stroke-dashoffset:2400;animation:rfDrawLine .75s cubic-bezier(.2,.8,.2,1) forwards}
+.line-area{animation:rfFadeArea .65s ease forwards}.line-point{animation:rfPointIn .42s ease both}
+@keyframes rfDrawLine{to{stroke-dashoffset:0}}@keyframes rfFadeArea{from{opacity:0}to{opacity:.075}}@keyframes rfPointIn{from{opacity:0;transform:scale(.4);transform-origin:center}to{opacity:1;transform:scale(1)}}
+.chart-bar{transform-box:fill-box;transform-origin:center bottom;animation:rfGrowBar .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rfGrowBar{from{transform:scaleY(0);opacity:.25}to{transform:scaleY(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -467,7 +509,7 @@
       </a>
 <a class="sidebar-link" href="/platform/klantenlijst/">
 <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
-        Klanten
+        Contactpersonen
       </a>
 <a class="sidebar-link" href="/platform/inbox/">
 <svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>
@@ -508,13 +550,13 @@
 </div>
 <!-- Stats -->
 <div class="stats-grid">
-<div class="stat-card">
+<div class="stat-card contact-totals-card">
 <div class="stat-icon purple">
 <svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
 </div>
 <div class="stat-info">
-<div class="stat-label">Totaal klanten</div>
-<div class="stat-value" id="statClients">0</div>
+<div class="stat-label">Contactpersonen</div>
+<div class="contact-total-values"><div><span class="stat-value" id="statClients">0</span><span class="contact-total-label">Klanten</span></div><span class="contact-total-divider"></span><div><span class="stat-value" id="statLeads">0</span><span class="contact-total-label">Leads</span></div></div>
 </div>
 </div>
 <div class="stat-card">
@@ -527,25 +569,25 @@
 </div>
 </div>
 <div class="stat-card">
-<div class="stat-icon green">
-<svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>
-</div>
-<div class="stat-info">
-<div class="stat-label">Bezettingsgraad</div>
-<div class="stat-value" id="statOccupancy">0%</div>
-<div class="stat-progress"><div class="stat-progress-fill" id="occupancyBar"></div></div>
-<div class="stat-meta" id="occupancyMeta">0 van 0 uur geboekt</div>
-</div>
-</div>
-<div class="stat-card">
 <div class="stat-icon blue">
 <svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" fill-rule="evenodd"></path></svg>
 </div>
 <div class="stat-info">
 <div class="stat-label">Afgehandeld deze week</div>
 <div class="stat-value" id="statCompletedWeek">0</div>
-<div class="stat-progress"><div class="stat-progress-fill green" id="completedBar"></div></div>
-<div class="stat-meta" id="completedMeta">0% van de gesprekken</div>
+<div class="metric-progress"><div class="metric-progress-fill green" id="completedBar"></div></div>
+<div class="metric-meta" id="completedMeta">0% van de gesprekken</div>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon green">
+<svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>
+</div>
+<div class="stat-info">
+<div class="stat-label">Bezettingsgraad</div>
+<div class="stat-value" id="statOccupancy">0%</div>
+<div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div><div aria-label="Periode bezettingsgraad" class="metric-period-switch"><button class="metric-period-btn" data-occupancy-period="day" type="button">Dag</button><button class="metric-period-btn" data-occupancy-period="week" type="button">Week</button><button class="metric-period-btn active" data-occupancy-period="month" type="button">Maand</button><button class="metric-period-btn" data-occupancy-period="year" type="button">Jaar</button></div>
+<div class="metric-meta" id="occupancyMeta">0 van 0 uur geboekt</div>
 </div>
 </div>
 </div>
@@ -553,11 +595,11 @@
 <div class="dashboard-grid">
 <div class="dashboard-card">
 <div class="card-header">
-<h2>Recente klanten</h2>
+<h2>Recente contactpersonen</h2>
 <a href="/platform/klantenlijst/">Bekijk alles</a>
 </div>
 <div class="card-body" id="recentClients">
-<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Klanten laden...</div>
+<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Contactpersonen laden...</div>
 </div>
 </div>
 <div class="dashboard-card">
@@ -571,7 +613,7 @@
 </div>
 <div class="dashboard-card">
 <div class="card-header">
-<h2>Komende klantafspraken</h2>
+<h2>Komende afspraken</h2>
 <a href="/platform/agenda/">Open agenda</a>
 </div>
 <div class="card-body" id="upcomingAppointments">
@@ -579,39 +621,33 @@
 </div>
 </div>
 </div>
-<section class="analytics-card" aria-label="Gespreksanalyse">
-  <div class="analytics-head">
-    <div class="analytics-title"><h2 id="analyticsHeading">Gespreksanalyse</h2><p id="analyticsSubtitle">Actuele cijfers uit gesprekken en klantprofielen.</p></div>
-    <div class="analytics-controls">
-      <div class="analytics-switch" aria-label="Grafiektype">
-        <button class="analytics-btn active" data-metric="sentiment" type="button">Sentiment</button>
-        <button class="analytics-btn" data-metric="handling" type="button">AI / manueel</button>
-        <button class="analytics-btn" data-metric="completed" type="button">Afgehandeld</button>
-      </div>
-      <div class="chart-mode-switch" aria-label="Grafiekweergave">
-        <button class="chart-mode-btn active" data-chart-mode="line" type="button" title="Lijndiagram">⌁</button>
-        <button class="chart-mode-btn" data-chart-mode="bar" type="button" title="Staafdiagram">▥</button>
-      </div>
-      <div class="analytics-switch" aria-label="Periode">
-        <button class="analytics-btn" data-period="day" type="button">Dag</button>
-        <button class="analytics-btn" data-period="week" type="button">Week</button>
-        <button class="analytics-btn active" data-period="month" type="button">Maand</button>
-      </div>
-    </div>
-  </div>
-  <div class="analytics-body">
-    <div class="chart-legend" id="chartLegend"></div>
-    <div class="chart-wrap" id="chartWrap"></div>
-    <div class="chart-summary" id="chartSummary"></div>
-  </div>
+<section aria-label="Gespreksanalyse" class="analytics-card">
+<div class="analytics-head">
+<div aria-label="Diagramtype" class="chart-mode-switch">
+<button aria-label="Lijndiagram" class="chart-icon-btn active" data-chart-view="line" title="Lijndiagram" type="button"><svg viewbox="0 0 24 24"><path d="M3 17l5-5 4 3 7-8"></path><path d="M19 7h2v2"></path></svg></button>
+<button aria-label="Staafdiagram" class="chart-icon-btn" data-chart-view="bar" title="Staafdiagram" type="button"><svg viewbox="0 0 24 24"><path d="M4 20V10h4v10"></path><path d="M10 20V4h4v16"></path><path d="M16 20v-7h4v7"></path></svg></button>
+</div><div class="analytics-title"><h2 id="analyticsHeading">Gespreksanalyse</h2><p id="analyticsSubtitle">Actuele cijfers uit gesprekken en contactprofielen.</p></div>
+<div class="analytics-controls">
+<div aria-label="Grafiektype" class="analytics-switch">
+<button class="analytics-btn active" data-metric="handling" type="button">AI chat</button>
+<button class="analytics-btn" data-metric="completed" type="button">Afgehandelde gesprekken</button>
+<button class="analytics-btn" data-metric="channel" type="button">Kanaalvergelijking</button>
+</div>
+
+<div aria-label="Periode" class="analytics-switch">
+<button class="analytics-btn" data-period="day" type="button">Dag</button>
+<button class="analytics-btn" data-period="week" type="button">Week</button>
+<button class="analytics-btn active" data-period="month" type="button">Maand</button>
+</div>
+</div>
+</div>
+<div class="analytics-body">
+<div class="chart-legend" id="chartLegend"></div>
+<div class="chart-wrap" id="chartWrap"></div>
+<div class="chart-summary" id="chartSummary"></div>
+</div>
 </section>
 </main>
-
-
-
-
-
-
 <script>
 (function(){
   if(window.ReactifyGlobalNotificationsLoaded) return;
@@ -739,9 +775,9 @@
 <script>
 (function(){
   const STORE='reactify_platform_data_v3';
-  const API={bookings:'/.netlify/functions/cal-bookings',schedules:'/.netlify/functions/cal-schedules'};
+  const API={bookings:'/.netlify/functions/cal-bookings',schedules:'/.netlify/functions/cal-schedules',conversations:'/.netlify/functions/conversations'};
   const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb'];
-  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a'};
+  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a',open:'#F5A623',sms:'#5B2E91',email:'#2563EB',chat:'#F5A623',other:'#9CA3AF'};
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const read=()=>{try{const d=JSON.parse(localStorage.getItem(STORE)||'{}');return {clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[]}}catch(e){return{clients:[],conversations:[],appointments:[]}}};
   const initials=n=>String(n||'Klant').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'KL';
@@ -754,24 +790,44 @@
   const stateBadge=status=>{const st=stateInfo(status);return `<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`};
   const statusKey=s=>stateInfo(s).key;
   const sentimentOf=(d,c)=>{const cl=clientFor(d,c);const raw=String(c.sentiment||c.customerSentiment||cl.sentiment||cl.status||'').toLowerCase();if(raw.includes('posit'))return'positive';if(raw.includes('negat'))return'negative';const txt=String(c.summary||c.lastMessage||'').toLowerCase();if(/bedankt|prima|perfect|tevreden|opgelost|geholpen/.test(txt))return'positive';if(/klacht|boos|ontevreden|probleem|fout|slecht/.test(txt))return'negative';return'neutral'};
-  let remoteBookings=[],schedules=[],rendering=false;
-  let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'sentiment';
+  let remoteBookings=[],schedules=[],remoteConversations=[],rendering=false;
+  let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'handling';
   let chartPeriod=localStorage.getItem('reactify.dashboardChartPeriod')||'month';
-  let chartMode=localStorage.getItem('reactify.dashboardChartMode')||'line';
-  if(!['sentiment','handling','completed'].includes(chartMetric))chartMetric='sentiment';
+  let chartView=localStorage.getItem('reactify.dashboardChartView')||'line';
+  let occupancyPeriod=localStorage.getItem('reactify.dashboardOccupancyPeriod')||'month';
+  if(!['handling','completed','channel'].includes(chartMetric))chartMetric='handling';
   if(!['day','week','month'].includes(chartPeriod))chartPeriod='month';
+  if(!['line','bar'].includes(chartView))chartView='line';
+  if(!['day','week','month','year'].includes(occupancyPeriod))occupancyPeriod='month';
 
   async function fetchJSON(url){const sep=url.includes('?')?'&':'?';const r=await fetch(`${url}${sep}_fresh=${Date.now()}`,{headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},cache:'no-store'});const j=await r.json();if(!r.ok||j.status==='error')throw new Error(j.error||'Data laden mislukt');return j}
-  async function fetchLiveData(){
-    const [bookingResult,scheduleResult]=await Promise.allSettled([fetchJSON(API.bookings),fetchJSON(API.schedules)]);
-    if(bookingResult.status==='fulfilled'){
-      const j=bookingResult.value;remoteBookings=Array.isArray(j.data)?j.data:Array.isArray(j.bookings)?j.bookings:[];
-      localStorage.setItem('reactify.calBookingsCache',JSON.stringify(remoteBookings));
-      localStorage.setItem('reactify.calBookingsCacheUpdatedAt',new Date().toISOString());
-    }else remoteBookings=window.ReactifyCalSync?.getCached?.()||[];
-    if(scheduleResult.status==='fulfilled'){
-      const j=scheduleResult.value;schedules=Array.isArray(j.data)?j.data:Array.isArray(j.data?.schedules)?j.data.schedules:Array.isArray(j.schedules)?j.schedules:[];
+  function normPhone(v){let x=String(v||'').trim().replace(/[^0-9+]/g,'');if(!x)return'';if(x.startsWith('00'))x='+'+x.slice(2);const d=x.replace(/\D/g,'');if(d.startsWith('32'))return'+32'+d.slice(2);if(d.startsWith('0'))return'+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return'+32'+d;return x.startsWith('+')?'+'+d:d}
+  function normEmail(v){return String(v||'').trim().toLowerCase()}
+  function mergeLiveConversations(rows){
+    const d=read();
+    const seen=new Set();
+    for(const row of rows){
+      const backendId=String(row.id||row.conversation_id||'');if(!backendId)continue;seen.add(backendId);
+      const phone=normPhone(row.contact_phone||row.phone),email=normEmail(row.contact_email||row.email);
+      let client=d.clients.find(c=>(phone&&normPhone(c.phone)===phone)||(email&&normEmail(c.email)===email));
+      if(!client){client={id:'client_'+backendId,name:row.contact_name||phone||email||'Nieuwe lead',phone,email,type:'Lead',sentiment:'neutraal',createdAt:row.created_at||new Date().toISOString(),updatedAt:row.updated_at||new Date().toISOString()};d.clients.unshift(client)}
+      if(row.contact_name&&!/^(nieuwe lead|nieuwe klant|onbekend)$/i.test(String(row.contact_name)))client.name=row.contact_name;
+      if(phone)client.phone=phone;if(email)client.email=email;client.updatedAt=row.updated_at||row.last_message_at||client.updatedAt;
+      let conv=d.conversations.find(c=>String(c.backendId||c.id)===backendId);
+      if(!conv){conv={id:backendId,backendId,clientId:client.id,createdAt:row.created_at||new Date().toISOString()};d.conversations.unshift(conv)}
+      Object.assign(conv,{backendId,clientId:client.id,channel:String(row.channel||'sms').toLowerCase(),folder:String(row.folder||'inbox'),status:row.status||conv.status||'inactive',summary:row.summary||'',lastMessage:row.last_message||conv.lastMessage||'',sentiment:row.sentiment||conv.sentiment||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||new Date().toISOString()});
+      client.sentiment=sentimentOf({clients:d.clients},conv);client.status=client.sentiment;
     }
+    localStorage.setItem(STORE,JSON.stringify({...JSON.parse(localStorage.getItem(STORE)||'{}'),clients:d.clients,conversations:d.conversations}));
+    window.dispatchEvent(new CustomEvent('reactify:data',{detail:d}));
+  }
+  async function fetchLiveData(){
+    document.querySelectorAll('.stat-card,.dashboard-card').forEach(el=>el.classList.add('rf-updating'));
+    const [bookingResult,scheduleResult,conversationResult]=await Promise.allSettled([fetchJSON(API.bookings),fetchJSON(API.schedules),fetchJSON(`${API.conversations}?limit=500&folder=all`)]);
+    if(bookingResult.status==='fulfilled'){const j=bookingResult.value;remoteBookings=Array.isArray(j.data)?j.data:Array.isArray(j.bookings)?j.bookings:[];localStorage.setItem('reactify.calBookingsCache',JSON.stringify(remoteBookings));localStorage.setItem('reactify.calBookingsCacheUpdatedAt',new Date().toISOString())}else remoteBookings=window.ReactifyCalSync?.getCached?.()||[];
+    if(scheduleResult.status==='fulfilled'){const j=scheduleResult.value;schedules=Array.isArray(j.data)?j.data:Array.isArray(j.data?.schedules)?j.data.schedules:Array.isArray(j.schedules)?j.schedules:[];}
+    if(conversationResult.status==='fulfilled'){const j=conversationResult.value;remoteConversations=Array.isArray(j.data)?j.data:[];mergeLiveConversations(remoteConversations)}
+    document.querySelectorAll('.stat-card,.dashboard-card').forEach(el=>{el.classList.remove('rf-updating');el.classList.remove('rf-updated');void el.offsetWidth;el.classList.add('rf-updated')});
   }
   function normalizedAppointments(){
     const now=Date.now();
@@ -780,11 +836,18 @@
   }
   function hmMinutes(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0}
   function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null}
-  function scheduleBlocks(){const s=activeSchedule();const rows=Array.isArray(s?.availability)?s.availability:Array.isArray(s?.availabilities)?s.availabilities:[];return rows.map(r=>({days:Array.isArray(r.days)?r.days:[],start:hmMinutes(r.startTime||r.start),end:hmMinutes(r.endTime||r.end)})).filter(r=>r.days.length&&r.end>r.start)}
+  function scheduleRows(schedule){
+    const direct=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
+    if(direct.length)return direct;
+    const nested=schedule?.availability||schedule?.availabilities||{};const rows=[];
+    if(nested&&typeof nested==='object'&&!Array.isArray(nested)){for(const [day,blocks] of Object.entries(nested)){for(const b of (Array.isArray(blocks)?blocks:[blocks]))if(b)rows.push({...b,days:b.days||[day]})}}
+    return rows;
+  }
+  function scheduleBlocks(){const s=activeSchedule();return scheduleRows(s).map(r=>({days:Array.isArray(r.days)?r.days:[r.day||r.weekday].filter(Boolean),start:hmMinutes(r.startTime||r.start||r.start_time),end:hmMinutes(r.endTime||r.end||r.end_time)})).filter(r=>r.days.length&&r.end>r.start)}
   function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const i=date.getDay();return days.some(d=>{if(typeof d==='number')return d===i||d===((i+6)%7);const v=String(d).trim().toLowerCase();return v===names[i].toLowerCase()||v===short[i].toLowerCase()||v===String(i)||v===String((i+6)%7)})}
-  function monthRange(){const n=new Date();return{start:new Date(n.getFullYear(),n.getMonth(),1),end:new Date(n.getFullYear(),n.getMonth()+1,1)}}
-  function availableMinutes(start,end){let total=0,blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1))for(const b of blocks)if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start);return total}
-  function bookedMinutes(start,end){return remoteBookings.reduce((t,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return t;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return t;let dur=(be-bs)/60000;if(!(dur>0))dur=Number(b.duration||0)||30;const os=Math.max(bs.getTime(),start.getTime()),oe=Math.min(bs.getTime()+dur*60000,end.getTime());return t+Math.max(0,(oe-os)/60000)},0)}
+  function occupancyRange(){const n=new Date();let start,end;if(occupancyPeriod==='day'){start=new Date(n);start.setHours(0,0,0,0);end=new Date(start);end.setDate(end.getDate()+1)}else if(occupancyPeriod==='week'){start=startOfWeek(n);end=new Date(start);end.setDate(end.getDate()+7)}else if(occupancyPeriod==='year'){start=new Date(n.getFullYear(),0,1);end=new Date(n.getFullYear()+1,0,1)}else{start=new Date(n.getFullYear(),n.getMonth(),1);end=new Date(n.getFullYear(),n.getMonth()+1,1)}return{start,end}}
+  function availableMinutes(start,end){let total=0;const blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1)){for(const b of blocks){if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start)}}return total}
+  function bookedMinutes(start,end){return remoteBookings.reduce((t,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return t;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return t;let dur=(be-bs)/60000;if(!(dur>0))dur=Number(b.duration||b.lengthInMinutes||0)||30;const os=Math.max(bs.getTime(),start.getTime()),oe=Math.min(bs.getTime()+dur*60000,end.getTime());return t+Math.max(0,(oe-os)/60000)},0)}
   function setHTML(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html}
   function startOfWeek(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
   function inCurrentWeek(date){const s=startOfWeek(new Date()),e=new Date(s);e.setDate(e.getDate()+7);const x=new Date(date);return x>=s&&x<e}
@@ -806,44 +869,54 @@
   function renderChart(d){
     document.querySelectorAll('[data-metric]').forEach(b=>b.classList.toggle('active',b.dataset.metric===chartMetric));
     document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===chartPeriod));
-    document.querySelectorAll('[data-chart-mode]').forEach(b=>b.classList.toggle('active',b.dataset.chartMode===chartMode));
+    document.querySelectorAll('[data-chart-view]').forEach(b=>b.classList.toggle('active',b.dataset.chartView===chartView));
     const buckets=chartBuckets(chartPeriod);
-    const series=chartMetric==='sentiment'?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]:chartMetric==='handling'?[['ai','AI chat',chartColors.ai],['manual','Manueel',chartColors.manual]]:[['completed','Afgehandeld',chartColors.completed],['open','Open',chartColors.manual]];
+    const series=chartMetric==='sentiment'
+      ?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]
+      :chartMetric==='handling'
+        ?[['ai','AI opgevolgd',chartColors.ai],['manual','Manueel opgevolgd',chartColors.manual]]
+        :chartMetric==='completed'
+          ?[['completed','Afgehandeld',chartColors.completed],['open','Open gesprekken',chartColors.open]]
+          :[['sms','SMS',chartColors.sms],['email','E-mail',chartColors.email],['chat','Chat',chartColors.chat],['other','Overig',chartColors.other]];
     const rows=buckets.map(bucket=>{
       const convs=d.conversations.filter(c=>{const x=new Date(c.updatedAt||c.createdAt||0);return x>=bucket.start&&x<bucket.end});
-      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0};
-      convs.forEach(c=>{values[sentimentOf(d,c)]++;const state=statusKey(c.status);if(state==='manual')values.manual++;else values.ai++;if(state==='completed')values.completed++;else values.open++});
-      return{...bucket,values,total:convs.length,conversations:convs};
+      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0,sms:0,email:0,chat:0,other:0};
+      convs.forEach(c=>{
+        values[sentimentOf(d,c)]++;
+        const state=statusKey(c.status);
+        if(state==='manual') values.manual++; else values.ai++;
+        if(state==='completed') values.completed++; else values.open++;
+        const channel=String(c.channel||c.communicationChannel||'').toLowerCase();
+        if(channel.includes('sms'))values.sms++;else if(channel.includes('mail'))values.email++;else if(channel.includes('chat')||channel.includes('web'))values.chat++;else values.other++;
+      });
+      return{...bucket,values,total:convs.length};
     });
-    const max=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
-    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI chat vs manuele opvolging':'Afgehandelde gesprekken';
+    const maxRaw=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
+    const max=Math.max(4,Math.ceil(maxRaw/4)*4);
+    const heading=chartMetric==='handling'?'AI chat':chartMetric==='completed'?'Afgehandelde gesprekken':'Kanaalvergelijking';
     const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
     document.getElementById('analyticsHeading').textContent=heading;
-    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · X-as: tijd · Y-as: aantal gesprekken.`;
+    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
     document.getElementById('chartLegend').innerHTML=series.map(s=>`<span class="legend-item"><span class="legend-dot" style="background:${s[2]}"></span>${s[1]}</span>`).join('');
-    const wrap=document.getElementById('chartWrap');wrap.className='chart-wrap modern';
-    const W=1400,H=410,L=62,R=28,T=26,B=58,plotW=W-L-R,plotH=H-T-B;
-    const x=i=>rows.length===1?L+plotW/2:L+(i/(rows.length-1))*plotW;
-    const y=v=>T+plotH-(v/max)*plotH;
-    let svg=`<svg class="modern-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(heading)}">`;
-    for(let i=0;i<=4;i++){const val=Math.round(max*(4-i)/4),yy=T+plotH*i/4;svg+=`<line class="modern-grid" x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/><text class="modern-label" x="${L-12}" y="${yy+4}" text-anchor="end">${val}</text>`}
-    svg+=`<line class="modern-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"/><line class="modern-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"/><text class="modern-axis-title" x="18" y="${T+plotH/2}" transform="rotate(-90 18 ${T+plotH/2})" text-anchor="middle">Aantal gesprekken</text><text class="modern-axis-title" x="${L+plotW/2}" y="${H-8}" text-anchor="middle">Tijd</text>`;
-    rows.forEach((r,i)=>svg+=`<text class="modern-label" x="${x(i)}" y="${T+plotH+23}" text-anchor="middle">${esc(r.label)}</text>`);
-    series.forEach((s,si)=>{
-      if(chartMode==='bar'){
-        const groupW=Math.max(18,Math.min(72,plotW/rows.length*.65)),barW=groupW/series.length;
-        rows.forEach((r,i)=>{const v=r.values[s[0]],h=(v/max)*plotH,bx=x(i)-groupW/2+si*barW;svg+=`<rect class="modern-bar chart-hit" data-row="${i}" data-series="${si}" x="${bx}" y="${T+plotH-h}" width="${Math.max(4,barW-3)}" height="${Math.max(v?3:1,h)}" fill="${s[2]}"/>`});
-      }else{
-        const pts=rows.map((r,i)=>[x(i),y(r.values[s[0]])]);
-        const dpath=pts.map((p,i)=>`${i?'L':'M'} ${p[0]} ${p[1]}`).join(' ');
-        const area=`${dpath} L ${pts.at(-1)[0]} ${T+plotH} L ${pts[0][0]} ${T+plotH} Z`;
-        svg+=`<path class="modern-area" d="${area}" fill="${s[2]}"/><path class="modern-line" d="${dpath}" stroke="${s[2]}"/>`;
-        pts.forEach((p,i)=>svg+=`<circle class="modern-point chart-hit" data-row="${i}" data-series="${si}" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"/>`);
-      }
-    });
-    svg+='</svg><div class="chart-tooltip" id="chartTooltip"></div>';wrap.innerHTML=svg;
-    const tooltip=wrap.querySelector('#chartTooltip');
-    wrap.querySelectorAll('.chart-hit').forEach(el=>{const show=e=>{const r=rows[Number(el.dataset.row)],ser=series[Number(el.dataset.series)],value=r.values[ser[0]];tooltip.innerHTML=`<strong>${esc(ser[1])}: ${value}</strong><br>${esc(r.label)}<br>${r.total} gesprek${r.total===1?'':'ken'}`;tooltip.style.display='block';const box=wrap.getBoundingClientRect();tooltip.style.left=`${Math.min(box.width-260,Math.max(8,e.clientX-box.left+12))}px`;tooltip.style.top=`${Math.max(8,e.clientY-box.top-62)}px`;};el.addEventListener('mousemove',show);el.addEventListener('mouseenter',show);el.addEventListener('mouseleave',()=>tooltip.style.display='none');el.addEventListener('click',()=>{const r=rows[Number(el.dataset.row)];const c=r.conversations[0];if(c)location.href=`/platform/inbox/?conversation=${encodeURIComponent(c.id||c.backendId||'')}`;});});
+
+    const wrap=document.getElementById('chartWrap');
+    const W=Math.max(900,Math.round(wrap.clientWidth||1200)),H=420,L=48,R=14,T=24,B=50,plotW=W-L-R,plotH=H-T-B;
+    const xAt=i=>L+(rows.length<=1?plotW/2:(i/(rows.length-1))*plotW);
+    const yAt=v=>T+plotH-(v/max)*plotH;
+    const ticks=[0,max*.25,max*.5,max*.75,max].map(v=>Math.round(v));
+    const grid=ticks.map(v=>`<line class="line-grid" x1="${L}" y1="${yAt(v)}" x2="${W-R}" y2="${yAt(v)}"></line><text class="line-y-label" x="${L-12}" y="${yAt(v)+4}" text-anchor="end">${v}</text>`).join('');
+    const xLabels=rows.map((r,i)=>`<text class="line-label" x="${xAt(i)}" y="${H-16}" text-anchor="middle">${esc(r.label)}</text>`).join('');
+    let marks='';
+    if(chartView==='bar'){
+      const groupW=rows.length?plotW/rows.length:plotW;
+      const innerW=Math.min(groupW*.72,90);
+      const barW=Math.max(3,innerW/Math.max(1,series.length));
+      marks=rows.map((r,i)=>series.map((s,si)=>{const v=r.values[s[0]],h=(v/max)*plotH,x=L+i*groupW+(groupW-innerW)/2+si*barW,y=T+plotH-h;return `<rect class="chart-bar" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(2,barW-2).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="3" fill="${s[2]}"><title>${s[1]} · ${r.label}: ${v}</title></rect>`}).join('')).join('');
+    }else{
+      marks=series.map((s)=>{const pts=rows.map((r,i)=>[xAt(i),yAt(r.values[s[0]]),r.values[s[0]]]);const path=pts.map((p,i)=>`${i?'L':'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');const area=`${path} L ${xAt(rows.length-1).toFixed(1)} ${(T+plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(T+plotH).toFixed(1)} Z`;const circles=pts.map((p,i)=>`<circle class="line-point" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"><title>${s[1]} · ${rows[i].label}: ${p[2]}</title></circle>`).join('');return `<path class="line-area" d="${area}" fill="${s[2]}"></path><path class="line-path" d="${path}" stroke="${s[2]}"></path>${circles}`}).join('');
+    }
+    wrap.innerHTML=`<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(heading)}"><line class="line-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"></line><line class="line-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"></line>${grid}${xLabels}${marks}</svg>`;
+
     const totals=series.map(s=>[s[1],rows.reduce((n,r)=>n+r.values[s[0]],0)]);
     document.getElementById('chartSummary').innerHTML=`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`;
   }
@@ -853,9 +926,11 @@
     try{
       const d=read(),appts=normalizedAppointments();
       const open=d.conversations.filter(c=>!isCompleted(c));
-      document.getElementById('statClients').textContent=d.clients.length;
+      document.getElementById('statClients').textContent=d.clients.filter(c=>String(c.type||'Lead').toLowerCase()==='klant').length;
+      document.getElementById('statLeads').textContent=d.clients.filter(c=>String(c.type||'Lead').toLowerCase()!=='klant').length;
       document.getElementById('statConversations').textContent=open.length;
-      const mr=monthRange(),available=availableMinutes(mr.start,mr.end),booked=bookedMinutes(mr.start,mr.end),occupancy=available>0?Math.min(100,Math.round(booked/available*100)):0;
+      document.querySelectorAll('[data-occupancy-period]').forEach(b=>b.classList.toggle('active',b.dataset.occupancyPeriod===occupancyPeriod));
+      const mr=occupancyRange(),available=availableMinutes(mr.start,mr.end),booked=bookedMinutes(mr.start,mr.end),occupancy=available>0?Math.min(100,Math.round(booked/available*100)):0;
       document.getElementById('statOccupancy').textContent=`${occupancy}%`;
       document.getElementById('occupancyBar').style.width=`${occupancy}%`;
       document.getElementById('occupancyMeta').textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
@@ -864,7 +939,7 @@
       document.getElementById('completedBar').style.width=`${completedPct}%`;
       document.getElementById('completedMeta').textContent=`${completedPct}% van ${weekConvs.length} gesprekken`;
       const clients=[...d.clients].sort((a,b)=>new Date(b.updatedAt||b.lastActivity||b.createdAt||0)-new Date(a.updatedAt||a.lastActivity||a.createdAt||0));
-      setHTML(document.getElementById('recentClients'),clients.length?clients.map((c,i)=>{const cv=latestConversationFor(d,c);return `<div class="client-item" onclick="location.href='/platform/klantenlijst/?client=${encodeURIComponent(c.id||'')}'"><div class="client-avatar" style="background:${c.color||colors[i%colors.length]}">${initials(c.name)}</div><div class="client-info"><div class="name-with-badges"><span class="client-name">${esc(c.name||'Klant')}</span>${typeBadge(c)}${cv?stateBadge(cv.status):''}</div><div class="client-phone">${esc(c.phone||c.email||'Geen contactgegevens')}</div></div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Nog geen recente klanten.</div>`);
+      setHTML(document.getElementById('recentClients'),clients.length?clients.map((c,i)=>{const cv=latestConversationFor(d,c);return `<div class="client-item" onclick="location.href='/platform/klantenlijst/?client=${encodeURIComponent(c.id||'')}'"><div class="client-avatar" style="background:${c.color||colors[i%colors.length]}">${initials(c.name)}</div><div class="client-info"><div class="name-with-badges"><span class="client-name">${esc(c.name||'Klant')}</span>${typeBadge(c)}${cv?stateBadge(cv.status):''}</div><div class="client-phone">${esc(c.phone||c.email||'Geen contactgegevens')}</div></div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Nog geen recente contactpersonen.</div>`);
       const convs=[...d.conversations].sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
       setHTML(document.getElementById('recentConversations'),convs.length?convs.map((c,i)=>{const cl=clientFor(d,c);return`<div class="inbox-item" onclick="location.href='/platform/inbox/?conversation=${encodeURIComponent(c.id||'')}'"><div class="inbox-avatar" style="background:${cl.color||colors[i%colors.length]}">${initials(cl.name||c.contactName)}</div><div class="inbox-content"><div class="name-with-badges"><span class="inbox-sender">${esc(cl.name||c.contactName||'Klant')}</span>${typeBadge(cl)}${stateBadge(c.status)}</div><div class="inbox-preview">${esc(c.lastMessage||c.messages?.at?.(-1)?.text||'Nog geen berichten')}</div></div><div class="inbox-time">${c.updatedAt?fmtTime(c.updatedAt):''}</div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Nog geen recente gesprekken.</div>`);
       setHTML(document.getElementById('upcomingAppointments'),appts.length?appts.map((a,i)=>`<div class="agenda-item" onclick="location.href='/platform/agenda/'"><div class="agenda-time"><div>${fmtTime(a.start)}</div><div style="font-size:.66rem;color:var(--gray-600);font-weight:700;line-height:1.2;margin-top:.15rem">${esc(dayLabel(a.start))}</div></div><div class="agenda-dot ${['purple','orange','green'][i%3]}"></div><div class="agenda-info"><div class="agenda-title">${esc(a.title||'Afspraak')}</div><div class="agenda-sub">${esc(a.customer||'Klant')}</div></div></div>`).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Geen komende afspraken.</div>`);
@@ -873,12 +948,13 @@
   }
   document.querySelectorAll('[data-metric]').forEach(btn=>btn.addEventListener('click',()=>{chartMetric=btn.dataset.metric;localStorage.setItem('reactify.dashboardChartMetric',chartMetric);render()}));
   document.querySelectorAll('[data-period]').forEach(btn=>btn.addEventListener('click',()=>{chartPeriod=btn.dataset.period;localStorage.setItem('reactify.dashboardChartPeriod',chartPeriod);render()}));
-  document.querySelectorAll('[data-chart-mode]').forEach(btn=>btn.addEventListener('click',()=>{chartMode=btn.dataset.chartMode;localStorage.setItem('reactify.dashboardChartMode',chartMode);render()}));
+  document.querySelectorAll('[data-chart-view]').forEach(btn=>btn.addEventListener('click',()=>{chartView=btn.dataset.chartView;localStorage.setItem('reactify.dashboardChartView',chartView);render()}));
+  document.querySelectorAll('[data-occupancy-period]').forEach(btn=>btn.addEventListener('click',()=>{occupancyPeriod=btn.dataset.occupancyPeriod;localStorage.setItem('reactify.dashboardOccupancyPeriod',occupancyPeriod);render()}));
   const toggle=document.getElementById('sidebarToggle'),sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));
-  async function refresh(){await fetchLiveData().catch(()=>{});render()}
-  refresh();setInterval(refresh,30000);
+  let refreshBusy=false;async function refresh(){if(refreshBusy)return;refreshBusy=true;try{await fetchLiveData();render()}catch(e){console.warn('Dashboard live update mislukt',e)}finally{refreshBusy=false}}
+  refresh();setInterval(refresh,8000);
   window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
-  window.addEventListener('storage',e=>{if(!e.key||e.key===STORE)render()});window.addEventListener('reactify:data',render);window.addEventListener('reactify:datachange',render);
+  window.addEventListener('storage',e=>{if(!e.key||e.key===STORE)render()});window.addEventListener('reactify:data',render);window.addEventListener('reactify:datachange',render);window.addEventListener('online',refresh);window.addEventListener('reactify:cal-sync',refresh);
 })();
 </script>
 <script src="/platform/assets/cal-sync.js"></script>
