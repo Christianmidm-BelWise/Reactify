@@ -629,7 +629,8 @@
 </div><div class="analytics-title"><h2 id="analyticsHeading">Gespreksanalyse</h2><p id="analyticsSubtitle">Actuele cijfers uit gesprekken en contactprofielen.</p></div>
 <div class="analytics-controls">
 <div aria-label="Grafiektype" class="analytics-switch">
-<button class="analytics-btn active" data-metric="handling" type="button">AI chat</button>
+<button class="analytics-btn active" data-metric="sentiment" type="button">Sentiment</button>
+<button class="analytics-btn" data-metric="handling" type="button">AI chat</button>
 <button class="analytics-btn" data-metric="completed" type="button">Afgehandelde gesprekken</button>
 <button class="analytics-btn" data-metric="channel" type="button">Kanaalvergelijking</button>
 </div>
@@ -791,11 +792,11 @@
   const statusKey=s=>stateInfo(s).key;
   const sentimentOf=(d,c)=>{const cl=clientFor(d,c);const raw=String(c.sentiment||c.customerSentiment||cl.sentiment||cl.status||'').toLowerCase();if(raw.includes('posit'))return'positive';if(raw.includes('negat'))return'negative';const txt=String(c.summary||c.lastMessage||'').toLowerCase();if(/bedankt|prima|perfect|tevreden|opgelost|geholpen/.test(txt))return'positive';if(/klacht|boos|ontevreden|probleem|fout|slecht/.test(txt))return'negative';return'neutral'};
   let remoteBookings=[],schedules=[],remoteConversations=[],rendering=false;
-  let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'handling';
+  let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'sentiment';
   let chartPeriod=localStorage.getItem('reactify.dashboardChartPeriod')||'month';
   let chartView=localStorage.getItem('reactify.dashboardChartView')||'line';
   let occupancyPeriod=localStorage.getItem('reactify.dashboardOccupancyPeriod')||'month';
-  if(!['handling','completed','channel'].includes(chartMetric))chartMetric='handling';
+  if(!['sentiment','handling','completed','channel'].includes(chartMetric))chartMetric='sentiment';
   if(!['day','week','month'].includes(chartPeriod))chartPeriod='month';
   if(!['line','bar'].includes(chartView))chartView='line';
   if(!['day','week','month','year'].includes(occupancyPeriod))occupancyPeriod='month';
@@ -835,7 +836,7 @@
     const seen=new Set();return cal.filter(a=>a&&a.start&&new Date(a.start).getTime()>=now).filter(a=>{const k=String(a.id||a.start);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>new Date(a.start)-new Date(b.start));
   }
   function hmMinutes(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0}
-  function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null}
+  function activeSchedule(){const ranked=[...schedules].sort((a,b)=>{const ad=new Date(a.updatedAt||a.updated_at||a.createdAt||a.created_at||0).getTime()||Number(a.id)||0;const bd=new Date(b.updatedAt||b.updated_at||b.createdAt||b.created_at||0).getTime()||Number(b.id)||0;return bd-ad});return ranked.find(s=>s.isDefault===true||s.is_default===true)||ranked[0]||null}
   function scheduleRows(schedule){
     const direct=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
     if(direct.length)return direct;
@@ -893,7 +894,7 @@
     });
     const maxRaw=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
     const max=Math.max(4,Math.ceil(maxRaw/4)*4);
-    const heading=chartMetric==='handling'?'AI chat':chartMetric==='completed'?'Afgehandelde gesprekken':'Kanaalvergelijking';
+    const heading=chartMetric==='sentiment'?'Sentiment van gesprekken':chartMetric==='handling'?'AI chat':chartMetric==='completed'?'Afgehandelde gesprekken':'Kanaalvergelijking';
     const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
     document.getElementById('analyticsHeading').textContent=heading;
     document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
