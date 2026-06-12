@@ -43,19 +43,18 @@
 .metric-progress{margin-top:.42rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}.metric-progress-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}.metric-progress-fill.purple{background:var(--purple)}
 .appt-item.past{opacity:.62;background:#FAFAFB}.appt-item.past:hover{opacity:.82}.appt-item.past .appt-title{text-decoration:none;color:var(--gray-600)}.appt-badge.past{background:var(--gray-100);color:var(--gray-500)}
 </style>
-<style id="reactify-requested-agenda-header-fix">
-.main-header{padding-right:3.75rem}
-.header-actions{margin-left:auto;justify-content:flex-end}
+<style id="reactify-agenda-header-fix">
+/* Final agenda header alignment */
+.main-header{padding-right:3.7rem}
+.header-actions{margin-left:auto;margin-right:0;justify-content:flex-end}
 .rf-global-notification{top:1.15rem!important;right:1.25rem!important;display:flex;align-items:center;justify-content:center}
 .rf-global-bell{margin:0!important;transform:none!important}
-@media(max-width:768px){.main-header{padding-right:0}.header-actions{margin-left:0;width:calc(100% - 3.5rem)}.rf-global-notification{top:.85rem!important;right:.85rem!important}}
-</style>
-<style id="reactify-agenda-bell-and-details-fix">
-.rf-global-notification{top:1.05rem!important;right:1.25rem!important;height:38px!important;display:flex!important;align-items:center!important}
-.rf-global-bell{width:38px!important;height:38px!important;border-radius:9px!important;line-height:1!important;padding:0!important;margin:0!important}
-.booking-detail-summary{display:flex;align-items:center;gap:.8rem;padding:0 0 1rem;margin-bottom:.25rem;border-bottom:1px solid var(--gray-100)}.booking-detail-icon{width:42px;height:42px;border-radius:12px;background:var(--purple-bg);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}.booking-detail-summary-title{font-size:1rem;font-weight:850;color:var(--gray-900);line-height:1.35}.booking-detail-summary-sub{font-size:.75rem;color:var(--gray-500);margin-top:.12rem}.booking-detail-list{display:grid;margin-top:.25rem}.booking-detail-row{display:grid;grid-template-columns:130px 1fr;gap:1rem;align-items:start;padding:.72rem 0;border-bottom:1px solid var(--gray-100)}.booking-detail-row:last-child{border-bottom:0}.booking-detail-label{font-size:.72rem;font-weight:750;color:var(--gray-500)}.booking-detail-value{font-size:.82rem;font-weight:650;color:var(--gray-900);word-break:break-word}.booking-detail-actions{display:flex;justify-content:flex-end;gap:.65rem;padding-top:1rem;margin-top:.75rem;border-top:1px solid var(--gray-100)}@media(max-width:600px){.booking-detail-row{grid-template-columns:1fr;gap:.15rem}}
-</style>
-</head>
+@media(max-width:768px){
+  .main-header{padding-right:0}
+  .header-actions{margin-left:0;width:calc(100% - 3.5rem)}
+  .rf-global-notification{top:.85rem!important;right:.85rem!important}
+}
+</style></head>
 <body>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo"><img alt="Reactify" src="/logo.png"/></div>
@@ -184,7 +183,6 @@
     const dayLabels=["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"];
     const colors=["purple","orange","green","blue"];
     let bookings=[], eventTypes=[], schedules=[], viewMode="month", visibleDate=new Date(), selectedDate=new Date();
-    let occupancyPeriod=localStorage.getItem("reactify.agendaOccupancyPeriod")||"month";if(!["day","week","month","year"].includes(occupancyPeriod))occupancyPeriod="month";
     const $=id=>document.getElementById(id);
     const pad=n=>String(n).padStart(2,"0");
     const uid=(p="id")=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
@@ -215,15 +213,19 @@ const NOTIFICATION_KEY="reactify.notifications";
     function badgesForBooking(b){const c=contactForBooking(b);if(!c)return '<span class="contact-type lead">Lead</span>';const cv=latestConvFor(c),st=cv?stateInfo(cv.status):null;return `<span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${escapeHTML(c.type||'Lead')}</span>${st?`<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`:''}`}
 
     async function apiFetch(url, options={}){
-      const res=await fetch(url,{headers:{"Content-Type":"application/json"},...options});
+      const separator=url.includes("?")?"&":"?";
+      const freshUrl=`${url}${separator}_=${Date.now()}`;
+      const res=await fetch(freshUrl,{cache:"no-store",headers:{"Content-Type":"application/json","Cache-Control":"no-cache"},...options});
       const data=await res.json().catch(()=>({status:"error",error:"Kon response niet lezen."}));
       if(!res.ok || data.status==="error") throw new Error(data.error || data.message || (typeof data.details==="string"?data.details:JSON.stringify(data.details||"")) || "API request mislukt.");
       return data;
     }
 
     function getContacts(){
-      if(window.ReactifyStore?.getContacts) return window.ReactifyStore.getContacts();
-      return readJSON(CONTACT_KEY,[]);
+      // De Contactpersonenpagina gebruikt reactify_platform_data_v3 als actuele bron.
+      // Gebruik hier exact dezelfde lijst en nooit meer de verouderde reactify.contacts-cache.
+      const clients=platformData().clients;
+      return clients.filter(c=>c && c.id && String(c.name||c.email||c.phone||"").trim());
     }
     function saveContacts(items){
       if(window.ReactifyStore?.saveContacts) return window.ReactifyStore.saveContacts(items);
@@ -298,7 +300,15 @@ const NOTIFICATION_KEY="reactify.notifications";
       return{s,e,period};
     }
     function hmMinutes(value){const m=String(value||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0;}
-    function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null;}
+    function activeSchedule(){
+      const ranked=[...schedules].sort((a,b)=>{
+        const ad=new Date(a.updatedAt||a.updated_at||a.createdAt||a.created_at||0).getTime()||Number(a.id)||0;
+        const bd=new Date(b.updatedAt||b.updated_at||b.createdAt||b.created_at||0).getTime()||Number(b.id)||0;
+        return bd-ad;
+      });
+      // Neem het recentst gewijzigde standaardschema; als er geen standaard is, het recentste schema.
+      return ranked.find(s=>s.isDefault===true||s.is_default===true)||ranked[0]||null;
+    }
     function scheduleRows(schedule){const direct=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];if(direct.length)return direct;const nested=schedule?.availability||schedule?.availabilities||{};const rows=[];if(nested&&typeof nested==='object'&&!Array.isArray(nested)){for(const [day,blocks] of Object.entries(nested)){for(const b of (Array.isArray(blocks)?blocks:[blocks]))if(b)rows.push({...b,days:b.days||[day]});}}return rows;}
     function scheduleBlocks(){return scheduleRows(activeSchedule()).map(row=>({days:Array.isArray(row.days)?row.days:[row.day||row.weekday].filter(Boolean),start:hmMinutes(row.startTime||row.start||row.start_time),end:hmMinutes(row.endTime||row.end||row.end_time)})).filter(block=>block.days.length&&block.end>block.start);}
     function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const index=date.getDay();return days.some(d=>{if(typeof d==='number')return d===index||d===((index+6)%7);const v=String(d).trim().toLowerCase();return v===names[index].toLowerCase()||v===short[index].toLowerCase()||v===String(index)||v===String((index+6)%7);});}
@@ -336,27 +346,10 @@ const NOTIFICATION_KEY="reactify.notifications";
     function renderAppointments(){
       const r=getRange(); const list=bookings.filter(b=>inRange(b,r.s,r.e)); const el=$("appointmentList");
       if(!list.length){el.innerHTML=`<div class="appt-empty">Geen afspraken in deze ${r.label.toLowerCase()}.</div>`; return;}
-      el.innerHTML=list.map((b,i)=>{const isPast=new Date(b.end||b.start).getTime()<Date.now();return `<div class="appt-item ${colors[i%colors.length]}${isPast?' past':''}" onclick="openBookingDetails('${escapeHTML(String(b.uid||b.id||''))}')"><div class="appt-time"><span>${formatTime(b.start)}</span><span class="appt-day-label">${escapeHTML(relativeDayLabel(b.start))}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${isPast?'past':(b.status==='pending'?'pending':'confirmed')}"><span class="dot"></span>${isPast?'Voorbij':(b.status==='pending'?'In aanvraag':'Bevestigd')}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`}).join("");
+      el.innerHTML=list.map((b,i)=>{const isPast=new Date(b.end||b.start).getTime()<Date.now();return `<div class="appt-item ${colors[i%colors.length]}${isPast?' past':''}" onclick="openBookingDetails('${escapeHTML(b.meetingUrl||'')}')"><div class="appt-time"><span>${formatTime(b.start)}</span><span class="appt-day-label">${escapeHTML(relativeDayLabel(b.start))}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${isPast?'past':(b.status==='pending'?'pending':'confirmed')}"><span class="dot"></span>${isPast?'Voorbij':(b.status==='pending'?'In aanvraag':'Bevestigd')}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`}).join("");
     }
     function cleanLocationLabel(value){const text=String(value||""); if(text.includes("app.cal.com/video")) return "Cal.com video"; if(text.includes("zoom.us")) return "Zoom meeting"; return text;}
-    function bookingMeetingUrl(b){
-      return b?.meetingUrl || b?.meeting_url || b?.videoCallUrl || b?.video_call_url || b?.metadata?.videoCallUrl || (typeof b?.location==='string' && /^https?:\/\//i.test(b.location) ? b.location : "") || "";
-    }
-    function ensureBookingDetailsModal(){
-      let backdrop=$("bookingDetailsModal"); if(backdrop) return backdrop;
-      backdrop=document.createElement("div");backdrop.id="bookingDetailsModal";backdrop.className="modal-backdrop";
-      backdrop.innerHTML=`<div class="modal" style="width:min(620px,100%)"><div class="modal-header"><div class="modal-title">Afspraakdetails</div><button class="modal-close" type="button" aria-label="Sluiten">×</button></div><div class="modal-body" id="bookingDetailsBody"></div></div>`;
-      document.body.appendChild(backdrop);backdrop.querySelector('.modal-close').onclick=()=>backdrop.classList.remove('open');backdrop.onclick=e=>{if(e.target===backdrop)backdrop.classList.remove('open')};return backdrop;
-    }
-    function openBookingDetails(id){
-      const b=bookings.find(x=>String(x.uid||x.id||'')===String(id));if(!b)return;
-      const start=new Date(b.start),end=new Date(b.end||b.start);const duration=Math.max(0,Math.round((end-start)/60000))||Number(b.duration||b.lengthInMinutes||0)||30;
-      const url=bookingMeetingUrl(b);const modal=ensureBookingDetailsModal();const body=$("bookingDetailsBody");
-      const row=(label,value)=>`<div class="booking-detail-row"><span class="booking-detail-label">${escapeHTML(label)}</span><div class="booking-detail-value">${escapeHTML(value||'Niet beschikbaar')}</div></div>`;
-      const status=String(b.status||'accepted')==='pending'?'In aanvraag':'Bevestigd';
-      body.innerHTML=`<div class="booking-detail-summary"><div class="booking-detail-icon">📅</div><div><div class="booking-detail-summary-title">${escapeHTML(b.title||'Afspraak')}</div><div class="booking-detail-summary-sub">Alleen-lezen overzicht uit je agenda</div></div></div><div class="booking-detail-list">${row('Contactpersoon',b.customer||b.name)}${row('Status',status)}${row('Datum',formatDate(b.start))}${row('Tijd',`${formatTime(b.start)} – ${formatTime(b.end||new Date(start.getTime()+duration*60000))}`)}${row('Duur',`${duration} minuten`)}${row('Afspraaktype',b.type||b.source||'Agenda')}${row('Locatie',cleanLocationLabel(b.location||''))}${b.email?row('E-mail',b.email):''}${b.phone?row('Telefoon',b.phone):''}</div><div class="booking-detail-actions"><button class="btn-secondary" type="button" id="bookingDetailsClose">Sluiten</button>${url?`<a class="btn-primary" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Meeting openen</a>`:''}</div>`;
-      $("bookingDetailsClose").onclick=()=>modal.classList.remove('open');modal.classList.add('open');
-    }
+    function openBookingDetails(url){ if(url) window.open(url,"_blank","noopener,noreferrer"); }
     async function deleteBooking(uidValue){
       if(!uidValue) return alert("Geen booking id gevonden."); if(!confirm("Wil je deze afspraak verwijderen? In Cal.com wordt dit als annuleren uitgevoerd.")) return;
       try{setSync("laden","Afspraak verwijderen..."); await apiFetch(API.cancelBooking,{method:"POST",body:JSON.stringify({ uid:uidValue, cancellationReason:"Verwijderd via Reactify agenda" })}); bookings=bookings.filter(b=>String(b.uid||b.id)!==String(uidValue)); renderAll(); setSync("ok","Afspraak verwijderd."); await loadAll();}
