@@ -68,6 +68,29 @@ exports.handler = async function (event) {
       });
     }
 
+
+    if (event.httpMethod === "PATCH") {
+      const body = parseBody(event);
+      if (!body) return json(400, { status: "error", error: "Ongeldige JSON body." });
+      const id = body.id || body.scheduleId || body.schedule_id || event.queryStringParameters?.id;
+      if (!id) return json(400, { status: "error", error: "Beschikbaarheidsschema ontbreekt." });
+      const availability = Array.isArray(body.availability) ? body.availability : undefined;
+      const payload = clean({
+        name: body.name,
+        timeZone: body.timeZone || body.time_zone,
+        isDefault: typeof body.isDefault === "boolean" ? body.isDefault : undefined,
+        availability,
+        overrides: Array.isArray(body.overrides) ? body.overrides : undefined,
+      });
+      const response = await calRequest(`/schedules/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        body: payload,
+        version: "2024-06-11",
+        auth: true,
+      });
+      return json(response.status, response.data);
+    }
+
     if (event.httpMethod === "POST") {
       const body = parseBody(event);
       if (!body) return json(400, { status: "error", error: "Ongeldige JSON body." });
