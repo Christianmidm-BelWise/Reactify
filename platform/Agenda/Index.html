@@ -102,7 +102,30 @@
     </section>
   </main>
 
-  <div class="modal-backdrop" id="bookingDetailsModal" aria-hidden="true"><div class="modal"><div class="modal-header"><div class="modal-title" id="bookingDetailsTitle">Afspraak</div><button class="modal-close" type="button" onclick="closeModal('bookingDetailsModal')">×</button></div><div class="modal-body" id="bookingDetailsBody"></div><div class="modal-actions"><button class="btn-secondary" type="button" onclick="closeModal('bookingDetailsModal')">Sluiten</button><a class="btn-primary" id="bookingMeetingLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Open meeting</a></div></div></div>
+  <div class="modal-backdrop" id="bookingDetailsModal" aria-hidden="true"><div class="modal"><div class="modal-header"><div class="modal-title" id="bookingDetailsTitle">Afspraak</div><button class="modal-close" type="button" onclick="closeModal('bookingDetailsModal')">×</button></div><div class="modal-body" id="bookingDetailsBody"></div><div class="modal-actions"><button class="btn-secondary" type="button" onclick="closeModal('bookingDetailsModal')">Sluiten</button><button class="btn-secondary" type="button" id="editBookingBtn" onclick="openBookingEditModal()">Afspraak aanpassen</button><a class="btn-primary" id="bookingMeetingLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Open meeting</a></div></div></div>
+
+  <div class="modal-backdrop" id="bookingEditModal" aria-hidden="true">
+    <div class="modal wide"><div class="modal-header"><div class="modal-title">Afspraak aanpassen</div><button class="modal-close" type="button" onclick="closeModal('bookingEditModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert info show">Deze wijziging wordt in Reactify opgeslagen en blijft zichtbaar op de agenda. Cal.com blijft de bron voor de originele afspraak.</div>
+        <div class="alert" id="bookingEditAlert"></div>
+        <form id="bookingEditForm" class="form-grid">
+          <input id="editBookingKey" type="hidden" />
+          <div class="form-field"><label>Titel</label><input id="editBookingTitle" type="text" required /></div>
+          <div class="form-field"><label>Status</label><select id="editBookingStatus"><option value="accepted">Bevestigd</option><option value="pending">In aanvraag</option></select></div>
+          <div class="form-field"><label>Startdatum en tijd</label><input id="editBookingStart" type="datetime-local" required /></div>
+          <div class="form-field"><label>Einddatum en tijd</label><input id="editBookingEnd" type="datetime-local" required /></div>
+          <div class="form-field"><label>Klantnaam</label><input id="editBookingCustomer" type="text" /></div>
+          <div class="form-field"><label>E-mail klant</label><input id="editBookingEmail" type="email" /></div>
+          <div class="form-field"><label>Telefoon klant</label><input id="editBookingPhone" type="tel" /></div>
+          <div class="form-field"><label>Meetinglink</label><input id="editBookingMeetingUrl" type="url" placeholder="https://..." /></div>
+          <div class="form-field full"><label>Locatie</label><input id="editBookingLocation" type="text" placeholder="Bijv. Cal.com video, Zoom-link, telefoon of adres" /></div>
+          <div class="form-field full"><label>Opmerking</label><textarea id="editBookingNotes" rows="3" placeholder="Interne notitie of context bij deze afspraak"></textarea></div>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="resetBookingEdit()">Origineel herstellen</button><button class="btn-secondary" type="button" onclick="closeModal('bookingEditModal')">Annuleren</button><button class="btn-primary" type="submit">Wijzigingen opslaan</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="bookingModal" aria-hidden="true">
     <div class="modal wide"><div class="modal-header"><div class="modal-title">Nieuwe afspraak maken</div><button class="modal-close" type="button" onclick="closeModal('bookingModal')">×</button></div>
@@ -175,6 +198,7 @@
     const CAL_USERNAME = "christian-damian-62o7zs";
     const CONTACT_KEY = "reactify.contacts";
     const LOCAL_APPT_KEY = "reactify.localAppointments";
+    const BOOKING_EDIT_KEY = "reactify.bookingEdits";
     const OCCUPANCY_SCHEDULE_KEY = "reactify.occupancySchedule";
     const PLATFORM_KEY = "reactify_platform_data_v3";
     const monthNames=["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"];
@@ -205,6 +229,15 @@ const NOTIFICATION_KEY="reactify.notifications";
     const initials=name=>String(name||"Klant").split(" ").filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"KL";
     const normalizeEmail=e=>String(e||"").trim().toLowerCase();
     const normalizePhone=v=>{let s=String(v||'').trim().replace(/[^0-9+]/g,'');if(!s)return '';if(s.startsWith('00'))s='+'+s.slice(2);let d=s.replace(/\D/g,'');if(d.startsWith('32'))return '+32'+d.slice(2);if(d.startsWith('0'))return '+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return '+32'+d;return s.startsWith('+')?'+'+d:d};
+    function bookingKey(b){return String(b?.uid||b?.id||b?.raw?.uid||b?.raw?.id||`${b?.start?new Date(b.start).toISOString():''}_${normalizeEmail(b?.email||'')}_${normalizePhone(b?.phone||'')}`);}
+    function bookingEdits(){return readJSON(BOOKING_EDIT_KEY,{});}
+    function saveBookingEdits(items){writeJSON(BOOKING_EDIT_KEY,items||{});}
+    function applyBookingEdit(b){const key=bookingKey(b);const edit=bookingEdits()[key];if(!edit)return b;const start=edit.start?new Date(edit.start):b.start;let end=edit.end?new Date(edit.end):b.end;if(!end||Number.isNaN(new Date(end).getTime()))end=new Date(new Date(start).getTime()+((Number(b.duration)||30)*60000));return{...b,...edit,start,end,edited:true,editKey:key};}
+    function applyBookingEdits(list){return list.map(applyBookingEdit).sort((a,b)=>a.start-b.start);}
+    function findBookingByKey(key){return bookings.find(b=>bookingKey(b)===String(key));}
+    function bookingNotes(b){return b?.notes||b?.raw?.bookingFieldsResponses?.notes||b?.raw?.responses?.notes||b?.raw?.metadata?.notes||'';}
+    function upsertBookingEdit(b,data){const key=bookingKey(b);const edits=bookingEdits();edits[key]={...(edits[key]||{}),...data,updatedAt:new Date().toISOString()};saveBookingEdits(edits);return key;}
+    function removeBookingEditByKey(key){const edits=bookingEdits();delete edits[String(key)];saveBookingEdits(edits);}
     function platformData(){try{const d=JSON.parse(localStorage.getItem(PLATFORM_KEY)||'{}');return{...d,clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[],settings:d.settings||{}}}catch{return{clients:[],conversations:[],appointments:[],settings:{}}}}
     function savePlatformData(data){localStorage.setItem(PLATFORM_KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('reactify:data',{detail:data}));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:PLATFORM_KEY}}));}
     function contactForBooking(b){const d=platformData();const phone=normalizePhone(b.phone||''),email=normalizeEmail(b.email||''),name=String(b.customer||'').trim().toLowerCase();return d.clients.find(c=>(b.contactId&&c.id===b.contactId)||(phone&&normalizePhone(c.phone)===phone)||(email&&normalizeEmail(c.email)===email)||(name&&String(c.name||'').trim().toLowerCase()===name))||null}
@@ -240,7 +273,7 @@ const NOTIFICATION_KEY="reactify.notifications";
 
     function normalizeBookings(payload){
       const raw=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:(payload?.data?[payload.data]:payload?.uid?[payload]:[]);
-      return raw.filter(b=>["accepted","pending"].includes(b.status||"accepted")).map((b,i)=>{
+      return applyBookingEdits(raw.filter(b=>["accepted","pending"].includes(b.status||"accepted")).map((b,i)=>{
         const attendee=Array.isArray(b.attendees)?b.attendees[0]:(b.attendee||{});
         const name=attendee?.name || b.bookingFieldsResponses?.name || b.responses?.name || "Klant";
         const email=attendee?.email || b.bookingFieldsResponses?.email || b.responses?.email || "";
@@ -252,7 +285,7 @@ const NOTIFICATION_KEY="reactify.notifications";
           start:new Date(b.start), end:new Date(b.end || b.start), status:b.status||"accepted", meetingUrl:b.meetingUrl || b.location || "https://app.cal.com/bookings",
           location:b.bookingFieldsResponses?.location || b.responses?.location || b.metadata?.locationLabel || b.location || b.meetingUrl || "", type:b.eventType?.title || b.eventType?.slug || "Cal.com", duration:b.duration || b.lengthInMinutes || 0, raw:b, source:"Cal.com"
         }
-      }).sort((a,b)=>a.start-b.start);
+      }));
     }
 
     function normalizeLocalAppointments(){ return []; }
@@ -363,12 +396,45 @@ const NOTIFICATION_KEY="reactify.notifications";
       el.innerHTML=list.map((b,i)=>`<div class="appt-item ${colors[i%colors.length]}" onclick="openBookingDetails(${i})"><div class="appt-time">${formatTime(b.start)}<span class="appt-day-label">${formatDate(b.start)}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${b.status==='pending'?'pending':'confirmed'}"><span class="dot"></span>${b.status==='pending'?'In aanvraag':'Bevestigd'}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`).join("");
     }
     function cleanLocationLabel(value){const text=String(value||""); if(text.includes("app.cal.com/video")) return "Cal.com video"; if(text.includes("zoom.us")) return "Zoom meeting"; return text;}
-    function openBookingDetails(index){const r=getRange();const list=bookings.filter(b=>inRange(b,r.s,r.e));const b=list[index];if(!b)return;const modal=$("bookingDetailsModal");$("bookingDetailsTitle").textContent=b.title||"Afspraak";$("bookingDetailsBody").innerHTML=`<div class="detail-grid"><div><span>Klant</span><strong>${escapeHTML(b.customer||"Onbekend")}</strong></div><div><span>Datum</span><strong>${escapeHTML(formatDate(b.start))}</strong></div><div><span>Tijd</span><strong>${escapeHTML(formatTime(b.start))}${b.end?` – ${escapeHTML(formatTime(b.end))}`:""}</strong></div><div><span>Status</span><strong>${b.status==="pending"?"In aanvraag":"Bevestigd"}</strong></div><div class="full"><span>Locatie</span><strong>${escapeHTML(cleanLocationLabel(b.location||"Niet opgegeven"))}</strong></div>${b.email?`<div class="full"><span>E-mail</span><strong>${escapeHTML(b.email)}</strong></div>`:""}${b.phone?`<div class="full"><span>Telefoon</span><strong>${escapeHTML(b.phone)}</strong></div>`:""}</div>`;const link=$("bookingMeetingLink");const url=b.meetingUrl||b.location||"";link.style.display=/^https?:\/\//i.test(url)?"inline-flex":"none";link.href=/^https?:\/\//i.test(url)?url:"#";modal.classList.add("open");modal.setAttribute("aria-hidden","false");}
+    function openBookingDetails(index){const r=getRange();const list=bookings.filter(b=>inRange(b,r.s,r.e));const b=list[index];if(!b)return;window.__currentBookingKey=bookingKey(b);const modal=$("bookingDetailsModal");$("bookingDetailsTitle").textContent=b.title||"Afspraak";$("bookingDetailsBody").innerHTML=`<div class="detail-grid"><div><span>Klant</span><strong>${escapeHTML(b.customer||"Onbekend")}</strong></div><div><span>Datum</span><strong>${escapeHTML(formatDate(b.start))}</strong></div><div><span>Tijd</span><strong>${escapeHTML(formatTime(b.start))}${b.end?` – ${escapeHTML(formatTime(b.end))}`:""}</strong></div><div><span>Status</span><strong>${b.status==="pending"?"In aanvraag":"Bevestigd"}</strong></div><div class="full"><span>Locatie</span><strong>${escapeHTML(cleanLocationLabel(b.location||"Niet opgegeven"))}</strong></div>${b.meetingUrl?`<div class="full"><span>Meetinglink</span><strong>${escapeHTML(b.meetingUrl)}</strong></div>`:""}${b.email?`<div class="full"><span>E-mail</span><strong>${escapeHTML(b.email)}</strong></div>`:""}${b.phone?`<div class="full"><span>Telefoon</span><strong>${escapeHTML(b.phone)}</strong></div>`:""}${bookingNotes(b)?`<div class="full"><span>Opmerking</span><strong>${escapeHTML(bookingNotes(b))}</strong></div>`:""}${b.edited?`<div class="full"><span>Reactify aanpassing</span><strong>Deze afspraak werd aangepast in Reactify.</strong></div>`:""}</div>`;const link=$("bookingMeetingLink");const url=b.meetingUrl||b.location||"";link.style.display=/^https?:\/\//i.test(url)?"inline-flex":"none";link.href=/^https?:\/\//i.test(url)?url:"#";modal.classList.add("open");modal.setAttribute("aria-hidden","false");}
     async function deleteBooking(uidValue){
       if(!uidValue) return alert("Geen booking id gevonden."); if(!confirm("Wil je deze afspraak verwijderen? In Cal.com wordt dit als annuleren uitgevoerd.")) return;
       try{setSync("laden","Afspraak verwijderen..."); await apiFetch(API.cancelBooking,{method:"POST",body:JSON.stringify({ uid:uidValue, cancellationReason:"Verwijderd via Reactify agenda" })}); bookings=bookings.filter(b=>String(b.uid||b.id)!==String(uidValue)); renderAll(); setSync("ok","Afspraak verwijderd."); await loadAll();}
       catch(error){console.error(error); setSync("error",error.message||"Afspraak verwijderen mislukt."); alert(error.message||"Afspraak verwijderen mislukt.");}
     }
+    function openBookingEditModal(){
+      const key=window.__currentBookingKey; const b=findBookingByKey(key); if(!b){alert("Geen afspraak geselecteerd.");return;}
+      $("editBookingKey").value=key;
+      $("editBookingTitle").value=b.title||"Afspraak";
+      $("editBookingStatus").value=b.status==="pending"?"pending":"accepted";
+      $("editBookingStart").value=toLocalInputValue(new Date(b.start));
+      const end=new Date(b.end||new Date(new Date(b.start).getTime()+((Number(b.duration)||30)*60000)));
+      $("editBookingEnd").value=toLocalInputValue(end);
+      $("editBookingCustomer").value=b.customer||"";
+      $("editBookingEmail").value=b.email||"";
+      $("editBookingPhone").value=b.phone||"";
+      $("editBookingLocation").value=cleanLocationLabel(b.location||"");
+      $("editBookingMeetingUrl").value=/^https?:\/\//i.test(b.meetingUrl||"")?b.meetingUrl:"";
+      $("editBookingNotes").value=bookingNotes(b);
+      closeModal("bookingDetailsModal");
+      openModal("bookingEditModal");
+    }
+    function refreshEditedBooking(key){bookings=applyBookingEdits(bookings.map(b=>({...b})));const b=findBookingByKey(key);if(b){selectedDate=new Date(b.start);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);}renderAll();}
+    function resetBookingEdit(){
+      const key=$("editBookingKey").value; if(!key)return;
+      removeBookingEditByKey(key);
+      showAlert("bookingEditAlert","ok","Lokale aanpassing verwijderd. Originele Cal.com gegevens worden opnieuw geladen...");
+      loadAll().then(()=>setTimeout(()=>closeModal("bookingEditModal"),600));
+    }
+    $("bookingEditForm").addEventListener("submit",e=>{e.preventDefault();
+      const key=$("editBookingKey").value; const b=findBookingByKey(key); if(!b){showAlert("bookingEditAlert","error","Afspraak niet gevonden.");return;}
+      const start=new Date($("editBookingStart").value); const end=new Date($("editBookingEnd").value);
+      if(!$("editBookingStart").value || !$("editBookingEnd").value || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())){showAlert("bookingEditAlert","error","Vul een geldige start- en eindtijd in.");return;}
+      if(end<=start){showAlert("bookingEditAlert","error","De eindtijd moet na de starttijd liggen.");return;}
+      const data={title:$("editBookingTitle").value.trim()||"Afspraak",status:$("editBookingStatus").value,customer:$("editBookingCustomer").value.trim()||"Klant",email:normalizeEmail($("editBookingEmail").value),phone:normalizePhone($("editBookingPhone").value),location:$("editBookingLocation").value.trim(),meetingUrl:$("editBookingMeetingUrl").value.trim(),notes:$("editBookingNotes").value.trim(),start:start.toISOString(),end:end.toISOString(),duration:Math.round((end-start)/60000)};
+      upsertBookingEdit(b,data); refreshEditedBooking(key); showAlert("bookingEditAlert","ok","Wijzigingen opgeslagen in Reactify."); setTimeout(()=>closeModal("bookingEditModal"),750);
+    });
+    window.openBookingEditModal=openBookingEditModal; window.resetBookingEdit=resetBookingEdit;
     window.deleteBooking=deleteBooking; window.openBookingDetails=openBookingDetails;
 
     function fillContactSelect(){
