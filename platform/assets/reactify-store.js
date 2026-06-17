@@ -146,6 +146,7 @@
       <a href="/platform/klantenlijst/" class="sidebar-link ${active==='clients'?'active':''}">👥 Klanten</a>
       <a href="/platform/inbox/" class="sidebar-link ${active==='inbox'?'active':''}">💬 Inbox</a>
       <a href="/platform/agenda/" class="sidebar-link ${active==='agenda'?'active':''}">📅 Agenda</a>
+      <a href="/platform/todo/" class="sidebar-link ${active==='todo'?'active':''}">✅ To-do lists</a>
       <div class="sidebar-spacer"></div><a href="#" class="sidebar-link">⚙️ Instellingen</a><a href="#" class="sidebar-link">❔ Help</a></nav>
       <div class="sidebar-user"><div class="user-avatar">BD</div><div><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div></aside>`;
   }
