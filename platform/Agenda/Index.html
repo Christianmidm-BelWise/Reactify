@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Reactify Platform - Agenda, afspraken, beschikbaarheid en afspraaktypes via Cal.com." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>Agenda | Reactify</title>
+  <style>
+    :root{--purple-dark:#3D1D72;--purple:#5B2E91;--purple-light:#E8DCF5;--purple-bg:#F5F0FA;--orange:#F5A623;--orange-dark:#E0941A;--orange-light:#FFF3DC;--white:#fff;--gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-300:#D1D5DB;--gray-400:#9CA3AF;--gray-500:#6B7280;--gray-600:#4B5563;--gray-700:#374151;--gray-800:#1F2937;--gray-900:#111827;--green:#16A34A;--green-light:#DCFCE7;--blue:#2563EB;--blue-light:#DBEAFE;--red:#DC2626;--red-light:#FEE2E2;--shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 10px 30px rgba(17,24,39,.12);--font-sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+    *{box-sizing:border-box;margin:0;padding:0}body{font-family:var(--font-sans);color:var(--gray-800);line-height:1.6;background:var(--gray-50);display:flex;-webkit-font-smoothing:antialiased}button,input,select,textarea{font:inherit}.sidebar{width:240px;background:var(--purple-dark);color:#fff;display:flex;flex-direction:column;min-height:100vh;position:fixed;inset:0 auto 0 0;z-index:100}.sidebar-logo{min-height:76px;padding:1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center}.sidebar-logo img{height:28px;filter:brightness(1.8)}.sidebar-nav{flex:1;padding:1rem 0;display:flex;flex-direction:column;gap:.25rem}.sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;color:rgba(255,255,255,.7);text-decoration:none;font-size:.9rem;font-weight:500;border-radius:0 8px 8px 0;margin-right:.75rem;transition:.2s}.sidebar-link:hover,.sidebar-link.active{color:#fff;background:rgba(255,255,255,.1)}.sidebar-link.active{background:var(--purple)}.sidebar-link svg{width:20px;height:20px}.sidebar-spacer{flex:1}.sidebar-user{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}.user-name{font-weight:700;font-size:.9rem}.user-role{font-size:.75rem;color:rgba(255,255,255,.55)}.main{flex:1;margin-left:240px;padding:2rem;min-height:100vh}.mobile-sidebar-toggle{display:none;align-items:center;gap:.5rem;padding:.5rem .75rem;background:var(--purple);color:#fff;border:none;border-radius:8px;font-weight:700;margin-bottom:1rem}.main-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.35rem;flex-wrap:wrap}.page-header h1{font-size:1.55rem;font-weight:800;color:var(--gray-900)}.page-header p{font-size:.875rem;color:var(--gray-500)}.header-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-left:auto;margin-right:58px}.btn-secondary,.btn-primary,.btn-danger{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.55rem 1rem;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:none;transition:.2s;min-height:38px;border:none}.btn-secondary{border:1px solid var(--gray-200);color:var(--gray-700);background:#fff}.btn-secondary:hover{border-color:var(--gray-300);background:var(--gray-50);transform:translateY(-1px)}.btn-primary{color:#fff;background:var(--purple);box-shadow:0 6px 14px rgba(91,46,145,.2)}.btn-primary:hover{background:var(--purple-dark);transform:translateY(-1px)}.btn-danger{color:var(--red);background:var(--red-light)}.btn-green{color:#fff;background:var(--green);box-shadow:0 6px 14px rgba(22,163,74,.18)}.btn-green:hover{background:#15803d;transform:translateY(-1px)}.btn-secondary svg,.btn-primary svg{width:16px;height:16px}.status-bar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;padding:.85rem 1rem;border-radius:12px;background:#fff;box-shadow:var(--shadow-sm);font-size:.82rem;color:var(--gray-600)}.status-dot{width:9px;height:9px;border-radius:50%;background:var(--orange)}.status-dot.ok{background:var(--green)}.status-dot.error{background:var(--red)}.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:1.5rem}.stat-card{background:#fff;border-radius:12px;padding:1.25rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow-sm);min-height:92px}.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.stat-icon.purple{background:var(--purple-light);color:var(--purple)}.stat-icon.orange{background:var(--orange-light);color:var(--orange-dark)}.stat-icon.green{background:var(--green-light);color:var(--green)}.stat-icon.blue{background:var(--blue-light);color:var(--blue)}.stat-label{font-size:.75rem;color:var(--gray-600);font-weight:600}.stat-value{font-size:1.5rem;font-weight:800;color:var(--gray-900)}.stat-trend{font-size:.7rem;font-weight:700;color:var(--gray-400)}.agenda-layout{display:grid;grid-template-columns:1.45fr 1fr;gap:1.25rem;align-items:start}.panel{background:#fff;border-radius:12px;box-shadow:var(--shadow-sm);overflow:hidden}.panel-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.25rem 1rem;gap:1rem;flex-wrap:wrap}.panel-header h2{font-size:1.05rem;font-weight:800;color:var(--gray-900)}.cal-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}.cal-today,.cal-nav,.view-btn{border:1px solid var(--gray-200);background:#fff;color:var(--gray-700);cursor:pointer;transition:.2s}.cal-today{padding:.375rem .75rem;border-radius:8px;font-size:.75rem;font-weight:700}.cal-nav{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px}.cal-nav svg{width:16px;height:16px}.view-switch{display:inline-flex;border:1px solid var(--gray-200);border-radius:9px;overflow:hidden;background:#fff}.view-btn{border:0;border-right:1px solid var(--gray-200);padding:.42rem .72rem;font-size:.75rem;font-weight:800}.view-btn:last-child{border-right:0}.view-btn.active{background:var(--purple);color:#fff}.calendar{padding:0 1.25rem 1.25rem}.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem;margin-bottom:.5rem}.cal-weekday{text-align:center;font-size:.7rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;padding:.375rem 0}.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem}.cal-day{position:relative;min-height:54px;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.12rem;font-size:.8rem;font-weight:600;color:var(--gray-700);border-radius:8px;cursor:pointer;transition:.15s;border:1px solid transparent;background:#fff}.cal-day:hover{background:var(--purple-bg)}.cal-day.muted{color:var(--gray-300);cursor:default}.cal-day.muted:hover{background:transparent}.cal-day.selected{background:var(--purple);color:#fff;font-weight:800}.cal-day.today{border-color:var(--purple);color:var(--purple);font-weight:800}.cal-day.today.selected{color:#fff}.cal-marker{width:5px;height:5px;border-radius:50%;background:var(--orange);display:block}.cal-day.selected .cal-marker{background:#fff}.cal-count{font-size:.62rem;line-height:1;color:var(--orange-dark);font-weight:900}.cal-day.selected .cal-count{color:#fff}.week-view,.day-view{display:grid;gap:.75rem}.week-view{grid-template-columns:repeat(7,1fr)}.week-day-card,.day-detail-card{border:1px solid var(--gray-100);background:var(--gray-50);border-radius:12px;padding:.85rem;min-height:150px;cursor:pointer;transition:.15s}.week-day-card:hover,.week-day-card.selected{border-color:var(--purple);background:var(--purple-bg)}.week-day-name{font-size:.72rem;color:var(--gray-500);font-weight:800;text-transform:uppercase}.week-day-number{font-size:1.25rem;color:var(--gray-900);font-weight:900}.week-appt-pill{margin-top:.5rem;padding:.35rem .45rem;border-radius:8px;background:#fff;font-size:.68rem;color:var(--gray-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid var(--purple)}.day-detail-card{cursor:default;min-height:260px}.day-detail-title{font-size:1rem;font-weight:900;color:var(--gray-900);margin-bottom:.25rem}.day-detail-sub{font-size:.82rem;color:var(--gray-500);margin-bottom:1rem}.appt-list{padding:.25rem 0 .5rem}.appt-empty{padding:2rem 1.25rem;text-align:center;color:var(--gray-500);font-size:.85rem}.appt-item{display:flex;align-items:flex-start;gap:.875rem;padding:.875rem 1.25rem;border-left:3px solid transparent;transition:.15s;cursor:pointer}.appt-item:hover{background:var(--gray-50)}.appt-item.purple{border-left-color:var(--purple)}.appt-item.orange{border-left-color:var(--orange)}.appt-item.green{border-left-color:var(--green)}.appt-item.blue{border-left-color:var(--blue)}.appt-time{font-size:.8rem;font-weight:800;color:var(--gray-900);width:52px;flex-shrink:0}.appt-body{flex:1;min-width:0}.appt-title{font-weight:700;font-size:.875rem;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.appt-sub{font-size:.78rem;color:var(--gray-500)}.appt-badge{display:inline-flex;align-items:center;gap:.375rem;padding:.2rem .55rem;border-radius:9999px;font-size:.7rem;font-weight:800;white-space:nowrap;align-self:center}.appt-badge .dot{width:6px;height:6px;border-radius:50%}.appt-badge.confirmed{background:var(--green-light);color:var(--green)}.appt-badge.pending{background:var(--orange-light);color:var(--orange-dark)}.appt-badge .dot{background:currentColor}.appt-actions{display:flex;gap:.35rem;align-items:center}.appt-delete{border:0;background:var(--red-light);color:var(--red);border-radius:8px;padding:.32rem .5rem;font-size:.7rem;font-weight:900;cursor:pointer}.appt-delete:hover{filter:brightness(.96)}.appt-location{font-size:.72rem;color:var(--gray-500);margin-top:.15rem}.panel-footer{padding:.875rem 1.25rem;border-top:1px solid var(--gray-100);text-align:center}.panel-footer a{font-size:.8rem;font-weight:700;color:var(--purple);text-decoration:none}.quick-card{padding:1.25rem;border-top:1px solid var(--gray-100)}.quick-card h3{font-size:.9rem;color:var(--gray-900);margin-bottom:.35rem}.quick-card p{font-size:.8rem;color:var(--gray-500);margin-bottom:.85rem}.quick-grid{display:grid;grid-template-columns:1fr;gap:.5rem}.modal-backdrop{position:fixed;inset:0;background:rgba(17,24,39,.62);display:none;align-items:center;justify-content:center;padding:1.25rem;z-index:500}.modal-backdrop.open{display:flex}.modal{width:min(760px,100%);max-height:92vh;background:#fff;border-radius:16px;box-shadow:var(--shadow-md);overflow:hidden;display:flex;flex-direction:column}.modal.wide{width:min(980px,100%)}.modal-header{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.875rem 1rem;border-bottom:1px solid var(--gray-100)}.modal-title{font-size:.98rem;font-weight:900;color:var(--gray-900)}.modal-close{width:34px;height:34px;border:1px solid var(--gray-200);background:#fff;border-radius:8px;color:var(--gray-700);cursor:pointer}.modal-body{padding:1rem;overflow:auto}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.form-field{display:flex;flex-direction:column;gap:.35rem}.form-field.full{grid-column:1/-1}.form-field label{font-size:.78rem;font-weight:800;color:var(--gray-700)}.form-field input,.form-field select,.form-field textarea{width:100%;border:1px solid var(--gray-200);border-radius:9px;padding:.65rem .75rem;color:var(--gray-800);background:#fff;outline:none}.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.12)}.form-help{font-size:.72rem;color:var(--gray-500)}.checkbox-row{display:flex;align-items:center;gap:.55rem;font-size:.82rem;color:var(--gray-700);font-weight:600}.day-checks{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}.day-check{display:flex;align-items:center;gap:.45rem;padding:.55rem;border:1px solid var(--gray-200);border-radius:9px;font-size:.78rem;font-weight:700;color:var(--gray-700)}.modal-actions{display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100)}.alert{padding:.75rem .9rem;border-radius:10px;font-size:.82rem;margin-bottom:1rem;display:none}.alert.show{display:block}.alert.ok{background:var(--green-light);color:var(--green)}.alert.error{background:var(--red-light);color:var(--red)}.alert.info{background:var(--purple-bg);color:var(--purple)}.type-list{display:grid;gap:.5rem;margin-top:1rem}.type-item{padding:.75rem;border:1px solid var(--gray-100);border-radius:10px;background:var(--gray-50);display:flex;justify-content:space-between;gap:1rem}.type-title{font-size:.84rem;font-weight:800;color:var(--gray-900)}.type-sub{font-size:.74rem;color:var(--gray-500)}
+    @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.agenda-layout{grid-template-columns:1fr}.week-view{grid-template-columns:repeat(2,1fr)}}@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:.3s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:1rem}.mobile-sidebar-toggle{display:inline-flex}.header-actions{width:100%}.btn-secondary,.btn-primary{flex:1}.form-grid{grid-template-columns:1fr}.day-checks{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.stats-grid{grid-template-columns:1fr}.week-view{grid-template-columns:1fr}.appt-badge{display:none}}
+  
+
+/* Reactify global meldingen + sidebar badges */
+.rf-sidebar-badge{margin-left:auto;min-width:18px;height:18px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
+.sidebar-link.has-rf-badge .rf-sidebar-badge{display:inline-flex}.sidebar-link.has-rf-badge{position:relative}.sidebar-link.has-rf-badge svg{flex-shrink:0}
+.rf-global-notification{position:fixed;right:1.35rem;top:1.25rem;z-index:1800}.rf-global-bell{width:40px;height:40px;border:1px solid var(--gray-200,#E5E7EB);border-radius:12px;background:#fff;color:var(--gray-700,#374151);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 22px rgba(17,24,39,.10);position:relative}.rf-global-bell:hover{border-color:var(--purple,#5B2E91);color:var(--purple,#5B2E91)}.rf-global-count{position:absolute;right:-7px;top:-7px;min-width:19px;height:19px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;padding:0 .35rem}.rf-global-bell.has-items .rf-global-count{display:inline-flex}.rf-global-panel{position:absolute;right:0;top:48px;width:min(390px,92vw);max-height:72vh;overflow:auto;background:#fff;border:1px solid var(--gray-200,#E5E7EB);border-radius:16px;box-shadow:0 22px 70px rgba(17,24,39,.18);display:none}.rf-global-panel.open{display:block}.rf-global-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem 1.05rem;border-bottom:1px solid var(--gray-100,#F3F4F6)}.rf-global-head strong{font-size:.95rem;color:var(--gray-900,#111827)}.rf-global-head button{border:1px solid var(--gray-200,#E5E7EB);background:#fff;border-radius:8px;padding:.35rem .55rem;font-size:.72rem;font-weight:800;color:var(--gray-700,#374151);cursor:pointer}.rf-global-list{display:grid;gap:.4rem;padding:.7rem}.rf-global-item{border:0;text-align:left;width:100%;padding:.78rem;border-radius:12px;background:var(--gray-50,#F9FAFB);border-left:3px solid var(--purple,#5B2E91);cursor:pointer}.rf-global-item.unread{background:var(--orange-light,#FFF3DC);border-left-color:var(--orange,#F5A623)}.rf-global-title{font-size:.82rem;font-weight:900;color:var(--gray-900,#111827);margin-bottom:.2rem}.rf-global-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.45}.rf-global-meta{font-size:.68rem;color:var(--gray-500,#6B7280);margin-top:.28rem}.rf-global-empty{padding:1.25rem;color:var(--gray-500,#6B7280);font-size:.82rem;text-align:center}
+@media(max-width:768px){.rf-global-notification{right:.8rem;top:.8rem}.rf-global-panel{right:-.25rem}}
+
+
+
+/* Reactify final fixes: top toast, bell position */
+.rf-global-notification{top:2rem!important;right:2rem!important;z-index:2100!important;display:flex;align-items:center}.rf-global-bell{width:40px;height:38px;border-radius:9px;box-shadow:0 6px 18px rgba(17,24,39,.09)}
+.rf-top-toast{position:fixed;top:1.1rem;left:50%;transform:translate(-50%,-130%);z-index:2400;width:min(560px,calc(100vw - 2rem));background:#fff;border:1px solid var(--purple-light,#E8DCF5);border-left:5px solid var(--orange,#F5A623);border-radius:14px;box-shadow:0 18px 50px rgba(17,24,39,.18);padding:.9rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;opacity:0;pointer-events:none;transition:transform .28s ease,opacity .28s ease}.rf-top-toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.rf-top-toast-icon{width:34px;height:34px;border-radius:999px;background:var(--orange-light,#FFF3DC);color:var(--orange-dark,#E0941A);display:flex;align-items:center;justify-content:center;flex-shrink:0}.rf-top-toast-title{font-size:.86rem;font-weight:900;color:var(--gray-900,#111827)}.rf-top-toast-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:768px){.rf-global-notification{top:.85rem!important;right:.85rem!important}.rf-top-toast{top:.75rem;width:calc(100vw - 1.5rem)}}
+
+
+/* Klant- en AI-statusbadges bij afspraken */
+.appt-customer-row{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;margin-top:.1rem}
+.contact-type{display:inline-flex;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:var(--blue-light);color:var(--blue)}
+.conversation-state{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}.conversation-state.ai-active{background:var(--green-light);color:var(--green)}.conversation-state.manual{background:var(--orange-light);color:var(--orange-dark)}.conversation-state.completed{background:var(--gray-100);color:var(--gray-600)}
+
+/* Reactify bezettingsgraad en afspraakknoppen */
+.occupancy-card{position:relative;overflow:visible}.occupancy-switch{display:inline-flex;gap:.25rem;padding:.25rem;background:var(--purple-bg);border:1px solid var(--purple-light);border-radius:10px;margin:.35rem 0 .25rem}.occupancy-btn{border:0;background:transparent;color:var(--gray-600);border-radius:7px;padding:.32rem .5rem;font-size:.66rem;font-weight:800;cursor:pointer;transition:.18s}.occupancy-btn:hover{color:var(--purple);background:#fff}.occupancy-btn.active{background:var(--purple);color:#fff;box-shadow:0 4px 10px rgba(91,46,145,.22)}.occupancy-card.celebrate{animation:occupancyGlow 1.15s ease-in-out 2}.occupancy-card.celebrate:after{content:"✦ 100% benut ✦";position:absolute;right:1rem;top:.75rem;color:var(--orange-dark);font-size:.68rem;font-weight:900;animation:celebratePop .8s ease both}@keyframes occupancyGlow{0%,100%{box-shadow:var(--shadow-sm)}50%{box-shadow:0 0 0 5px rgba(245,166,35,.18),0 14px 34px rgba(91,46,145,.2);transform:translateY(-2px)}}@keyframes celebratePop{0%{opacity:0;transform:scale(.6) rotate(-6deg)}70%{opacity:1;transform:scale(1.12) rotate(3deg)}100%{opacity:1;transform:scale(1)}}
+.panel-footer-actions{display:grid;gap:.55rem;justify-items:center}.panel-footer-actions .btn-primary{width:min(220px,100%)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}.detail-grid>div{background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px;padding:.75rem}.detail-grid .full{grid-column:1/-1}.detail-grid span{display:block;font-size:.7rem;color:var(--gray-500);font-weight:700;margin-bottom:.15rem}.detail-grid strong{display:block;font-size:.85rem;color:var(--gray-900);word-break:break-word}@media(max-width:560px){.detail-grid{grid-template-columns:1fr}.detail-grid .full{grid-column:auto}}
+</style>
+
+<style id="reactify-final-agenda-time-style">.appt-time{width:72px!important;line-height:1.2}.appt-day-label{display:block;font-size:.66rem;color:var(--gray-500);font-weight:800;margin-top:.15rem}.appt-sub{margin-top:.1rem}</style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><img src="/logo.png" alt="Reactify" /></div>
+    <nav class="sidebar-nav">
+      <a href="/platform/" class="sidebar-link"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Dashboard</a>
+      <a href="/platform/klantenlijst/" class="sidebar-link"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>Klanten</a>
+      <a href="/platform/inbox/" class="sidebar-link"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>Inbox</a>
+      <a href="/platform/agenda/" class="sidebar-link active"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>Agenda</a>
+      <a href="/platform/todo/" class="sidebar-link"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>To-do lists</a>
+      <div class="sidebar-spacer"></div>
+      <a href="#" class="sidebar-link">Instellingen</a><a href="#" class="sidebar-link">Help</a>
+    </nav>
+    <div class="sidebar-user"><div class="user-avatar">BD</div><div><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div>
+  </aside>
+
+  <main class="main">
+    <button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button>
+    <div class="main-header">
+      <div class="page-header"><h1>Agenda</h1><p>Afspraken, beschikbaarheid en afspraaktypes beheren via Cal.com.</p></div>
+      <div class="header-actions">
+        <button id="openAvailabilityBtn" class="btn-secondary" type="button">Beschikbaarheid instellen</button>
+        <button id="openEventTypeBtn" class="btn-secondary" type="button">Afspraaktypes beheren</button>
+        
+      </div>
+    </div>
+
+    <div class="status-bar"><span class="status-dot" id="syncDot"></span><span id="syncStatus">Cal.com data laden...</span></div>
+
+    <section class="stats-grid" aria-label="Agenda statistieken">
+      <article class="stat-card"><div class="stat-icon purple">📅</div><div><div class="stat-label">Afspraken vandaag</div><div class="stat-value" id="statToday">0</div><div class="stat-trend">Live uit Cal.com</div></div></article>
+      <article class="stat-card"><div class="stat-icon orange">🗓️</div><div><div class="stat-label">Afspraken deze week</div><div class="stat-value" id="statWeek">0</div><div class="stat-trend">Accepted only</div></div></article>
+      <article class="stat-card"><div class="stat-icon green">✓</div><div><div class="stat-label">Totaal deze maand</div><div class="stat-value" id="statMonth">0</div><div class="stat-trend">Gekozen maand</div></div></article>
+      <article class="stat-card occupancy-card" id="occupancyCard"><div class="stat-icon blue">↗</div><div><div class="stat-label">Bezettingsgraad</div><div class="stat-value" id="statOccupancy">0%</div><div class="occupancy-switch" id="occupancySwitch" aria-label="Periode bezettingsgraad"><button type="button" class="occupancy-btn" data-period="day">Dag</button><button type="button" class="occupancy-btn" data-period="week">Week</button><button type="button" class="occupancy-btn active" data-period="month">Maand</button><button type="button" class="occupancy-btn" data-period="year">Jaar</button></div><div class="stat-trend" id="occupancyDetail">0 van 0 uur geboekt</div></div></article>
+    </section>
+
+    <section class="agenda-layout">
+      <article class="panel">
+        <div class="panel-header">
+          <h2 id="calendarTitle">Agenda</h2>
+          <div class="cal-controls">
+            <div class="view-switch" aria-label="Weergave">
+              <button class="view-btn active" data-view="month" type="button">Maand</button>
+              <button class="view-btn" data-view="week" type="button">Week</button>
+              <button class="view-btn" data-view="day" type="button">Dag</button>
+            </div>
+            <button class="cal-today" id="todayBtn" type="button">Vandaag</button>
+            <button class="cal-nav" id="prevBtn" type="button" aria-label="Vorige">‹</button>
+            <button class="cal-nav" id="nextBtn" type="button" aria-label="Volgende">›</button>
+          </div>
+        </div>
+        <div class="calendar" id="calendarContainer"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header"><h2 id="appointmentsTitle">Maand</h2></div>
+        <div class="appt-list" id="appointmentList"></div>
+        <div class="panel-footer panel-footer-actions"><button class="btn-primary" type="button" onclick="openModal('bookingModal')">＋ Afspraak maken</button><a href="https://app.cal.com/bookings" target="_blank" rel="noopener noreferrer">Bekijk alles in Cal.com</a></div>
+      </article>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="bookingDetailsModal" aria-hidden="true"><div class="modal"><div class="modal-header"><div class="modal-title" id="bookingDetailsTitle">Afspraak</div><button class="modal-close" type="button" onclick="closeModal('bookingDetailsModal')">×</button></div><div class="modal-body" id="bookingDetailsBody"></div><div class="modal-actions"><button class="btn-secondary" type="button" onclick="closeModal('bookingDetailsModal')">Sluiten</button><button class="btn-secondary" type="button" id="editBookingBtn" onclick="openBookingEditModal()">Afspraak aanpassen</button><a class="btn-primary" id="bookingMeetingLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Open meeting</a></div></div></div>
+
+  <div class="modal-backdrop" id="bookingEditModal" aria-hidden="true">
+    <div class="modal wide"><div class="modal-header"><div class="modal-title">Afspraak aanpassen</div><button class="modal-close" type="button" onclick="closeModal('bookingEditModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert info show">Deze wijziging wordt in Reactify opgeslagen en blijft zichtbaar op de agenda. Cal.com blijft de bron voor de originele afspraak.</div>
+        <div class="alert" id="bookingEditAlert"></div>
+        <form id="bookingEditForm" class="form-grid">
+          <input id="editBookingKey" type="hidden" />
+          <div class="form-field"><label>Titel</label><input id="editBookingTitle" type="text" required /></div>
+          <div class="form-field"><label>Status</label><select id="editBookingStatus"><option value="accepted">Bevestigd</option><option value="pending">In aanvraag</option></select></div>
+          <div class="form-field"><label>Startdatum en tijd</label><input id="editBookingStart" type="datetime-local" required /></div>
+          <div class="form-field"><label>Einddatum en tijd</label><input id="editBookingEnd" type="datetime-local" required /></div>
+          <div class="form-field"><label>Klantnaam</label><input id="editBookingCustomer" type="text" /></div>
+          <div class="form-field"><label>E-mail klant</label><input id="editBookingEmail" type="email" /></div>
+          <div class="form-field"><label>Telefoon klant</label><input id="editBookingPhone" type="tel" /></div>
+          <div class="form-field"><label>Meetinglink</label><input id="editBookingMeetingUrl" type="url" placeholder="https://..." /></div>
+          <div class="form-field full"><label>Locatie</label><input id="editBookingLocation" type="text" placeholder="Bijv. Cal.com video, Zoom-link, telefoon of adres" /></div>
+          <div class="form-field full"><label>Opmerking</label><textarea id="editBookingNotes" rows="3" placeholder="Interne notitie of context bij deze afspraak"></textarea></div>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="resetBookingEdit()">Origineel herstellen</button><button class="btn-secondary" type="button" onclick="closeModal('bookingEditModal')">Annuleren</button><button class="btn-primary" type="submit">Wijzigingen opslaan</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="bookingModal" aria-hidden="true">
+    <div class="modal wide"><div class="modal-header"><div class="modal-title">Nieuwe afspraak maken</div><button class="modal-close" type="button" onclick="closeModal('bookingModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert" id="bookingAlert"></div>
+        <form id="bookingForm" class="form-grid">
+          <div class="form-field"><label>Afspraaktype</label><select id="bookingEventType" required></select><div class="form-help">Wordt live opgehaald uit Cal.com.</div></div>
+          <div class="form-field"><label>Startdatum en tijd</label><input id="bookingStart" type="datetime-local" required /><div class="form-help">Gebruikt automatisch de gekozen datum uit de kalender.</div></div>
+          <div class="form-field full"><label>Klant kiezen</label><select id="bookingContact" required></select><div class="form-help">Komt uit je Reactify klantenlijst. Kies “Nieuwe contactpersoon” als de klant nog niet bestaat.</div></div>
+          <div class="form-field"><label>Klantnaam</label><input id="bookingName" type="text" placeholder="Bijv. Mike" required /></div>
+          <div class="form-field"><label>E-mail klant</label><input id="bookingEmail" type="email" placeholder="klant@email.be" required /></div>
+          <div class="form-field"><label>Telefoon klant</label><input id="bookingPhone" type="tel" placeholder="optioneel" /></div>
+          <div class="form-field"><label>Plaats</label><select id="bookingLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="custom">Andere plaats</option></select></div>
+          <div class="form-field"><label>Plaats detail</label><input id="bookingLocationValue" type="text" placeholder="Link, telefoonnummer of adres" /><div class="form-help">Bij Cal.com video mag dit leeg blijven.</div></div>
+          <div class="form-field"><label>Duur</label><input id="bookingLength" type="number" min="5" step="5" placeholder="Automatisch" /></div>
+          <div class="form-field full"><label>Opmerking</label><textarea id="bookingNotes" rows="3" placeholder="Bijv. afspraak ingepland via Reactify"></textarea></div>
+          <label class="checkbox-row full"><input id="bookingForce" type="checkbox" /> Forceer afspraak buiten beschikbaarheid of bij conflict</label>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="closeModal('bookingModal')">Annuleren</button><button class="btn-primary" type="submit">Afspraak aanmaken</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="availabilityModal" aria-hidden="true">
+    <div class="modal"><div class="modal-header"><div class="modal-title">Beschikbaarheid instellen</div><button class="modal-close" type="button" onclick="closeModal('availabilityModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert info show">Dit maakt een nieuw beschikbaarheidsschema in Cal.com. Je kan dit schema daarna koppelen aan een afspraaktype.</div>
+        <div class="alert" id="availabilityAlert"></div>
+        <form id="availabilityForm" class="form-grid">
+          <div class="form-field"><label>Naam schema</label><input id="scheduleName" type="text" value="Reactify beschikbaarheid" required /></div>
+          <div class="form-field"><label>Tijdzone</label><input id="scheduleTimeZone" type="text" value="Europe/Brussels" required /></div>
+          <div class="form-field"><label>Startuur</label><input id="scheduleStart" type="time" value="09:00" required /></div>
+          <div class="form-field"><label>Einduur</label><input id="scheduleEnd" type="time" value="17:00" required /></div>
+          <div class="form-field full"><label>Dagen</label><div class="day-checks" id="dayChecks"></div></div>
+          <label class="checkbox-row full"><input id="scheduleDefault" type="checkbox" /> Instellen als standaard beschikbaarheid</label>
+          <div class="form-field"><label>Uitzondering datum</label><input id="overrideDate" type="date" /><div class="form-help">Optioneel: specifieke dag met andere uren.</div></div>
+          <div class="form-field"><label>Uitzondering uren</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"><input id="overrideStart" type="time" /><input id="overrideEnd" type="time" /></div></div>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="closeModal('availabilityModal')">Annuleren</button><button class="btn-primary" type="submit">Beschikbaarheid opslaan</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="eventTypeModal" aria-hidden="true">
+    <div class="modal wide"><div class="modal-header"><div class="modal-title">Afspraaktypes beheren</div><button class="modal-close" type="button" onclick="closeModal('eventTypeModal')">×</button></div>
+      <div class="modal-body">
+        <div class="alert" id="eventTypeAlert"></div>
+        <form id="eventTypeForm" class="form-grid">
+          <div class="form-field"><label>Titel</label><input id="typeTitle" type="text" placeholder="Bijv. Introductie & demo" required /></div>
+          <div class="form-field"><label>Slug</label><input id="typeSlug" type="text" placeholder="introductie-demo" /><div class="form-help">Leeg laten = automatisch.</div></div>
+          <div class="form-field"><label>Duur in minuten</label><input id="typeLength" type="number" value="30" min="5" step="5" required /></div>
+          <div class="form-field"><label>Slot interval</label><input id="typeSlot" type="number" value="30" min="5" step="5" /></div>
+          <div class="form-field"><label>Minimum vooraf boeken</label><input id="typeNotice" type="number" value="60" min="0" step="15" /></div>
+          <div class="form-field"><label>Beschikbaarheidsschema</label><select id="typeSchedule"><option value="">Standaard Cal.com schema</option></select></div>
+          <div class="form-field"><label>Plaats afspraaktype</label><select id="typeLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="link">Externe link</option><option value="none">Geen vaste plaats</option></select></div>
+          <div class="form-field"><label>Plaats detail</label><input id="typeLocationValue" type="text" placeholder="Link, telefoonnummer of adres" /></div>
+          <div class="form-field"><label>Buffer voor</label><input id="typeBefore" type="number" value="0" min="0" step="5" /></div>
+          <div class="form-field"><label>Buffer na</label><input id="typeAfter" type="number" value="0" min="0" step="5" /></div>
+          <div class="form-field full"><label>Beschrijving</label><textarea id="typeDescription" rows="3" placeholder="Korte omschrijving van dit afspraaktype"></textarea></div>
+          <label class="checkbox-row full"><input id="typeHidden" type="checkbox" /> Verborgen afspraaktype maken</label>
+          <div class="modal-actions full"><button class="btn-secondary" type="button" onclick="closeModal('eventTypeModal')">Annuleren</button><button class="btn-primary" type="submit">Afspraaktype opslaan</button></div>
+        </form>
+        <div class="type-list" id="eventTypeList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = { bookings:"/.netlify/functions/cal-bookings", cancelBooking:"/.netlify/functions/cal-cancel-booking", schedules:"/.netlify/functions/cal-schedules", eventTypes:"/.netlify/functions/cal-event-types" };
+    const CAL_USERNAME = "christian-damian-62o7zs";
+    const CONTACT_KEY = "reactify.contacts";
+    const LOCAL_APPT_KEY = "reactify.localAppointments";
+    const BOOKING_EDIT_KEY = "reactify.bookingEdits";
+    const OCCUPANCY_SCHEDULE_KEY = "reactify.occupancySchedule";
+    const PLATFORM_KEY = "reactify_platform_data_v3";
+    const monthNames=["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"];
+    const dayNames=["Ma","Di","Wo","Do","Vr","Za","Zo"];
+    const calDays=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    const dayLabels=["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"];
+    const colors=["purple","orange","green","blue"];
+    let bookings=[], eventTypes=[], schedules=[], viewMode="month", visibleDate=new Date(), selectedDate=new Date();
+    const $=id=>document.getElementById(id);
+    const pad=n=>String(n).padStart(2,"0");
+    const uid=(p="id")=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+    const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    const sameDate=(a,b)=>dateKey(a)===dateKey(b);
+    const escapeHTML=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    const toLocalInputValue=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const localToUTCISO=value=>new Date(value).toISOString();
+    const formatTime=d=>new Date(d).toLocaleTimeString("nl-BE",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Brussels"});
+    const formatDate=d=>new Date(d).toLocaleDateString("nl-BE",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Brussels"});
+    const readJSON=(key, fallback=[])=>{try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback}catch(e){return fallback}};
+    const writeJSON=(key,val)=>{localStorage.setItem(key,JSON.stringify(val));window.dispatchEvent(new CustomEvent("reactify:datachange",{detail:{key}}))};
+const NOTIFICATION_KEY="reactify.notifications";
+    function pushNotification(type,title,body,extra={}){
+      const list=readJSON(NOTIFICATION_KEY,[]);
+      list.unshift({id:uid("note"),type,title,body,...extra,read:false,createdAt:new Date().toISOString()});
+      writeJSON(NOTIFICATION_KEY,list.slice(0,80));
+      if("Notification" in window && Notification.permission==="granted"){try{new Notification(title,{body});}catch(e){}}
+    }
+    const initials=name=>String(name||"Klant").split(" ").filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"KL";
+    const normalizeEmail=e=>String(e||"").trim().toLowerCase();
+    const normalizePhone=v=>{let s=String(v||'').trim().replace(/[^0-9+]/g,'');if(!s)return '';if(s.startsWith('00'))s='+'+s.slice(2);let d=s.replace(/\D/g,'');if(d.startsWith('32'))return '+32'+d.slice(2);if(d.startsWith('0'))return '+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return '+32'+d;return s.startsWith('+')?'+'+d:d};
+    function bookingKey(b){return String(b?.uid||b?.id||b?.raw?.uid||b?.raw?.id||`${b?.start?new Date(b.start).toISOString():''}_${normalizeEmail(b?.email||'')}_${normalizePhone(b?.phone||'')}`);}
+    function bookingEdits(){return readJSON(BOOKING_EDIT_KEY,{});}
+    function saveBookingEdits(items){writeJSON(BOOKING_EDIT_KEY,items||{});}
+    function applyBookingEdit(b){const key=bookingKey(b);const edit=bookingEdits()[key];if(!edit)return b;const start=edit.start?new Date(edit.start):b.start;let end=edit.end?new Date(edit.end):b.end;if(!end||Number.isNaN(new Date(end).getTime()))end=new Date(new Date(start).getTime()+((Number(b.duration)||30)*60000));return{...b,...edit,start,end,edited:true,editKey:key};}
+    function applyBookingEdits(list){return list.map(applyBookingEdit).sort((a,b)=>a.start-b.start);}
+    function findBookingByKey(key){return bookings.find(b=>bookingKey(b)===String(key));}
+    function bookingNotes(b){return b?.notes||b?.raw?.bookingFieldsResponses?.notes||b?.raw?.responses?.notes||b?.raw?.metadata?.notes||'';}
+    function upsertBookingEdit(b,data){const key=bookingKey(b);const edits=bookingEdits();edits[key]={...(edits[key]||{}),...data,updatedAt:new Date().toISOString()};saveBookingEdits(edits);return key;}
+    function removeBookingEditByKey(key){const edits=bookingEdits();delete edits[String(key)];saveBookingEdits(edits);}
+    function platformData(){try{const d=JSON.parse(localStorage.getItem(PLATFORM_KEY)||'{}');return{...d,clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[],settings:d.settings||{}}}catch{return{clients:[],conversations:[],appointments:[],settings:{}}}}
+    function savePlatformData(data){localStorage.setItem(PLATFORM_KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('reactify:data',{detail:data}));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:PLATFORM_KEY}}));}
+    function contactForBooking(b){const d=platformData();const phone=normalizePhone(b.phone||''),email=normalizeEmail(b.email||''),name=String(b.customer||'').trim().toLowerCase();return d.clients.find(c=>(b.contactId&&c.id===b.contactId)||(phone&&normalizePhone(c.phone)===phone)||(email&&normalizeEmail(c.email)===email)||(name&&String(c.name||'').trim().toLowerCase()===name))||null}
+    function latestConvFor(client){if(!client)return null;return [...platformData().conversations].filter(c=>c.clientId===client.id).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0))[0]||null}
+    function stateInfo(status){const x=String(status||'ai-active').toLowerCase().replaceAll('_','-');if(x.includes('afgesloten')||x.includes('closed')||x.includes('inactive'))return{key:'completed',label:'Afgerond'};if(x.includes('overname')||x.includes('manual')||x.includes('human'))return{key:'manual',label:'Overname nodig'};return{key:'ai-active',label:'AI actief'}}
+    function badgesForBooking(b){const c=contactForBooking(b);if(!c)return '<span class="contact-type lead">Lead</span>';const cv=latestConvFor(c),st=cv?stateInfo(cv.status):null;return `<span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${escapeHTML(c.type||'Lead')}</span>${st?`<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`:''}`}
+
+    async function apiFetch(url, options={}){
+      const res=await fetch(url,{headers:{"Content-Type":"application/json"},...options});
+      const data=await res.json().catch(()=>({status:"error",error:"Kon response niet lezen."}));
+      if(!res.ok || data.status==="error") throw new Error(data.error || data.message || (typeof data.details==="string"?data.details:JSON.stringify(data.details||"")) || "API request mislukt.");
+      return data;
+    }
+
+    function getContacts(){
+      // Alleen expliciet opgeslagen Reactify-contacten tonen. Oude SMS-gesprekken
+      // en historische Cal.com-deelnemers mogen de keuzelijst niet opnieuw vullen.
+      return platformData().clients;
+    }
+    function saveContacts(items){
+      const data=platformData(); data.clients=Array.isArray(items)?items:[]; savePlatformData(data); return data.clients;
+    }
+    function upsertContact(data){
+      const platform=platformData(); const contacts=platform.clients;
+      const email=normalizeEmail(data.email), phone=normalizePhone(data.phone);
+      let c=contacts.find(x=>(data.id&&x.id===data.id)||(email&&normalizeEmail(x.email)===email)||(phone&&normalizePhone(x.phone)===phone));
+      if(c){Object.assign(c,data,{id:c.id,updatedAt:new Date().toISOString(),lastActivity:data.lastActivity||new Date().toISOString()});}
+      else{c={id:uid("client"),name:data.name||"Nieuwe klant",email:data.email||"",phone:data.phone||"",type:data.type||"Lead",status:data.status||"neutraal",sentiment:data.sentiment||"neutraal",description:data.description||"",note:data.notes||data.note||"",source:data.source||"Reactify",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),lastActivity:data.lastActivity||new Date().toISOString(),color:data.color||"#5B2E91"};contacts.unshift(c);}
+      platform.clients=contacts; savePlatformData(platform); return c;
+    }
+    function saveLocalAppointment(item){ return item; }
+
+
+    function normalizeBookings(payload){
+      const raw=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:(payload?.data?[payload.data]:payload?.uid?[payload]:[]);
+      return applyBookingEdits(raw.filter(b=>["accepted","pending"].includes(b.status||"accepted")).map((b,i)=>{
+        const attendee=Array.isArray(b.attendees)?b.attendees[0]:(b.attendee||{});
+        const name=attendee?.name || b.bookingFieldsResponses?.name || b.responses?.name || "Klant";
+        const email=attendee?.email || b.bookingFieldsResponses?.email || b.responses?.email || "";
+        const phone=attendee?.phoneNumber || attendee?.phone || b.bookingFieldsResponses?.phone || b.bookingFieldsResponses?.phoneNumber || "";
+        const existing=contactForBooking({customer:name,email,phone});
+        return {
+          id:b.id||b.uid||i, uid:b.uid||b.id, title:b.bookingFieldsResponses?.title || b.responses?.title || b.title || b.eventType?.title || b.eventType?.slug || "Afspraak",
+          customer:existing?.name || name, contactId:existing?.id || "", email:existing?.email || email, phone:existing?.phone || phone,
+          start:new Date(b.start), end:new Date(b.end || b.start), status:b.status||"accepted", meetingUrl:b.meetingUrl || b.location || "https://app.cal.com/bookings",
+          location:b.bookingFieldsResponses?.location || b.responses?.location || b.metadata?.locationLabel || b.location || b.meetingUrl || "", type:b.eventType?.title || b.eventType?.slug || "Cal.com", duration:b.duration || b.lengthInMinutes || 0, raw:b, source:"Cal.com"
+        }
+      }));
+    }
+
+    function normalizeLocalAppointments(){ return []; }
+
+
+    async function loadAll(){
+      setSync("laden","Cal.com data laden...");
+      try{
+        const [bookingPayload, typePayload, schedulePayload] = await Promise.allSettled([
+          apiFetch(API.bookings), apiFetch(API.eventTypes), apiFetch(API.schedules)
+        ]);
+        if(bookingPayload.status==="fulfilled"){
+          bookings=normalizeBookings(bookingPayload.value);
+        } else { bookings=[]; throw bookingPayload.reason; }
+        if(typePayload.status==="fulfilled") eventTypes=Array.isArray(typePayload.value?.data)?typePayload.value.data:Array.isArray(typePayload.value?.data?.eventTypes)?typePayload.value.data.eventTypes:Array.isArray(typePayload.value?.eventTypes)?typePayload.value.eventTypes:[];
+        if(schedulePayload.status==="fulfilled") schedules=Array.isArray(schedulePayload.value?.data)?schedulePayload.value.data:Array.isArray(schedulePayload.value?.data?.schedules)?schedulePayload.value.data.schedules:Array.isArray(schedulePayload.value?.schedules)?schedulePayload.value.schedules:[];
+        renderAll(); fillContactSelect(); fillEventTypeSelects(); fillScheduleSelect(); renderEventTypeList();
+        setSync("ok",`Verbonden met Cal.com · ${bookings.length} afspraken · ${eventTypes.length} afspraaktypes · ${schedules.length} schema's`);
+      }catch(error){
+        console.error(error); renderAll(); fillContactSelect(); fillEventTypeSelects(); fillScheduleSelect(); renderEventTypeList();
+        setSync("error",error.message || "Kon Cal.com-afspraken niet laden.");
+      }
+    }
+
+    function setSync(type,text){$("syncStatus").textContent=text;$("syncDot").className="status-dot"+(type==="ok"?" ok":type==="error"?" error":"");}
+    function getRange(){
+      if(viewMode==="day"){const s=new Date(selectedDate);s.setHours(0,0,0,0);const e=new Date(s);e.setDate(e.getDate()+1);return{s,e,label:"Dag"};}
+      if(viewMode==="week"){const s=new Date(selectedDate);const day=s.getDay()||7;s.setDate(s.getDate()-day+1);s.setHours(0,0,0,0);const e=new Date(s);e.setDate(s.getDate()+7);return{s,e,label:"Week"};}
+      const s=new Date(visibleDate.getFullYear(),visibleDate.getMonth(),1);const e=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);return{s,e,label:"Maand"};
+    }
+    const inRange=(b,s,e)=>b.start>=s&&b.start<e;
+    const bookingsForDate=d=>bookings.filter(b=>sameDate(b.start,d));
+    function renderAll(){renderStats();renderCalendar();renderAppointments();}
+    function occupancyRange(){
+      const period=localStorage.getItem("reactify.occupancyPeriod")||"month";let s,e;
+      if(period==="day"){s=new Date(selectedDate);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+1);}
+      else if(period==="week"){s=new Date(selectedDate);const d=s.getDay()||7;s.setDate(s.getDate()-d+1);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+7);}
+      else if(period==="year"){s=new Date(selectedDate.getFullYear(),0,1);e=new Date(selectedDate.getFullYear()+1,0,1);}
+      else{s=new Date(visibleDate.getFullYear(),visibleDate.getMonth(),1);e=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);}
+      return{s,e,period};
+    }
+    function hmMinutes(value){const m=String(value||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0;}
+    function occupancyPreference(){return readJSON(OCCUPANCY_SCHEDULE_KEY,null);}
+    function scheduleTimestamp(schedule){
+      const raw=schedule?.updatedAt||schedule?.updated_at||schedule?.createdAt||schedule?.created_at||0;
+      const time=new Date(raw).getTime();
+      return Number.isFinite(time)?time:Number(schedule?.id||schedule?.scheduleId||0)||0;
+    }
+    function activeSchedule(){
+      const pref=occupancyPreference();
+      if(Array.isArray(schedules)&&schedules.length){
+        const prefId=String(pref?.id||pref?.scheduleId||pref?.schedule_id||'');
+        const prefName=String(pref?.name||'').trim().toLowerCase();
+        const preferred=schedules.find(s=>prefId&&String(s.id||s.scheduleId||s.schedule_id||'')===prefId)
+          || schedules.find(s=>prefName&&String(s.name||'').trim().toLowerCase()===prefName);
+        if(preferred)return preferred;
+        return [...schedules].sort((a,b)=>scheduleTimestamp(b)-scheduleTimestamp(a))[0]||null;
+      }
+      return pref||null;
+    }
+    function scheduleBlocks(){
+      const schedule=activeSchedule()||occupancyPreference();
+      const rows=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
+      const blocks=[];
+      for(const row of rows){
+        const days=Array.isArray(row.days)?row.days:[];
+        const start=hmMinutes(row.startTime||row.start);
+        const end=hmMinutes(row.endTime||row.end);
+        if(days.length&&end>start)blocks.push({days,start,end});
+      }
+      return blocks;
+    }
+    function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const index=date.getDay();return days.some(d=>{if(typeof d==='number')return d===index||d===((index+6)%7);const v=String(d).trim().toLowerCase();return v===names[index].toLowerCase()||v===short[index].toLowerCase()||v===String(index)||v===String((index+6)%7);});}
+    function availableMinutesInRange(s,e){let total=0;const blocks=scheduleBlocks();for(let d=new Date(s);d<e;d.setDate(d.getDate()+1)){for(const block of blocks){if(dayMatches(block.days,d))total+=Math.max(0,block.end-block.start);}}return total;}
+    function bookedMinutesInRange(s,e){return bookings.reduce((total,b)=>{const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return total;let duration=(be-bs)/60000;if(!(duration>0))duration=Number(b.duration||0)||30;const overlapStart=Math.max(bs.getTime(),s.getTime());const overlapEnd=Math.min(bs.getTime()+duration*60000,e.getTime());return total+Math.max(0,(overlapEnd-overlapStart)/60000);},0);}
+    function renderStats(){
+      const today=new Date();today.setHours(0,0,0,0);const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
+      const weekStart=new Date(today);const day=weekStart.getDay()||7;weekStart.setDate(weekStart.getDate()-day+1);weekStart.setHours(0,0,0,0);const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+7);
+      const monthStart=new Date(visibleDate.getFullYear(),visibleDate.getMonth(),1);const monthEnd=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);
+      $("statToday").textContent=bookings.filter(b=>inRange(b,today,tomorrow)).length;
+      $("statWeek").textContent=bookings.filter(b=>inRange(b,weekStart,weekEnd)).length;
+      $("statMonth").textContent=bookings.filter(b=>inRange(b,monthStart,monthEnd)).length;
+      const range=occupancyRange();const available=availableMinutesInRange(range.s,range.e);const booked=bookedMinutesInRange(range.s,range.e);const percentage=available>0?Math.min(100,Math.round(booked/available*100)):0;
+      $("statOccupancy").textContent=`${percentage}%`;$("occupancyDetail").textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;document.querySelectorAll(".occupancy-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.period===(localStorage.getItem("reactify.occupancyPeriod")||"month")));const occCard=$("occupancyCard");if(occCard){occCard.classList.toggle("celebrate",percentage===100);}
+    }
+    function renderCalendar(){
+      const c=$("calendarContainer");c.innerHTML="";document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===viewMode));
+      if(viewMode==="month") renderMonth(c); if(viewMode==="week") renderWeek(c); if(viewMode==="day") renderDay(c);
+    }
+    function renderMonth(c){
+      const y=visibleDate.getFullYear(),m=visibleDate.getMonth();$("calendarTitle").textContent=`${monthNames[m]} ${y}`;$("appointmentsTitle").textContent="Maand";
+      c.innerHTML=`<div class="cal-weekdays">${dayNames.map(d=>`<div class="cal-weekday">${d}</div>`).join("")}</div><div class="cal-days" id="calDays"></div>`;
+      const grid=$("calDays"),first=new Date(y,m,1),last=new Date(y,m+1,0),offset=(first.getDay()+6)%7,prevLast=new Date(y,m,0).getDate();
+      for(let i=0;i<42;i++){let d,label,muted=false;if(i<offset){label=prevLast-offset+i+1;d=new Date(y,m-1,label);muted=true}else if(i>=offset+last.getDate()){label=i-offset-last.getDate()+1;d=new Date(y,m+1,label);muted=true}else{label=i-offset+1;d=new Date(y,m,label)}
+        const count=bookingsForDate(d).length;const b=document.createElement("button");b.type="button";b.className="cal-day"+(muted?" muted":"")+(sameDate(d,selectedDate)&&!muted?" selected":"")+(sameDate(d,new Date())&&!muted?" today":"");b.innerHTML=`<span>${label}</span>${count&&!muted?`<span class="cal-marker"></span><span class="cal-count">${count}</span>`:""}`;
+        if(!muted)b.onclick=()=>{selectedDate=d;renderAll()};grid.appendChild(b);}
+    }
+    function renderWeek(c){
+      const r=getRange();$("calendarTitle").textContent=`Week van ${formatDate(r.s)}`;$("appointmentsTitle").textContent="Week";c.innerHTML='<div class="week-view" id="weekView"></div>';const w=$("weekView");
+      for(let i=0;i<7;i++){const d=new Date(r.s);d.setDate(r.s.getDate()+i);const list=bookingsForDate(d);const card=document.createElement("div");card.className="week-day-card"+(sameDate(d,selectedDate)?" selected":"");card.innerHTML=`<div class="week-day-name">${dayLabels[i]}</div><div class="week-day-number">${d.getDate()}</div>${list.slice(0,3).map(b=>`<div class="week-appt-pill">${formatTime(b.start)} · ${escapeHTML(b.title)}</div>`).join("")}${list.length>3?`<div class="week-appt-pill">+${list.length-3} meer</div>`:""}`;card.onclick=()=>{selectedDate=d;viewMode="day";renderAll()};w.appendChild(card)}
+    }
+    function renderDay(c){
+      $("calendarTitle").textContent=`${formatDate(selectedDate)}`;$("appointmentsTitle").textContent="Dag";const list=bookingsForDate(selectedDate);c.innerHTML=`<div class="day-view"><div class="day-detail-card"><div class="day-detail-title">${formatDate(selectedDate)}</div><div class="day-detail-sub">${list.length} afspraken op deze dag</div>${list.map(b=>`<div class="week-appt-pill">${formatTime(b.start)} · ${escapeHTML(b.customer)} ${badgesForBooking(b)} · ${escapeHTML(b.title)}</div>`).join("") || '<div class="appt-empty">Geen afspraken op deze dag.</div>'}</div></div>`;
+    }
+    function renderAppointments(){
+      const r=getRange(); const list=bookings.filter(b=>inRange(b,r.s,r.e)); const el=$("appointmentList");
+      if(!list.length){el.innerHTML=`<div class="appt-empty">Geen afspraken in deze ${r.label.toLowerCase()}.</div>`; return;}
+      el.innerHTML=list.map((b,i)=>`<div class="appt-item ${colors[i%colors.length]}" onclick="openBookingDetails(${i})"><div class="appt-time">${formatTime(b.start)}<span class="appt-day-label">${formatDate(b.start)}</span></div><div class="appt-body"><div class="appt-title">${escapeHTML(b.title)}</div><div class="appt-customer-row"><span class="appt-sub">${escapeHTML(b.customer)}</span>${badgesForBooking(b)}</div><div class="appt-sub">${escapeHTML(b.type||b.source||'Reactify')}</div>${b.location ? `<div class="appt-location">📍 ${escapeHTML(cleanLocationLabel(b.location))}</div>` : ""}</div><div class="appt-actions"><span class="appt-badge ${b.status==='pending'?'pending':'confirmed'}"><span class="dot"></span>${b.status==='pending'?'In aanvraag':'Bevestigd'}</span><button class="appt-delete" type="button" onclick="event.stopPropagation();deleteBooking('${escapeHTML(b.uid||b.id)}')">Verwijder</button></div></div>`).join("");
+    }
+    function cleanLocationLabel(value){const text=String(value||""); if(text.includes("app.cal.com/video")) return "Cal.com video"; if(text.includes("zoom.us")) return "Zoom meeting"; return text;}
+    function openBookingDetails(index){const r=getRange();const list=bookings.filter(b=>inRange(b,r.s,r.e));const b=list[index];if(!b)return;window.__currentBookingKey=bookingKey(b);const modal=$("bookingDetailsModal");$("bookingDetailsTitle").textContent=b.title||"Afspraak";$("bookingDetailsBody").innerHTML=`<div class="detail-grid"><div><span>Klant</span><strong>${escapeHTML(b.customer||"Onbekend")}</strong></div><div><span>Datum</span><strong>${escapeHTML(formatDate(b.start))}</strong></div><div><span>Tijd</span><strong>${escapeHTML(formatTime(b.start))}${b.end?` – ${escapeHTML(formatTime(b.end))}`:""}</strong></div><div><span>Status</span><strong>${b.status==="pending"?"In aanvraag":"Bevestigd"}</strong></div><div class="full"><span>Locatie</span><strong>${escapeHTML(cleanLocationLabel(b.location||"Niet opgegeven"))}</strong></div>${b.meetingUrl?`<div class="full"><span>Meetinglink</span><strong>${escapeHTML(b.meetingUrl)}</strong></div>`:""}${b.email?`<div class="full"><span>E-mail</span><strong>${escapeHTML(b.email)}</strong></div>`:""}${b.phone?`<div class="full"><span>Telefoon</span><strong>${escapeHTML(b.phone)}</strong></div>`:""}${bookingNotes(b)?`<div class="full"><span>Opmerking</span><strong>${escapeHTML(bookingNotes(b))}</strong></div>`:""}${b.edited?`<div class="full"><span>Reactify aanpassing</span><strong>Deze afspraak werd aangepast in Reactify.</strong></div>`:""}</div>`;const link=$("bookingMeetingLink");const url=b.meetingUrl||b.location||"";link.style.display=/^https?:\/\//i.test(url)?"inline-flex":"none";link.href=/^https?:\/\//i.test(url)?url:"#";modal.classList.add("open");modal.setAttribute("aria-hidden","false");}
+    async function deleteBooking(uidValue){
+      if(!uidValue) return alert("Geen booking id gevonden."); if(!confirm("Wil je deze afspraak verwijderen? In Cal.com wordt dit als annuleren uitgevoerd.")) return;
+      try{setSync("laden","Afspraak verwijderen..."); await apiFetch(API.cancelBooking,{method:"POST",body:JSON.stringify({ uid:uidValue, cancellationReason:"Verwijderd via Reactify agenda" })}); bookings=bookings.filter(b=>String(b.uid||b.id)!==String(uidValue)); renderAll(); setSync("ok","Afspraak verwijderd."); await loadAll();}
+      catch(error){console.error(error); setSync("error",error.message||"Afspraak verwijderen mislukt."); alert(error.message||"Afspraak verwijderen mislukt.");}
+    }
+    function openBookingEditModal(){
+      const key=window.__currentBookingKey; const b=findBookingByKey(key); if(!b){alert("Geen afspraak geselecteerd.");return;}
+      $("editBookingKey").value=key;
+      $("editBookingTitle").value=b.title||"Afspraak";
+      $("editBookingStatus").value=b.status==="pending"?"pending":"accepted";
+      $("editBookingStart").value=toLocalInputValue(new Date(b.start));
+      const end=new Date(b.end||new Date(new Date(b.start).getTime()+((Number(b.duration)||30)*60000)));
+      $("editBookingEnd").value=toLocalInputValue(end);
+      $("editBookingCustomer").value=b.customer||"";
+      $("editBookingEmail").value=b.email||"";
+      $("editBookingPhone").value=b.phone||"";
+      $("editBookingLocation").value=cleanLocationLabel(b.location||"");
+      $("editBookingMeetingUrl").value=/^https?:\/\//i.test(b.meetingUrl||"")?b.meetingUrl:"";
+      $("editBookingNotes").value=bookingNotes(b);
+      closeModal("bookingDetailsModal");
+      openModal("bookingEditModal");
+    }
+    function refreshEditedBooking(key){bookings=applyBookingEdits(bookings.map(b=>({...b})));const b=findBookingByKey(key);if(b){selectedDate=new Date(b.start);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);}renderAll();}
+    function resetBookingEdit(){
+      const key=$("editBookingKey").value; if(!key)return;
+      removeBookingEditByKey(key);
+      showAlert("bookingEditAlert","ok","Lokale aanpassing verwijderd. Originele Cal.com gegevens worden opnieuw geladen...");
+      loadAll().then(()=>setTimeout(()=>closeModal("bookingEditModal"),600));
+    }
+    $("bookingEditForm").addEventListener("submit",e=>{e.preventDefault();
+      const key=$("editBookingKey").value; const b=findBookingByKey(key); if(!b){showAlert("bookingEditAlert","error","Afspraak niet gevonden.");return;}
+      const start=new Date($("editBookingStart").value); const end=new Date($("editBookingEnd").value);
+      if(!$("editBookingStart").value || !$("editBookingEnd").value || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())){showAlert("bookingEditAlert","error","Vul een geldige start- en eindtijd in.");return;}
+      if(end<=start){showAlert("bookingEditAlert","error","De eindtijd moet na de starttijd liggen.");return;}
+      const data={title:$("editBookingTitle").value.trim()||"Afspraak",status:$("editBookingStatus").value,customer:$("editBookingCustomer").value.trim()||"Klant",email:normalizeEmail($("editBookingEmail").value),phone:normalizePhone($("editBookingPhone").value),location:$("editBookingLocation").value.trim(),meetingUrl:$("editBookingMeetingUrl").value.trim(),notes:$("editBookingNotes").value.trim(),start:start.toISOString(),end:end.toISOString(),duration:Math.round((end-start)/60000)};
+      upsertBookingEdit(b,data); refreshEditedBooking(key); showAlert("bookingEditAlert","ok","Wijzigingen opgeslagen in Reactify."); setTimeout(()=>closeModal("bookingEditModal"),750);
+    });
+    window.openBookingEditModal=openBookingEditModal; window.resetBookingEdit=resetBookingEdit;
+    window.deleteBooking=deleteBooking; window.openBookingDetails=openBookingDetails;
+
+    function fillContactSelect(){
+      const select=$("bookingContact"); if(!select) return; const contacts=getContacts();
+      select.innerHTML=`<option value="">Kies een klant...</option>`+contacts.map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}${c.email?` · ${escapeHTML(c.email)}`:""}</option>`).join("")+`<option value="__new__">+ Nieuwe contactpersoon aanmaken</option>`;
+      const params=new URLSearchParams(location.search); const pre=params.get("contact") || sessionStorage.getItem("reactify.selectedContactId") || "";
+      if(pre && contacts.some(c=>c.id===pre)) select.value=pre;
+      updateCustomerFieldsFromSelect();
+    }
+    function updateCustomerFieldsFromSelect(){
+      const select=$("bookingContact"); if(!select) return; const id=select.value; const isNew=id==="__new__" || !id; const c=getContacts().find(x=>x.id===id);
+      if(c){$("bookingName").value=c.name||""; $("bookingEmail").value=c.email||""; $("bookingPhone").value=c.phone||"";}
+      else if(id==="__new__"){ $("bookingName").value=""; $("bookingEmail").value=""; $("bookingPhone").value=""; }
+      ["bookingName","bookingEmail","bookingPhone"].forEach(field=>$(field).readOnly=!!c);
+    }
+    function fillEventTypeSelects(){
+      const select=$("bookingEventType");
+      select.innerHTML=eventTypes.length?eventTypes.map(t=>`<option value="${t.id}" data-slug="${escapeHTML(t.slug)}" data-title="${escapeHTML(t.title)}" data-length="${t.lengthInMinutes||30}">${escapeHTML(t.title)} · ${t.lengthInMinutes||30} min</option>`).join(""):`<option value="3902702" data-slug="reactify-meeting" data-title="Reactify meeting" data-length="30">Reactify meeting · fallback</option>`;
+      select.onchange=()=>{const opt=select.selectedOptions[0];$("bookingLength").value=opt?.dataset.length||""};select.onchange();
+    }
+    function fillScheduleSelect(){const s=$("typeSchedule");s.innerHTML='<option value="">Standaard Cal.com schema</option>'+schedules.map(sc=>`<option value="${sc.id}">${escapeHTML(sc.name)}${sc.isDefault?' · standaard':''}</option>`).join("");}
+    function renderEventTypeList(){const el=$("eventTypeList");el.innerHTML=(eventTypes.length?eventTypes.slice(0,8).map(t=>`<div class="type-item"><div><div class="type-title">${escapeHTML(t.title)}</div><div class="type-sub">/${escapeHTML(t.slug)} · ${t.lengthInMinutes||30} min${t.hidden?' · verborgen':''}</div></div><a class="btn-secondary" href="${t.bookingUrl||`https://cal.com/${CAL_USERNAME}/${t.slug}`}" target="_blank">Open</a></div>`).join(""):'<div class="appt-empty">Nog geen afspraaktypes gevonden in Cal.com.</div>');}
+
+    function setBookingStartFromSelectedDate(){
+      const input=$("bookingStart"); if(!input) return; const chosen=new Date(selectedDate); const now=new Date();
+      let hours=10, minutes=0;
+      if(sameDate(chosen,now)){ const next=new Date(now); next.setMinutes(0,0,0); next.setHours(next.getHours()+1); hours=next.getHours(); minutes=next.getMinutes(); }
+      const current=input.value?new Date(input.value):null;
+      if(current && !Number.isNaN(current.getTime()) && sameDate(current,chosen)){ hours=current.getHours(); minutes=current.getMinutes(); }
+      chosen.setHours(hours,minutes,0,0); input.value=toLocalInputValue(chosen);
+    }
+    function fillAvailabilityForm(){
+      const schedule=activeSchedule()||occupancyPreference();
+      if(!schedule)return;
+      const rows=Array.isArray(schedule.availability)?schedule.availability:Array.isArray(schedule.availabilities)?schedule.availabilities:[];
+      const first=rows[0]||{};
+      $("scheduleName").value=schedule.name||"Reactify beschikbaarheid";
+      $("scheduleTimeZone").value=schedule.timeZone||schedule.time_zone||"Europe/Brussels";
+      $("scheduleStart").value=first.startTime||first.start||"09:00";
+      $("scheduleEnd").value=first.endTime||first.end||"17:00";
+      $("scheduleDefault").checked=Boolean(schedule.isDefault||schedule.is_default);
+      const selectedDays=new Set(Array.isArray(first.days)?first.days:[]);
+      document.querySelectorAll('#dayChecks input').forEach(input=>{input.checked=selectedDays.size?selectedDays.has(input.value):input.checked;});
+      const override=(Array.isArray(schedule.overrides)?schedule.overrides:[])[0]||{};
+      $("overrideDate").value=override.date||"";
+      $("overrideStart").value=override.startTime||override.start||"";
+      $("overrideEnd").value=override.endTime||override.end||"";
+    }
+    function openModal(id){ if(id==="bookingModal"){setBookingStartFromSelectedDate(); fillContactSelect(); fillEventTypeSelects();} if(id==="availabilityModal"){fillAvailabilityForm();} if(id==="eventTypeModal"){fillScheduleSelect(); renderEventTypeList();} $(id).classList.add("open"); $(id).setAttribute("aria-hidden","false"); document.body.style.overflow="hidden"; }
+    function closeModal(id){$(id).classList.remove("open");$(id).setAttribute("aria-hidden","true");document.body.style.overflow="";}
+    function applyAppointmentQuery(){const q=new URLSearchParams(location.search);if(q.get("newAppointment")!=="1")return;const contactId=q.get("contactId")||"";if(contactId&&$("bookingContact"))$("bookingContact").value=contactId;updateCustomerFieldsFromSelect();if(q.get("name"))$("bookingName").value=q.get("name");if(q.get("email"))$("bookingEmail").value=q.get("email");if(q.get("phone"))$("bookingPhone").value=q.get("phone");openModal("bookingModal");history.replaceState({},document.title,location.pathname);}
+
+    function showAlert(id,type,msg){const a=$(id);a.className=`alert ${type} show`;a.textContent=msg;}
+    window.openModal=openModal;window.closeModal=closeModal;
+
+    function setupDayChecks(){const box=$("dayChecks");box.innerHTML=calDays.map((d,i)=>`<label class="day-check"><input type="checkbox" value="${d}" ${i<5?'checked':''}>${dayLabels[i]}</label>`).join("");}
+    setupDayChecks();
+
+    $("bookingContact").addEventListener("change",updateCustomerFieldsFromSelect);
+    $("bookingForm").addEventListener("submit",async e=>{e.preventDefault();
+      try{
+        showAlert("bookingAlert","info","Afspraak aanmaken in Cal.com..."); const opt=$("bookingEventType").selectedOptions[0]; const contactId=$("bookingContact").value; let contact=null;
+        if(contactId && contactId!=="__new__") contact=getContacts().find(c=>c.id===contactId);
+        if(!contact){ contact=upsertContact({name:$("bookingName").value,email:$("bookingEmail").value,phone:$("bookingPhone").value,source:"Reactify agenda",lastActivity:localToUTCISO($("bookingStart").value)}); }
+        if(!contact.email && !$("bookingEmail").value) throw new Error("Cal.com heeft een e-mailadres nodig om een afspraak te maken.");
+        const locationType=$("bookingLocationType").value; const locationValue=$("bookingLocationValue").value.trim(); const locationLabel=locationType==="cal_video"?"Cal.com video":locationValue;
+        const length=Number($("bookingLength").value||opt?.dataset.length||30); const startISO=localToUTCISO($("bookingStart").value);
+        const payload={start:startISO,eventTypeId:$("bookingEventType").value,eventTypeSlug:opt?.dataset.slug,username:CAL_USERNAME,lengthInMinutes:length,attendee:{name:contact.name,email:contact.email||$("bookingEmail").value,phoneNumber:contact.phone||$("bookingPhone").value,timeZone:"Europe/Brussels",language:"nl"},bookingFieldsResponses:{notes:$("bookingNotes").value,title:opt?.dataset.title||opt?.textContent||"Reactify afspraak",location:locationLabel},metadata:{source:"reactify-agenda",contactId:contact.id,locationType,locationValue,locationLabel},locationType,locationValue,locationLabel,allowConflicts:$("bookingForce").checked,allowBookingOutOfBounds:$("bookingForce").checked};
+        const createdPayload=await apiFetch(API.bookings,{method:"POST",body:JSON.stringify(payload)}); showAlert("bookingAlert","ok","Afspraak aangemaakt in Cal.com.");
+        const created=(createdPayload?.data||createdPayload?.booking||createdPayload); const calUid=created?.uid||created?.id||null;
+        saveLocalAppointment({contactId:contact.id,customer:contact.name,title:payload.bookingFieldsResponses.title,start:startISO,end:new Date(new Date(startISO).getTime()+length*60000).toISOString(),status:"accepted",type:opt?.dataset.title||"Cal.com",source:"Reactify",location:locationLabel,calUid,meetingUrl:created?.meetingUrl||""});
+        selectedDate=new Date($("bookingStart").value); visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1); await loadAll(); renderAll(); setTimeout(()=>closeModal("bookingModal"),900);
+      }catch(error){console.error(error); showAlert("bookingAlert","error",error.message||"Afspraak aanmaken mislukt.")}
+    });
+
+    $("availabilityForm").addEventListener("submit",async e=>{e.preventDefault();
+      try{showAlert("availabilityAlert","info","Beschikbaarheid opslaan in Cal.com...");const days=[...document.querySelectorAll('#dayChecks input:checked')].map(i=>i.value); if(!days.length) throw new Error("Kies minstens één dag."); const payload={name:$("scheduleName").value,timeZone:$("scheduleTimeZone").value,isDefault:$("scheduleDefault").checked,availability:[{days,startTime:$("scheduleStart").value,endTime:$("scheduleEnd").value}]};
+      if($("overrideDate").value && $("overrideStart").value && $("overrideEnd").value)payload.overrides=[{date:$("overrideDate").value,startTime:$("overrideStart").value,endTime:$("overrideEnd").value}];
+      const current=activeSchedule()||occupancyPreference();
+      const currentId=current?.id||current?.scheduleId||current?.schedule_id||"";
+      if(currentId)payload.id=currentId;
+      const savedPayload=await apiFetch(API.schedules,{method:currentId?"PATCH":"POST",body:JSON.stringify(payload)});
+      const savedSchedule=savedPayload?.data?.schedule||savedPayload?.data||savedPayload?.schedule||{};
+      writeJSON(OCCUPANCY_SCHEDULE_KEY,{...payload,...savedSchedule,id:savedSchedule.id||savedSchedule.scheduleId||currentId||"",savedAt:new Date().toISOString()});
+      showAlert("availabilityAlert","ok","Beschikbaarheid opgeslagen in Cal.com en opnieuw geladen in Reactify.");await loadAll();renderStats();setTimeout(()=>closeModal("availabilityModal"),900)}catch(error){console.error(error);showAlert("availabilityAlert","error",error.message||"Beschikbaarheid opslaan mislukt.")}});
+
+    $("eventTypeForm").addEventListener("submit",async e=>{e.preventDefault();
+      try{showAlert("eventTypeAlert","info","Afspraaktype opslaan in Cal.com...");const payload={title:$("typeTitle").value,slug:$("typeSlug").value,lengthInMinutes:$("typeLength").value,slotInterval:$("typeSlot").value,minimumBookingNotice:$("typeNotice").value,beforeEventBuffer:$("typeBefore").value,afterEventBuffer:$("typeAfter").value,scheduleId:$("typeSchedule").value||undefined,description:$("typeDescription").value,hidden:$("typeHidden").checked,locationType:$("typeLocationType").value,locationValue:$("typeLocationValue").value};
+      await apiFetch(API.eventTypes,{method:"POST",body:JSON.stringify(payload)});showAlert("eventTypeAlert","ok","Afspraaktype aangemaakt in Cal.com en opnieuw geladen in Reactify.");$("eventTypeForm").reset();$("typeLength").value=30;$("typeSlot").value=30;$("typeNotice").value=60;$("typeBefore").value=0;$("typeAfter").value=0;await loadAll();}catch(error){console.error(error);showAlert("eventTypeAlert","error",error.message||"Afspraaktype opslaan mislukt.")}});
+
+    $("typeTitle").addEventListener("input",()=>{if(!$("typeSlug").dataset.touched){$("typeSlug").value=$("typeTitle").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}});$("typeSlug").addEventListener("input",()=>$("typeSlug").dataset.touched="1");
+    document.querySelectorAll(".view-btn").forEach(b=>b.onclick=()=>{viewMode=b.dataset.view;if(viewMode==="month")visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll()});
+    $("prevBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()-1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()-7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()-1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
+    $("nextBtn").onclick=()=>{if(viewMode==="month"){visibleDate=new Date(visibleDate.getFullYear(),visibleDate.getMonth()+1,1);selectedDate=new Date(visibleDate)}else if(viewMode==="week"){selectedDate.setDate(selectedDate.getDate()+7);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}else{selectedDate.setDate(selectedDate.getDate()+1);visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1)}renderAll()};
+    $("todayBtn").onclick=()=>{selectedDate=new Date();visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll()};
+    $("openAvailabilityBtn").onclick=()=>openModal("availabilityModal");$("openEventTypeBtn").onclick=()=>openModal("eventTypeModal");document.querySelectorAll(".occupancy-btn").forEach(btn=>btn.onclick=()=>{localStorage.setItem("reactify.occupancyPeriod",btn.dataset.period);renderStats();});
+    $("sidebarToggle")?.addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+    document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id))});
+    const startDefault=new Date();startDefault.setDate(startDefault.getDate()+1);startDefault.setHours(10,0,0,0);$("bookingStart").value=toLocalInputValue(startDefault);
+    window.addEventListener("reactify:datachange",()=>{fillContactSelect(); renderAll();});
+    if("Notification" in window && Notification.permission==="default") Notification.requestPermission().catch(()=>{});
+    visibleDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll();loadAll().then(()=>setTimeout(applyAppointmentQuery,0));
+  </script>
+
+<script>
+(function(){
+  if(window.ReactifyGlobalNotificationsLoaded) return;
+  window.ReactifyGlobalNotificationsLoaded=true;
+  const NOTIFICATION_KEY='reactify.notifications';
+  const SEEN_MSG_KEY='reactify.globalSeenMessages';
+  const SEEN_APPT_KEY='reactify.globalSeenAppointments';
+  const INIT_KEY='reactify.globalNotificationsInitialized';
+  const uid=(p='note')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+  const read=(k,f=[])=>{try{const raw=localStorage.getItem(k);return raw?JSON.parse(raw):f}catch(e){return f}};
+  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));};
+  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  const fmt=iso=>{try{return new Date(iso).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'})}catch(e){return ''}};
+  const pathForType=t=>t==='appointment'?'/platform/agenda/':'/platform/inbox/';
+  function showTopToast(note){
+    let el=document.getElementById('rfTopToast');
+    if(!el){el=document.createElement('div');el.id='rfTopToast';el.className='rf-top-toast';document.body.appendChild(el);}
+    const target=note.link||pathForType(note.type);
+    el.innerHTML=`<div class="rf-top-toast-icon">${note.type==='appointment'?'📅':'💬'}</div><div style="min-width:0;flex:1"><div class="rf-top-toast-title">${esc(note.title||'Reactify melding')}</div><div class="rf-top-toast-body">${esc(note.body||note.message||'Nieuwe melding in Reactify')}</div></div>`;
+    el.onclick=()=>{ saveNotes(notes().map(n=>n.id===note.id?{...n,read:true}:n)); location.href=target; };
+    el.classList.add('show');
+    clearTimeout(window.__rfTopToastTimer);
+    window.__rfTopToastTimer=setTimeout(()=>el.classList.remove('show'),5000);
+  }
+  function notes(){return read(NOTIFICATION_KEY,[])}
+  function saveNotes(items){write(NOTIFICATION_KEY,items.slice(0,120));renderBadges();}
+  function pushNote(note){
+    const items=notes();
+    const dedupe=note.dedupeKey||`${note.type}:${note.title}:${note.body}`;
+    if(items.some(n=>n.dedupeKey===dedupe)) return;
+    const item={id:uid(),type:note.type||'message',title:note.title||'Reactify melding',body:note.body||'',contactName:note.contactName||'',message:note.message||'',appointmentType:note.appointmentType||'',appointmentMoment:note.appointmentMoment||'',link:note.link||pathForType(note.type),dedupeKey:dedupe,createdAt:new Date().toISOString(),read:false};
+    items.unshift(item);saveNotes(items);showTopToast(item);
+    if('Notification' in window && Notification.permission==='granted'){try{new Notification(item.title,{body:item.body||'Nieuwe melding in Reactify'});}catch(e){}}
+  }
+  window.ReactifyPushNotification=pushNote;
+  function unread(type){return notes().filter(n=>!n.read && (!type || n.type===type)).length;}
+  function markTypeRead(type){const items=notes().map(n=>n.type===type?{...n,read:true}:n);saveNotes(items);}
+  window.ReactifyMarkNotificationsReadByType=markTypeRead;
+  function renderBadges(){
+    const total=unread();
+    const btn=document.getElementById('rfGlobalBell')||document.getElementById('notificationBtn');
+    const badge=document.getElementById('rfGlobalCount')||document.getElementById('notificationBadge');
+    if(btn) btn.classList.toggle('has-items',total>0), btn.classList.toggle('has-notifications',total>0);
+    if(badge) badge.textContent=total>99?'99+':String(total);
+    document.querySelectorAll('a.sidebar-link').forEach(a=>{
+      const href=a.getAttribute('href')||'';
+      const type=href.includes('/agenda')?'appointment':href.includes('/inbox')?'message':'';
+      if(!type) return;
+      let b=a.querySelector('.rf-sidebar-badge'); if(!b){b=document.createElement('span');b.className='rf-sidebar-badge';a.appendChild(b);}
+      const c=unread(type); b.textContent=c>99?'99+':String(c); a.classList.toggle('has-rf-badge',c>0);
+      if(!a.dataset.rfReadHook){a.dataset.rfReadHook='1';a.addEventListener('click',()=>markTypeRead(type));}
+    });
+  }
+  function ensureWidget(){
+    if(document.getElementById('rfGlobalNotifications')) return;
+    if(document.getElementById('notificationBtn')) return; // inbox has its own top-right button
+    const box=document.createElement('div');box.id='rfGlobalNotifications';box.className='rf-global-notification';
+    box.innerHTML=`<button class="rf-global-bell" id="rfGlobalBell" type="button" title="Meldingen">🔔<span class="rf-global-count" id="rfGlobalCount">0</span></button><div class="rf-global-panel" id="rfGlobalPanel"><div class="rf-global-head"><strong>Meldingen</strong><button type="button" id="rfGlobalReadAll">Alles gelezen</button></div><div class="rf-global-list" id="rfGlobalList"></div></div>`;
+    document.body.appendChild(box);
+    document.getElementById('rfGlobalBell')?.addEventListener('click',()=>{renderPanel();document.getElementById('rfGlobalPanel')?.classList.toggle('open');});
+    document.getElementById('rfGlobalReadAll')?.addEventListener('click',e=>{e.stopPropagation();saveNotes(notes().map(n=>({...n,read:true})));renderPanel();});
+  }
+  function renderPanel(){
+    const list=document.getElementById('rfGlobalList')||document.getElementById('notificationList'); if(!list) return;
+    const items=notes();
+    list.innerHTML=items.length?items.map(n=>`<button class="rf-global-item notification-item ${n.read?'':'unread'}" data-id="${esc(n.id)}"><div class="rf-global-title notification-title">${esc(n.title)}</div><div class="rf-global-body notification-body">${esc(n.body||n.message||'')}</div>${n.contactName?`<div class="rf-global-meta notification-meta">Contact: ${esc(n.contactName)}</div>`:''}${n.appointmentType?`<div class="rf-global-meta notification-meta">Afspraak: ${esc(n.appointmentType)} · ${esc(n.appointmentMoment||'')}</div>`:''}<div class="rf-global-meta notification-meta">${fmt(n.createdAt)}</div></button>`).join(''):'<div class="rf-global-empty notification-empty">Nog geen meldingen.</div>';
+    list.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('click',()=>{const id=el.dataset.id;let target='/platform/inbox/';saveNotes(notes().map(n=>{if(n.id===id){target=n.link||pathForType(n.type);return {...n,read:true};}return n;}));location.href=target;}));
+  }
+  window.toggleNotificationsPanel=function(){ensureWidget();renderPanel();(document.getElementById('rfGlobalPanel')||document.getElementById('notificationPanel'))?.classList.toggle('open');};
+  window.markAllNotificationsRead=function(){saveNotes(notes().map(n=>({...n,read:true})));renderPanel();};
+  async function pollConversations(){
+    try{
+      const payload=await fetch('/.netlify/functions/conversations').then(r=>r.json());
+      const rows=Array.isArray(payload?.data)?payload.data:[];
+      const seen=read(SEEN_MSG_KEY,{}), next={...seen};
+      const initialized=localStorage.getItem(INIT_KEY)==='1';
+      rows.forEach(r=>{
+        const id=r.id||r.conversation_id; if(!id) return;
+        const key=`${r.last_message_at||r.updated_at||''}:${r.last_message||''}`;
+        const direction=String(r.last_message_direction||'').toLowerCase();
+        if(!key.trim()) return;
+        if(seen[id] && seen[id]!==key && direction!=='outgoing'){
+          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
+        } else if(!seen[id] && initialized && direction!=='outgoing') {
+          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
+        }
+        next[id]=key;
+      });
+      write(SEEN_MSG_KEY,next);
+    }catch(e){}
+  }
+  async function pollBookings(){
+    try{
+      const payload=await fetch('/.netlify/functions/cal-bookings').then(r=>r.json());
+      const rows=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:[];
+      const seen=read(SEEN_APPT_KEY,{}), next={...seen};
+      const initialized=localStorage.getItem(INIT_KEY)==='1';
+      rows.forEach((b,i)=>{
+        const attendee=Array.isArray(b.attendees)?b.attendees[0]:(b.attendee||{});
+        const id=String(b.uid||b.id||`${b.start}_${attendee?.email||i}`);
+        const start=b.start||b.startTime||'';
+        const title=b.eventType?.title||b.title||b.bookingFieldsResponses?.title||'Afspraak';
+        const contact=attendee?.name||b.bookingFieldsResponses?.name||'Klant';
+        const key=`${start}:${title}:${contact}`;
+        if(seen[id] && seen[id]!==key || (!seen[id] && initialized)){
+          pushNote({type:'appointment',title:`Nieuwe afspraak: ${contact}`,body:`${title} staat ingepland op ${fmt(start)}.`,contactName:contact,appointmentType:title,appointmentMoment:fmt(start),link:'/platform/agenda/',dedupeKey:`appt:${id}:${key}`});
+        }
+        next[id]=key;
+      });
+      write(SEEN_APPT_KEY,next);
+    }catch(e){}
+  }
+  function boot(){
+    ensureWidget();renderBadges();renderPanel();
+    if('Notification' in window && Notification.permission==='default') Notification.requestPermission().catch(()=>{});
+    pollConversations();pollBookings();
+    setTimeout(()=>localStorage.setItem(INIT_KEY,'1'),1500);
+    setInterval(()=>{pollConversations();pollBookings();renderBadges();},12000);
+  }
+  window.addEventListener('storage',e=>{if(e.key===NOTIFICATION_KEY) renderBadges();});
+  window.addEventListener('reactify:datachange',renderBadges);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+</script>
+
+<script src="/platform/assets/cal-sync.js"></script>
+<script src="/platform-ui.js"></script>
+</body>
+</html>
