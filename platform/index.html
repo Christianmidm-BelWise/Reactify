@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="nl">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Reactify Platform - Beheer je klanten, afspraken en berichten op één plek." name="description"/>
-<link href="/favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<title>Platform | Reactify</title>
-<style>
+<html lang="nl"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="Reactify Platform" name="description"/><link href="/favicon.svg" rel="icon" type="image/svg+xml"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><title>Inbox | Reactify</title><style>
     :root {
       --purple-dark: #3D1D72;
       --purple: #5B2E91;
@@ -25,10 +15,18 @@
       --gray-100: #F3F4F6;
       --gray-200: #E5E7EB;
       --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
       --gray-600: #4B5563;
       --gray-700: #374151;
       --gray-800: #1F2937;
       --gray-900: #111827;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --blue: #2563eb;
+      --blue-light: #dbeafe;
+      --red: #dc2626;
+      --red-light: #fee2e2;
       --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -65,17 +63,8 @@
       gap: 0.75rem;
     }
 
-    .sidebar-logo svg {
-      width: 32px;
-      height: 32px;
-      flex-shrink: 0;
-    }
-
-    .sidebar-logo span {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
+    .sidebar-logo svg { width: 32px; height: 32px; flex-shrink: 0; }
+    .sidebar-logo span { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
 
     .sidebar-nav {
       flex: 1;
@@ -99,25 +88,10 @@
       transition: all 0.2s ease;
     }
 
-    .sidebar-link:hover {
-      color: var(--white);
-      background: rgba(255,255,255,0.1);
-    }
-
-    .sidebar-link.active {
-      color: var(--white);
-      background: var(--purple);
-    }
-
-    .sidebar-link svg {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      opacity: 0.8;
-    }
-
+    .sidebar-link:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+    .sidebar-link.active { color: var(--white); background: var(--purple); }
+    .sidebar-link svg { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.8; }
     .sidebar-link.active svg { opacity: 1; }
-
     .sidebar-spacer { flex: 1; }
 
     .sidebar-user {
@@ -150,59 +124,91 @@
     .main {
       flex: 1;
       margin-left: 240px;
-      padding: 2rem;
+      padding: 1.5rem 2rem;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .main-header {
+    .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
-    .main-header h1 {
+    .top-bar-left h1 {
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--gray-900);
+      margin-bottom: 0.125rem;
     }
 
-    .main-header h1 span {
-      color: var(--orange);
+    .top-bar-left p {
+      font-size: 0.875rem;
+      color: var(--gray-500);
     }
 
-    .header-actions {
+    .top-bar-right {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--white);
+    .top-search {
+      position: relative;
+    }
+
+    .top-search svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--gray-400);
+    }
+
+    .top-search input {
+      width: 240px;
+      padding: 0.5rem 0.75rem 0.5rem 2.25rem;
       border: 1px solid var(--gray-200);
       border-radius: 8px;
       font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--gray-700);
-      text-decoration: none;
-      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.2s ease;
     }
 
-    .btn-back:hover {
-      background: var(--gray-50);
-      border-color: var(--gray-300);
+    .top-search input::placeholder { color: var(--gray-400); }
+    .top-search input:focus { border-color: var(--purple); }
+
+    .notification-btn {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
     }
+
+    .notification-btn:hover { border-color: var(--gray-300); color: var(--gray-700); }
+    .notification-btn svg { width: 18px; height: 18px; }
 
     /* Stats Grid */
     .stats-grid {
       display: grid;
-      grid-template-columns:repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.25rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .stat-card {
@@ -222,154 +228,635 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
       flex-shrink: 0;
     }
 
     .stat-icon.purple { background: var(--purple-light); color: var(--purple); }
     .stat-icon.orange { background: var(--orange-light); color: var(--orange-dark); }
-    .stat-icon.green { background: #dcfce7; color: #16a34a; }
-    .stat-icon.blue { background: #dbeafe; color: #2563eb; }
+    .stat-icon.green { background: var(--green-light); color: var(--green); }
+    .stat-icon.blue { background: var(--blue-light); color: var(--blue); }
 
     .stat-info { line-height: 1.3; }
     .stat-label { font-size: 0.75rem; color: var(--gray-600); font-weight: 500; }
     .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--gray-900); }
+    .stat-change { font-size: 0.7rem; color: var(--green); font-weight: 500; }
 
-    /* Dashboard Grid */
-    .dashboard-grid {
+    /* Inbox Layout */
+    .inbox-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 300px 1fr 280px;
       gap: 1.25rem;
+      flex: 1;
+      min-height: 0;
     }
 
-    .dashboard-card {
+    .inbox-panel {
       background: var(--white);
       border-radius: 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
 
-    .card-header {
-      padding: 1rem 1.25rem;
+
+    .email-message-body{white-space:pre-wrap;word-break:break-word;line-height:1.65}
+    .email-message{padding:1rem 1.1rem}.email-message .chat-msg-subject{font-weight:800;margin-bottom:.55rem;padding-bottom:.45rem;border-bottom:1px solid rgba(156,163,175,.28)}
+
+    /* Conversation List */
+    .conv-tabs {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: .1rem;
       border-bottom: 1px solid var(--gray-100);
+      padding: 0 .65rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: var(--purple-light) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .conv-tabs::-webkit-scrollbar { height: 7px; }
+    .conv-tabs::-webkit-scrollbar-track { background: var(--gray-50); }
+    .conv-tabs::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 999px; }
+    .conv-tabs:hover::-webkit-scrollbar-thumb { background: var(--purple-medium); }
+
+    .conv-tab {
+      padding: 0.75rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gray-500);
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
+
+    .conv-tab:hover { color: var(--gray-700); }
+    .conv-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .conv-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid var(--gray-50);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .conv-item:hover { background: var(--gray-50); }
+    .conv-item.active { background: var(--purple-bg); }
+
+    .conv-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .conv-content { flex: 1; min-width: 0; }
+
+    .conv-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 0.125rem;
     }
 
-    .card-header h2 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--gray-900);
+    .conv-name { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
+    .conv-time { font-size: 0.7rem; color: var(--gray-400); white-space: nowrap; flex-shrink: 0; }
+
+    .conv-preview {
+      font-size: 0.78rem;
+      color: var(--gray-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
     }
 
-    .card-header a {
+    .conv-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .conv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    .conv-badge.online { background: var(--green-light); color: var(--green); }
+
+    .conv-footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--gray-100);
+      text-align: center;
+    }
+
+    .conv-footer a {
       font-size: 0.8rem;
       color: var(--purple);
       text-decoration: none;
       font-weight: 500;
     }
 
-    .card-header a:hover { color: var(--orange); }
+    .conv-footer a:hover { color: var(--orange); }
 
-    .card-body {
+    /* Chat Panel */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .chat-header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 600; font-size: 0.95rem; color: var(--gray-900); }
+
+    .chat-header-details {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .chat-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .chat-date {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--gray-400);
+      font-weight: 500;
       padding: 0.5rem 0;
     }
 
-    /* Client list */
-    .client-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.625rem 1.25rem;
-      transition: background 0.15s ease;
+    .chat-msg {
+      max-width: 75%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
     }
 
-    .client-item:hover { background: var(--gray-50); }
-    .client-item { cursor: pointer; }
+    .chat-msg.incoming {
+      background: var(--gray-100);
+      color: var(--gray-800);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
 
-    .client-avatar {
-      width: 36px;
-      height: 36px;
+    .chat-msg.outgoing {
+      background: var(--purple);
+      color: var(--white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-msg-time {
+      font-size: 0.65rem;
+      margin-top: 0.375rem;
+      opacity: 0.6;
+    }
+
+    .chat-msg.outgoing .chat-msg-time { text-align: right; }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .chat-input-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--gray-400);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input-btn:hover { background: var(--gray-100); color: var(--gray-600); }
+    .chat-input-btn svg { width: 18px; height: 18px; }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      background: var(--gray-50);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .chat-input input::placeholder { color: var(--gray-400); }
+    .chat-input input:focus { border-color: var(--purple); background: var(--white); }
+
+    .chat-send-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 8px;
+      background: var(--purple);
+      color: var(--white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-send-btn:hover { background: var(--purple-dark); }
+    .chat-send-btn svg { width: 16px; height: 16px; }
+
+    /* Client Profile Panel */
+    .profile-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-header-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-header-section h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .profile-card {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 1.1rem;
       color: var(--white);
-      flex-shrink: 0;
+      margin-bottom: 0.75rem;
     }
 
-    .client-info { flex: 1; min-width: 0; }
-    .client-name { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
-    .client-phone { font-size: 0.75rem; color: var(--gray-600); }
+    .profile-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--gray-900);
+      margin-bottom: 0.125rem;
+    }
 
-    /* Inbox */
-    .inbox-item {
+    .profile-phone {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-email {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .profile-action-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .profile-action-btn:hover { border-color: var(--gray-300); color: var(--gray-700); }
+    .profile-action-btn svg { width: 16px; height: 16px; }
+
+    .profile-details {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.375rem 0;
+    }
+
+    .profile-detail-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .profile-detail-value {
+      font-size: 0.8rem;
+      color: var(--gray-800);
+      font-weight: 500;
+      text-align: right;
+      max-width: 60%;
+    }
+
+    .profile-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .profile-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-status-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .status-badge-small {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    .status-badge-small.active { background: var(--green-light); color: var(--green); }
+
+    .progress-row {
+      margin-bottom: 0.625rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .progress-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .progress-value {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--gray-100);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-fill.purple { background: var(--purple); }
+    .progress-fill.green { background: var(--green); }
+
+    .profile-activity {
+      padding: 1rem 1.25rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .activity-item {
       display: flex;
       align-items: flex-start;
-      gap: 0.75rem;
-      padding: 0.75rem 1.25rem;
-      transition: background 0.15s ease;
+      gap: 0.625rem;
+      padding: 0.375rem 0;
     }
 
-    .inbox-item:hover { background: var(--gray-50); }
-    .inbox-item { cursor: pointer; }
-
-    .inbox-avatar {
-      width: 36px;
-      height: 36px;
+    .activity-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.green { background: var(--green); }
+    .activity-dot.purple { background: var(--purple); }
+    .activity-dot.orange { background: var(--orange); }
+
+    .activity-text {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .activity-date {
+      font-size: 0.65rem;
+      color: var(--gray-400);
+    }
+
+    .profile-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--gray-100);
+      margin-top: auto;
+    }
+
+    .btn-new-convo {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 0.75rem;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.625rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
       color: var(--white);
-      flex-shrink: 0;
-      margin-top: 2px;
+      background: var(--green);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
     }
 
-    .inbox-content { flex: 1; min-width: 0; }
-    .inbox-sender { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
-    .inbox-preview { font-size: 0.78rem; color: var(--gray-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .inbox-time { font-size: 0.7rem; color: var(--gray-600); white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .btn-new-convo:hover { background: #15803d; }
+    .btn-new-convo svg { width: 16px; height: 16px; }
 
-    /* Agenda */
-    .agenda-item {
+    /* Conversation Summary */
+    .conv-summary {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .conv-summary-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.625rem 1.25rem;
-      transition: background 0.15s ease;
+      gap: 0.375rem;
     }
 
-    .agenda-item:hover { background: var(--gray-50); }
-    .agenda-item { cursor: pointer; }
-
-    .agenda-time {
-      font-size: 0.78rem;
-      font-weight: 600;
+    .conv-summary-title svg {
+      width: 14px;
+      height: 14px;
       color: var(--purple);
-      width: 44px;
-      flex-shrink: 0;
     }
 
-    .agenda-dot {
-      width: 8px;
-      height: 8px;
+    .conv-summary-text {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 0.625rem 0.75rem;
+      border-left: 3px solid var(--purple);
+    }
+
+    /* Gespreksstatus Badges */
+    .gespreksstatus-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .gespreksstatus-badge .gs-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .agenda-dot.purple { background: var(--purple); }
-    .agenda-dot.orange { background: var(--orange); }
-    .agenda-dot.green { background: #16a34a; }
+    .gespreksstatus-badge.gs-ai-actief {
+      background: var(--green-light);
+      color: var(--green);
+    }
+    .gespreksstatus-badge.gs-ai-actief .gs-dot { background: var(--green); }
 
-    .agenda-info { flex: 1; min-width: 0; }
-    .agenda-title { font-weight: 600; font-size: 0.85rem; color: var(--gray-900); }
-    .agenda-sub { font-size: 0.75rem; color: var(--gray-600); }
+    .gespreksstatus-badge.gs-menselijke-overname {
+      background: var(--orange-light);
+      color: var(--orange-dark);
+    }
+    .gespreksstatus-badge.gs-menselijke-overname .gs-dot { background: var(--orange); }
+
+    .gespreksstatus-badge.gs-afgesloten {
+      background: var(--gray-100);
+      color: var(--gray-500);
+    }
+    .gespreksstatus-badge.gs-afgesloten .gs-dot { background: var(--gray-400); }
+
+    .conv-item .conv-status-row {
+      margin-top: 0.25rem;
+    }
 
     /* Mobile */
     .mobile-sidebar-toggle {
@@ -385,30 +872,80 @@
       font-weight: 500;
       cursor: pointer;
       font-family: var(--font-sans);
+      margin-bottom: 1rem;
     }
 
-    @media (max-width: 1250px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 1200px) {
+      .inbox-layout { grid-template-columns: 280px 1fr; }
+      .profile-panel { display: none; }
+    }
 
     @media (max-width: 1024px) {
-      .dashboard-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-      }
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
       .sidebar.open { transform: translateX(0); }
       .main { margin-left: 0; }
       .mobile-sidebar-toggle { display: inline-flex; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-    }
-
-    @media (max-width: 480px) {
+      .inbox-layout { grid-template-columns: 1fr; }
+      .conv-panel { display: none; }
+      .conv-panel.mobile-show { display: flex; }
+      .chat-panel.mobile-hide { display: none; }
       .stats-grid { grid-template-columns: 1fr; }
+      .top-search input { width: 160px; }
     }
   
+
+    .empty-state{padding:1.25rem;text-align:center;color:var(--gray-500);font-size:.85rem;}
+    .empty-state strong{display:block;color:var(--gray-900);font-size:.95rem;margin-bottom:.25rem;}
+    .btn-small{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.38rem .7rem;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-700);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:none;font-family:var(--font-sans);transition:.2s;}
+    .btn-small:hover{background:var(--gray-50);border-color:var(--gray-300);}
+    .btn-purple{background:var(--purple);color:var(--white);border-color:var(--purple);}
+    .btn-purple:hover{background:var(--purple-dark);color:var(--white);}
+    .btn-orange{background:var(--orange);color:var(--white);border-color:var(--orange);}
+    .btn-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+    .modal-overlay,.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+    .modal-overlay.open,.modal-backdrop.open{display:flex;}
+    .modal{background:var(--white);border-radius:16px;width:min(560px,95vw);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.16);}
+    .modal.wide{width:min(760px,95vw);}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--gray-100);}
+    .modal-header h2,.modal-title{font-size:1.05rem;font-weight:800;color:var(--gray-900);}
+    .modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:var(--gray-100);color:var(--gray-600);cursor:pointer;font-size:1.1rem;}
+    .modal-body{padding:1.5rem;}
+    .modal-footer,.modal-actions{display:flex;justify-content:flex-end;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid var(--gray-100);}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .form-field,.form-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem;}
+    .form-field.full{grid-column:1/-1;}
+    .form-field label,.form-group label{font-size:.78rem;font-weight:700;color:var(--gray-700);}
+    .form-field input,.form-field select,.form-field textarea,.form-group input,.form-group select,.form-group textarea{width:100%;padding:.55rem .75rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.85rem;font-family:var(--font-sans);color:var(--gray-800);background:var(--white);outline:none;}
+    .form-field input:focus,.form-field select:focus,.form-field textarea:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,46,145,.1);}
+    .form-help{font-size:.72rem;color:var(--gray-500);}
+    .btn-save,.btn-primary{padding:.55rem 1.1rem;border:0;border-radius:8px;font-size:.8rem;font-weight:700;color:var(--white);background:var(--purple);cursor:pointer;font-family:var(--font-sans);}
+    .btn-cancel,.btn-secondary{padding:.55rem 1rem;border:1px solid var(--gray-200);border-radius:8px;font-size:.8rem;font-weight:600;color:var(--gray-700);background:var(--white);cursor:pointer;font-family:var(--font-sans);}
+    .btn-danger-small{background:var(--red-light);color:var(--red);border-color:var(--red-light);}
+    .hidden{display:none!important;}
+    .toast{position:fixed;right:1rem;bottom:1rem;background:var(--gray-900);color:#fff;padding:.75rem 1rem;border-radius:10px;z-index:2000;font-size:.85rem;box-shadow:0 12px 30px rgba(0,0,0,.2);display:none;}
+    .toast.show{display:block;}
+    @media(max-width:768px){.form-grid{grid-template-columns:1fr}.modal-actions,.modal-footer{flex-wrap:wrap}.modal-actions button,.modal-footer button{flex:1}}
+
+
+    /* Reactify live notification + inbox improvements */
+
+.ai-toggle-btn{border:1px solid var(--green);background:var(--green-light);color:var(--green);border-radius:999px;padding:.38rem .7rem;font-size:.72rem;font-weight:900;cursor:pointer}.ai-toggle-btn.off{border-color:var(--orange);background:var(--orange-light);color:var(--orange-dark)}.ai-toggle-btn:hover{filter:brightness(.97)}
+.gespreksstatus-badge.gs-manual{background:var(--orange-light);color:var(--orange-dark)}.gespreksstatus-badge.gs-manual .gs-dot{background:var(--orange)}
+.urgency-meter{position:relative;height:12px;background:linear-gradient(90deg,#facc15,#f97316,#dc2626);border-radius:999px;overflow:visible}.urgency-meter-fill{display:none}.urgency-knob{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid #dc2626;box-shadow:0 3px 10px rgba(17,24,39,.22);transform:translate(-50%,-50%);transition:left .25s ease}.urgency-meter[data-level="low"] .urgency-knob{border-color:#facc15}.urgency-meter[data-level="medium"] .urgency-knob{border-color:#f97316}.urgency-meter[data-level="high"] .urgency-knob{border-color:#dc2626}
+
+    .notification-badge,.unread-badge{min-width:18px;height:18px;border-radius:999px;background:var(--orange);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
+    .notification-btn .notification-badge{position:absolute;right:-7px;top:-7px;display:none}.notification-btn.has-notifications .notification-badge{display:inline-flex}
+    .conv-item.unread{background:#fffaf0}.conv-item.unread.active{background:var(--purple-bg)}.conv-item.unread .conv-name{font-weight:800}.conv-item.unread .conv-preview{color:var(--gray-800);font-weight:600}
+    .conv-topline{display:flex;align-items:center;gap:.45rem;min-width:0}.conv-topline .conv-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.conv-actions{display:flex;align-items:center;gap:.35rem}.conv-delete-btn,.chat-delete-btn{border:0;background:var(--red-light);color:var(--red);border-radius:8px;padding:.32rem .5rem;font-size:.72rem;font-weight:800;cursor:pointer}.conv-delete-btn:hover,.chat-delete-btn:hover{filter:brightness(.95)}
+    .intent-pill{display:inline-flex;align-items:center;padding:.16rem .5rem;border-radius:999px;background:var(--purple-light);color:var(--purple);font-size:.68rem;font-weight:800}
+    .urgency-meter{width:100%;height:10px;border-radius:999px;background:var(--gray-100);overflow:hidden;margin-top:.35rem}.urgency-meter-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#facc15,#f97316,#dc2626);transition:width .25s ease}.urgency-caption{display:flex;justify-content:space-between;gap:.5rem;margin-top:.25rem;font-size:.7rem;color:var(--gray-500)}
+    .notification-panel{position:fixed;right:1.5rem;top:5rem;width:min(380px,92vw);max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--gray-200);border-radius:14px;box-shadow:0 20px 60px rgba(17,24,39,.18);z-index:1500;display:none}.notification-panel.open{display:block}.notification-panel-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;border-bottom:1px solid var(--gray-100)}.notification-panel-header h3{font-size:.95rem;font-weight:900;color:var(--gray-900)}.notification-list{display:grid;gap:.35rem;padding:.65rem}.notification-item{padding:.75rem;border-radius:10px;background:var(--gray-50);border-left:3px solid var(--purple)}.notification-item.unread{background:var(--orange-light);border-left-color:var(--orange)}.notification-title{font-weight:800;font-size:.82rem;color:var(--gray-900);margin-bottom:.2rem}.notification-body{font-size:.76rem;color:var(--gray-600);line-height:1.45}.notification-meta{font-size:.68rem;color:var(--gray-400);margin-top:.35rem}.notification-empty{padding:1.25rem;color:var(--gray-500);text-align:center;font-size:.82rem}
+
+
 
 /* Reactify global meldingen + sidebar badges */
 .rf-sidebar-badge{margin-left:auto;min-width:18px;height:18px;border-radius:999px;background:var(--orange,#F5A623);color:#fff;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;line-height:1;padding:0 .35rem;box-shadow:0 4px 10px rgba(245,166,35,.28)}
@@ -423,541 +960,627 @@
 .rf-top-toast{position:fixed;top:1.1rem;left:50%;transform:translate(-50%,-130%);z-index:2400;width:min(560px,calc(100vw - 2rem));background:#fff;border:1px solid var(--purple-light,#E8DCF5);border-left:5px solid var(--orange,#F5A623);border-radius:14px;box-shadow:0 18px 50px rgba(17,24,39,.18);padding:.9rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;opacity:0;pointer-events:none;transition:transform .28s ease,opacity .28s ease}.rf-top-toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.rf-top-toast-icon{width:34px;height:34px;border-radius:999px;background:var(--orange-light,#FFF3DC);color:var(--orange-dark,#E0941A);display:flex;align-items:center;justify-content:center;flex-shrink:0}.rf-top-toast-title{font-size:.86rem;font-weight:900;color:var(--gray-900,#111827)}.rf-top-toast-body{font-size:.76rem;color:var(--gray-600,#4B5563);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:768px){.rf-global-notification{top:.85rem!important;right:.85rem!important}.rf-top-toast{top:.75rem;width:calc(100vw - 1.5rem)}}
 
 
-/* Consistente badges naast namen */
-.name-with-badges{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap}
-.contact-type{display:inline-flex;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:#dbeafe;color:#2563eb}
-.conversation-state{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}.conversation-state.ai-active{background:#dcfce7;color:#16a34a}.conversation-state.manual{background:var(--orange-light);color:var(--orange-dark)}.conversation-state.completed{background:var(--gray-100);color:var(--gray-600)}
-</style>
-<style id="reactify-dashboard-analytics-style">
-  .stat-info{flex:1;min-width:0}
-  .stat-progress{margin-top:.55rem;width:100%;height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden}
-  .stat-progress-fill{height:100%;border-radius:3px;background:var(--purple);width:0;transition:width .35s ease}
-  .stat-progress-fill.green{background:var(--green,#16a34a)}
-  .stat-meta{font-size:.68rem;color:var(--gray-600);margin-top:.28rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .dashboard-card .card-body{max-height:330px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--purple-light) transparent}
-  .dashboard-card .card-body::-webkit-scrollbar{width:7px}.dashboard-card .card-body::-webkit-scrollbar-thumb{background:var(--purple-light);border-radius:999px}.dashboard-card .card-body:hover::-webkit-scrollbar-thumb{background:var(--purple)}
-  .analytics-card{grid-column:1/-1;width:calc(100% + .8rem);margin:1.25rem -.4rem 0;background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;font-family:var(--font-sans)}
-  .analytics-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.2rem 1.3rem;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
-  .analytics-title h2{font-size:1.05rem;font-weight:800;color:var(--gray-900);margin-bottom:.18rem;letter-spacing:-.01em}.analytics-title p{font-size:.76rem;color:var(--gray-600)}
-  .analytics-controls{display:flex;gap:.65rem;flex-wrap:wrap;justify-content:flex-end;align-items:center}
-  .analytics-switch{display:inline-flex;gap:.22rem;padding:.28rem;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 1px 2px rgba(17,24,39,.04)}
-  .analytics-btn{appearance:none;border:0;background:transparent;color:var(--gray-600);border-radius:9px;padding:.46rem .78rem;font-family:var(--font-sans);font-size:.72rem;font-weight:750;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s,transform .18s;white-space:nowrap}
-  .analytics-btn:hover{background:var(--purple-bg);color:var(--purple);transform:translateY(-1px)}
-  .analytics-btn.active{background:var(--purple);color:#fff;box-shadow:0 5px 14px rgba(91,46,145,.24)}
-  .analytics-body{padding:1.25rem .9rem 1.45rem}
-  .chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.85rem;min-height:22px}.legend-item{display:flex;align-items:center;gap:.42rem;font-size:.72rem;color:var(--gray-600);font-weight:700}.legend-dot{width:9px;height:9px;border-radius:999px;box-shadow:0 0 0 3px rgba(17,24,39,.035)}
-  .chart-wrap{height:430px;width:100%;position:relative;overflow:hidden;border:1px solid var(--gray-100);border-radius:14px;background:linear-gradient(180deg,#fff 0%,#FCFAFE 100%)}
-  .line-chart{width:100%;height:100%;display:block;font-family:var(--font-sans)}
-  .line-grid{stroke:#E5E7EB;stroke-width:1;stroke-dasharray:4 5}.line-axis{stroke:#D1D5DB;stroke-width:1}.line-label{fill:#6B7280;font-size:11px;font-family:var(--font-sans)}.line-y-label{fill:#9CA3AF;font-size:10px;font-family:var(--font-sans)}
-  .line-path{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 4px 8px rgba(91,46,145,.12))}.line-area{opacity:.075}.line-point{stroke:#fff;stroke-width:2.5;cursor:pointer;transition:r .15s}.line-point:hover{r:6}
-  .chart-summary{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--gray-100);font-size:.75rem;color:var(--gray-600)}.chart-summary strong{color:var(--gray-900);font-weight:800}
-  @media(max-width:900px){.analytics-card{width:100%;margin-left:0;margin-right:0}.analytics-head{align-items:stretch}.analytics-controls{justify-content:flex-start}.analytics-switch{overflow-x:auto;max-width:100%}.chart-wrap{height:340px;overflow-x:auto}.line-chart{min-width:760px}}
 
-  /* Professionele analytics-bediening */
-  .analytics-controls{gap:.8rem}
-  .analytics-switch{position:relative;display:inline-flex;align-items:center;gap:.18rem;padding:.32rem;background:linear-gradient(180deg,#fff,#F9FAFB);border:1px solid #E5E7EB;border-radius:13px;box-shadow:0 5px 16px rgba(17,24,39,.06)}
-  .analytics-btn{min-height:36px;padding:.5rem .9rem;border-radius:9px;font-weight:800;letter-spacing:-.01em;color:#4B5563}
-  .analytics-btn:hover{background:#F5F0FA;color:#5B2E91;transform:none}
-  .analytics-btn.active{background:linear-gradient(180deg,#6B38A5,#5B2E91);color:#fff;box-shadow:0 6px 16px rgba(91,46,145,.28),inset 0 1px 0 rgba(255,255,255,.18)}
-  .chart-wrap{padding:0!important}
-  .chart-mode-switch{display:inline-flex;align-items:center;gap:.18rem;padding:.32rem;background:linear-gradient(180deg,#fff,#F9FAFB);border:1px solid var(--gray-200);border-radius:13px;box-shadow:0 5px 16px rgba(17,24,39,.06)}
-  .chart-icon-btn{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:var(--gray-600);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s}
-  .chart-icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .chart-icon-btn:hover{background:var(--purple-bg);color:var(--purple)}
-  .chart-icon-btn.active{background:linear-gradient(180deg,#6B38A5,#5B2E91);color:#fff;box-shadow:0 6px 16px rgba(91,46,145,.28)}
-  .metric-period-switch{display:inline-flex;gap:.12rem;margin-top:.38rem;padding:.2rem;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px}
-  .metric-period-btn{border:0;background:transparent;color:var(--gray-600);padding:.28rem .48rem;border-radius:7px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:var(--font-sans)}
-  .metric-period-btn:hover{background:var(--purple-bg);color:var(--purple)}
-  .metric-period-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px 8px rgba(91,46,145,.2)}
-</style>
-<style id="reactify-shared-metric-cards">
-.contact-total-values{display:flex;align-items:center;gap:.85rem;margin-top:.15rem}.contact-total-values>div{display:flex;align-items:baseline;gap:.35rem}.contact-total-label{font-size:.68rem;color:var(--gray-600);font-weight:700}.contact-total-divider{width:1px;height:28px;background:var(--gray-200)}
-.metric-progress{margin-top:.5rem;width:100%;height:7px;background:var(--gray-100);border-radius:999px;overflow:hidden}.metric-progress-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}.metric-progress-fill.purple{background:var(--purple)}.metric-progress-fill.green{background:#16a34a}.metric-meta{font-size:.68rem;color:var(--gray-600);margin-top:.28rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-</style>
-<style id="reactify-requested-layout-fixes">
-.analytics-head{align-items:center!important}
-.analytics-head>.chart-mode-switch{order:0;flex:0 0 auto;margin-right:.1rem}
-.analytics-head>.analytics-title{order:1;flex:1 1 260px}
-.analytics-head>.analytics-controls{order:2;flex:0 1 auto}
-@media(max-width:900px){.analytics-head>.analytics-title{flex-basis:calc(100% - 92px)}.analytics-head>.analytics-controls{width:100%;justify-content:flex-start}}
-</style>
-<style id="reactify-dashboard-live-smooth-style">
-.stat-card,.dashboard-card,.analytics-card{transition:transform .28s ease,box-shadow .28s ease,opacity .28s ease}
-.stat-card:hover,.dashboard-card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(17,24,39,.08)}
-.stat-value,.stat-meta,.client-item,.inbox-item,.agenda-item{transition:opacity .22s ease,transform .22s ease,background-color .22s ease}
-.rf-updating{opacity:.58;transform:translateY(2px)}
-.rf-updated{animation:rfSoftPulse .55s ease}
-@keyframes rfSoftPulse{0%{transform:scale(.985);opacity:.72}55%{transform:scale(1.01);opacity:1}100%{transform:scale(1);opacity:1}}
-.line-path{stroke-dasharray:2400;stroke-dashoffset:2400;animation:rfDrawLine .75s cubic-bezier(.2,.8,.2,1) forwards}
-.line-area{animation:rfFadeArea .65s ease forwards}.line-point{animation:rfPointIn .42s ease both}
-@keyframes rfDrawLine{to{stroke-dashoffset:0}}@keyframes rfFadeArea{from{opacity:0}to{opacity:.075}}@keyframes rfPointIn{from{opacity:0;transform:scale(.4);transform-origin:center}to{opacity:1;transform:scale(1)}}
-.chart-bar{transform-box:fill-box;transform-origin:center bottom;animation:rfGrowBar .55s cubic-bezier(.2,.8,.2,1) both}
-@keyframes rfGrowBar{from{transform:scaleY(0);opacity:.25}to{transform:scaleY(1);opacity:1}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-</style>
-</head>
-<body>
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-<div class="sidebar-logo">
-<img alt="Reactify" src="/logo.png" style="height: 28px; width: auto; filter: brightness(1.8);"/>
-</div>
-<nav class="sidebar-nav">
-<a class="sidebar-link active" href="/platform/">
-<svg fill="currentColor" viewbox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
-        Dashboard
-      </a>
-<a class="sidebar-link" href="/platform/klantenlijst/">
-<svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
-        Contactpersonen
-      </a>
-<a class="sidebar-link" href="/platform/inbox/">
-<svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>
-        Inbox
-      </a>
-<a class="sidebar-link" href="/platform/agenda/">
-<svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>
-        Agenda
-      </a>
-<div class="sidebar-spacer"></div>
-<a class="sidebar-link" href="/platform/instellingen/">
-<svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" fill-rule="evenodd"></path></svg>
-        Instellingen
-      </a>
-<a class="sidebar-link" href="#">
-<svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" fill-rule="evenodd"></path></svg>
-        Help
-      </a>
-</nav>
-<div class="sidebar-user">
-<div class="user-avatar">BD</div>
-<div class="user-info">
-<div class="user-name">Bob Demo</div>
-<div class="user-role">Beheerder</div>
-</div>
-</div>
-</aside>
-<!-- Main Content -->
-<main class="main">
-<div class="main-header">
-<div>
-<button class="mobile-sidebar-toggle" id="sidebarToggle">
-<svg fill="currentColor" height="18" viewbox="0 0 20 20" width="18"><path clip-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" fill-rule="evenodd"></path></svg>
-          Menu
-        </button>
-<h1>Welkom terug, <span>Bob!</span></h1>
-</div>
-</div>
-<!-- Stats -->
-<div class="stats-grid">
-<div class="stat-card contact-totals-card">
-<div class="stat-icon purple">
-<svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
-</div>
-<div class="stat-info">
-<div class="stat-label">Contactpersonen</div>
-<div class="contact-total-values"><div><span class="stat-value" id="statClients">0</span><span class="contact-total-label">Klanten</span></div><span class="contact-total-divider"></span><div><span class="stat-value" id="statLeads">0</span><span class="contact-total-label">Leads</span></div></div>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon orange">
-<svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>
-</div>
-<div class="stat-info">
-<div class="stat-label">Open gesprekken</div>
-<div class="stat-value" id="statConversations">0</div>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon blue">
-<svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" fill-rule="evenodd"></path></svg>
-</div>
-<div class="stat-info">
-<div class="stat-label">Afgehandeld deze week</div>
-<div class="stat-value" id="statCompletedWeek">0</div>
-<div class="metric-progress"><div class="metric-progress-fill green" id="completedBar"></div></div>
-<div class="metric-meta" id="completedMeta">0% van de gesprekken</div>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon green">
-<svg fill="currentColor" height="22" viewbox="0 0 20 20" width="22"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>
-</div>
-<div class="stat-info">
-<div class="stat-label">Bezettingsgraad</div>
-<div class="stat-value" id="statOccupancy">0%</div>
-<div class="metric-progress"><div class="metric-progress-fill purple" id="occupancyBar"></div></div><div aria-label="Periode bezettingsgraad" class="metric-period-switch"><button class="metric-period-btn" data-occupancy-period="day" type="button">Dag</button><button class="metric-period-btn" data-occupancy-period="week" type="button">Week</button><button class="metric-period-btn active" data-occupancy-period="month" type="button">Maand</button><button class="metric-period-btn" data-occupancy-period="year" type="button">Jaar</button></div>
-<div class="metric-meta" id="occupancyMeta">0 van 0 uur geboekt</div>
-</div>
-</div>
-</div>
-<!-- Dashboard Cards -->
-<div class="dashboard-grid">
-<div class="dashboard-card">
-<div class="card-header">
-<h2>Recente contactpersonen</h2>
-<a href="/platform/klantenlijst/">Bekijk alles</a>
-</div>
-<div class="card-body" id="recentClients">
-<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Contactpersonen laden...</div>
-</div>
-</div>
-<div class="dashboard-card">
-<div class="card-header">
-<h2>Recente gesprekken</h2>
-<a href="/platform/inbox/">Open inbox</a>
-</div>
-<div class="card-body" id="recentConversations">
-<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Gesprekken laden...</div>
-</div>
-</div>
-<div class="dashboard-card">
-<div class="card-header">
-<h2>Komende afspraken</h2>
-<a href="/platform/agenda/">Open agenda</a>
-</div>
-<div class="card-body" id="upcomingAppointments">
-<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Afspraken laden...</div>
-</div>
-</div>
-</div>
-<section aria-label="Gespreksanalyse" class="analytics-card">
-<div class="analytics-head">
-<div aria-label="Diagramtype" class="chart-mode-switch">
-<button aria-label="Lijndiagram" class="chart-icon-btn active" data-chart-view="line" title="Lijndiagram" type="button"><svg viewbox="0 0 24 24"><path d="M3 17l5-5 4 3 7-8"></path><path d="M19 7h2v2"></path></svg></button>
-<button aria-label="Staafdiagram" class="chart-icon-btn" data-chart-view="bar" title="Staafdiagram" type="button"><svg viewbox="0 0 24 24"><path d="M4 20V10h4v10"></path><path d="M10 20V4h4v16"></path><path d="M16 20v-7h4v7"></path></svg></button>
-</div><div class="analytics-title"><h2 id="analyticsHeading">Gespreksanalyse</h2><p id="analyticsSubtitle">Actuele cijfers uit gesprekken en contactprofielen.</p></div>
-<div class="analytics-controls">
-<div aria-label="Grafiektype" class="analytics-switch">
-<button class="analytics-btn active" data-metric="handling" type="button">AI chat</button>
-<button class="analytics-btn" data-metric="completed" type="button">Afgehandelde gesprekken</button>
-<button class="analytics-btn" data-metric="channel" type="button">Kanaalvergelijking</button>
-</div>
+/* Inbox final controls */
+.ai-toggle-btn{display:none!important}.chat-delete-btn{display:none!important}.btn-row{align-items:center}.ai-switch{display:inline-flex;align-items:center;gap:.45rem;border:1px solid transparent;border-radius:999px;padding:.25rem .65rem .25rem .28rem;font-size:.72rem;font-weight:900;cursor:pointer;white-space:nowrap;min-height:32px}.ai-switch.on{background:var(--green-light);color:var(--green);border-color:var(--green-light)}.ai-switch.off{background:var(--orange-light);color:var(--orange-dark);border-color:var(--orange-light)}.ai-switch-knob{width:22px;height:22px;border-radius:999px;background:currentColor;display:inline-block;box-shadow:0 2px 7px rgba(17,24,39,.16)}.ai-switch-text{line-height:1}.icon-danger-btn{width:34px;height:34px;border:0;border-radius:9px;background:var(--red-light);color:var(--red);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:.92rem}.icon-danger-btn:hover{filter:brightness(.96)}.finish-chat-btn{height:34px;border:1px solid #d1fae5;border-radius:9px;background:#ecfdf5;color:#15803d;padding:0 .75rem;font-size:.72rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}.finish-chat-btn:hover{background:#dcfce7}.finish-chat-btn:disabled{opacity:.55;cursor:default}.profile-footer{display:none!important}.urgency-meter{position:relative!important;width:100%!important;height:12px!important;border-radius:999px!important;background:linear-gradient(90deg,#facc15,#f97316,#dc2626)!important;overflow:visible!important;margin-top:.35rem}.urgency-meter-fill{display:none!important}.urgency-knob{position:absolute!important;top:50%!important;width:18px!important;height:18px!important;border-radius:50%!important;background:#fff!important;border:3px solid #f97316!important;box-shadow:0 3px 10px rgba(17,24,39,.22)!important;transform:translate(-50%,-50%);transition:left .25s ease;animation:urgencyRingWiggle 1.15s ease-in-out infinite alternate}.urgency-meter[data-level="low"] .urgency-knob{border-color:#facc15!important}.urgency-meter[data-level="medium"] .urgency-knob{border-color:#f97316!important}.urgency-meter[data-level="high"] .urgency-knob{border-color:#dc2626!important}@keyframes urgencyRingWiggle{0%{box-shadow:0 0 0 0 rgba(249,115,22,.0),0 3px 10px rgba(17,24,39,.20);transform:translate(-50%,-50%) scale(1)}100%{box-shadow:0 0 0 6px rgba(249,115,22,.18),0 3px 12px rgba(17,24,39,.24);transform:translate(-50%,-50%) scale(1.08)}}
 
-<div aria-label="Periode" class="analytics-switch">
-<button class="analytics-btn" data-period="day" type="button">Dag</button>
-<button class="analytics-btn" data-period="week" type="button">Week</button>
-<button class="analytics-btn active" data-period="month" type="button">Maand</button>
+
+/* Stable inbox layout */
+.inbox-layout{grid-template-columns:280px minmax(460px,1fr) 380px!important;min-height:620px}.profile-panel{min-width:0;width:380px;max-width:380px;max-height:calc(100vh - 230px);overflow:hidden}.profile-panel #profilePanelContent{overflow-y:auto;min-height:0}.profile-description{font-size:.76rem;line-height:1.5;color:var(--gray-600);background:var(--gray-50);border-left:3px solid var(--purple);padding:.65rem .75rem;border-radius:8px;margin:.65rem 0;width:100%;text-align:left}.contact-type{display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:999px;font-size:.66rem;font-weight:800;margin-left:.35rem}.contact-type.lead{background:var(--orange-light);color:var(--orange-dark)}.contact-type.customer{background:var(--green-light);color:var(--green)}.client-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:2600}.client-drawer-overlay.open{display:block}.client-drawer{position:fixed;right:0;top:0;width:min(540px,96vw);height:100vh;background:#fff;z-index:2601;transform:translateX(100%);transition:.25s;display:flex;flex-direction:column;box-shadow:-12px 0 44px rgba(17,24,39,.2)}.client-drawer.open{transform:translateX(0)}.client-drawer-header,.client-drawer-footer{padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}.client-drawer-footer{border-top:1px solid var(--gray-100);border-bottom:0;justify-content:flex-end;gap:.65rem}.client-drawer-body{padding:1.25rem;overflow-y:auto;flex:1}.drawer-photo{text-align:center;margin-bottom:1rem}.drawer-avatar{width:82px;height:82px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:800;margin:0 auto .7rem;overflow:hidden}.drawer-avatar img{width:100%;height:100%;object-fit:cover}.drawer-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}.drawer-input{margin-bottom:.8rem}.drawer-input label{display:block;font-size:.76rem;font-weight:800;margin-bottom:.3rem}.drawer-input input,.drawer-input select,.drawer-input textarea{width:100%;padding:.6rem .7rem;border:1px solid var(--gray-200);border-radius:8px}.drawer-photo-btn,.client-drawer-close{border:1px solid var(--gray-200);background:#fff;border-radius:8px;padding:.45rem .7rem;cursor:pointer}.icon-danger-btn{width:34px;height:34px;border:0;border-radius:9px;background:var(--red-light);color:var(--red);cursor:pointer}@media(max-width:1250px){.inbox-layout{grid-template-columns:260px 1fr!important}.profile-panel{display:none}}
+
+.ai-control-toggle{display:inline-flex;align-items:center;gap:.45rem;border:0;border-radius:999px;padding:.38rem .7rem;font-size:.72rem;font-weight:800;cursor:pointer;white-space:nowrap}
+.ai-control-toggle.active{background:var(--green-light);color:var(--green)}
+.ai-control-toggle.manual{background:var(--orange-light);color:var(--orange-dark)}
+.ai-control-dot{width:10px;height:10px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(255,255,255,.55)}
+.drawer-input select:disabled{opacity:1;color:var(--gray-700);background:var(--gray-50);cursor:not-allowed}
+.profile-panel #profilePanelContent{scrollbar-width:thin;scrollbar-color:var(--purple-light) transparent}
+.profile-panel #profilePanelContent::-webkit-scrollbar{width:7px}
+.profile-panel #profilePanelContent::-webkit-scrollbar-thumb{background:var(--purple-light);border-radius:999px}
+
+/* Inbox header alignment fix */
+.chat-header-actions{display:flex;align-items:center;gap:.55rem;margin-left:auto;flex-shrink:0}
+.ai-header-switch{display:inline-flex;align-items:center;gap:.5rem;min-width:92px;height:34px;padding:0 .72rem 0 .34rem;border:1px solid transparent;border-radius:999px;font-family:var(--font-sans);font-size:.72rem;font-weight:800;cursor:pointer;transition:.2s;white-space:nowrap}
+.ai-header-switch.on{background:var(--green-light);color:var(--green);border-color:#bbf7d0}
+.ai-header-switch.off{background:var(--orange-light);color:var(--orange-dark);border-color:#fed7aa}
+.ai-header-switch:hover{filter:brightness(.97);transform:translateY(-1px)}
+.ai-header-switch-track{position:relative;width:34px;height:20px;border-radius:999px;background:currentColor;display:inline-block;flex-shrink:0}
+.ai-header-switch-track:after{content:'';position:absolute;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(17,24,39,.22);transition:left .2s ease}
+.ai-header-switch.on .ai-header-switch-track:after{left:17px}
+.ai-header-switch.off .ai-header-switch-track:after{left:3px}
+.chat-header-name-row,.profile-name-row{display:flex;align-items:center;justify-content:center;gap:.42rem;min-width:0}
+.chat-header-name-row{justify-content:flex-start}
+.chat-header-name-row .chat-header-name,.profile-name-row .profile-name{margin:0}
+.chat-header-details{margin-top:.15rem}
+.contact-type{margin-left:0!important;flex-shrink:0}
+
+/* Reactify statusmodel: apart van Lead/Klant */
+.conversation-state{display:inline-flex;align-items:center;gap:.3rem;padding:.17rem .55rem;border-radius:999px;font-size:.65rem;font-weight:800;white-space:nowrap;border:1px solid transparent}
+.conversation-state .state-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.conversation-state.ai-active{background:#dcfce7;color:#15803d;border-color:#bbf7d0}
+.conversation-state.needs-takeover{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+.conversation-state.taken-over{background:#e0f2fe;color:#0369a1;border-color:#bae6fd}
+.conversation-state.completed{background:#f3f4f6;color:#4b5563;border-color:#e5e7eb}
+.conversation-state.inactive{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
+.profile-description-label{width:100%;text-align:left;font-size:.72rem;font-weight:800;color:var(--gray-800);margin-top:.7rem;margin-bottom:.3rem}
+.chat-header-actions .conversation-state{margin-right:.15rem}
+
+.email-message-body{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:1.58}.chat-msg.email-message{max-width:82%;padding:.9rem 1rem}.chat-msg.email-message .chat-msg-subject{padding-bottom:.45rem;margin-bottom:.5rem;border-bottom:1px solid rgba(107,114,128,.18);font-size:.76rem}.chat-msg.outgoing.email-message .chat-msg-subject{border-bottom-color:rgba(255,255,255,.24)}
+</style>
+<style id="reactify-message-meta-fix">
+.chat-msg-meta{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:.75rem!important;margin-top:.28rem!important;font-size:.58rem!important;line-height:1.15!important;font-weight:500!important;letter-spacing:0!important;opacity:.78!important}
+.chat-msg.incoming .chat-msg-meta{color:#4B5563!important}
+.chat-msg.outgoing .chat-msg-meta{color:rgba(255,255,255,.82)!important}
+.chat-msg-meta .message-origin{font-size:inherit!important;font-weight:600!important;background:transparent!important;padding:0!important;border:0!important;color:inherit!important}
+
+/* E-mailkanaal */
+.chat-compose{padding:.75rem 1.25rem;border-top:1px solid var(--gray-100);display:grid;gap:.55rem;background:#fff}.chat-compose-top{display:flex;gap:.55rem;align-items:center}.chat-channel-select,.chat-subject-input{border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);padding:.5rem .65rem;font-size:.8rem;color:var(--gray-800)}.chat-channel-select{width:110px;font-weight:700}.chat-subject-input{flex:1}.chat-compose-bottom{display:flex;align-items:flex-end;gap:.5rem}.chat-compose textarea{flex:1;resize:vertical;min-height:44px;max-height:150px;padding:.65rem .75rem;border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);font:inherit;font-size:.85rem;outline:none}.chat-compose textarea:focus,.chat-subject-input:focus,.chat-channel-select:focus{border-color:var(--purple);background:#fff}.chat-msg-subject{font-size:.72rem;font-weight:800;margin-bottom:.35rem;opacity:.85}.channel-pill{display:inline-flex;align-items:center;padding:.13rem .45rem;border-radius:999px;background:var(--purple-light);color:var(--purple);font-size:.65rem;font-weight:800}.email-sync-state{font-size:.68rem;color:var(--gray-500)}
+</style>
+
+<style id="reactify-contact-sentiment-appointment-fix">
+.sentiment-pill{display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.sentiment-pill.positief{background:#DCFCE7;color:#16A34A}.sentiment-pill.neutraal{background:#F3F4F6;color:#6B7280}.sentiment-pill.negatief{background:#FEE2E2;color:#DC2626}
+.profile-appointment-btn{width:100%;margin-top:.7rem;border:0;border-radius:9px;padding:.62rem .8rem;background:var(--purple);color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;box-shadow:0 6px 14px rgba(91,46,145,.18)}.profile-appointment-btn:hover{background:var(--purple-dark);transform:translateY(-1px)}
+.finish-chat-btn:disabled{background:#DCFCE7!important;color:#15803D!important;border-color:#86EFAC!important;opacity:1!important;cursor:default!important}
+</style>
+
+<style id="reactify-hide-inbox-dates">
+/* Verbergt datums/tijd in de inbox voor propere classificatie-screenshots */
+.conv-time,.chat-msg-time,.activity-date{display:none!important}
+</style>
+</head><body>
+<aside class="sidebar" id="sidebar"><div class="sidebar-logo"><img alt="Reactify" src="/logo.png" style="height:28px;width:auto;filter:brightness(1.8);"/></div><nav class="sidebar-nav"><a class="sidebar-link" href="/platform/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>Dashboard</a>
+<a class="sidebar-link" href="/platform/klantenlijst/"><svg fill="currentColor" viewbox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Klanten</a>
+<a class="sidebar-link active" href="/platform/inbox/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" fill-rule="evenodd"></path></svg>Inbox</a>
+<a class="sidebar-link" href="/platform/agenda/"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" fill-rule="evenodd"></path></svg>Agenda</a><div class="sidebar-spacer"></div><a class="sidebar-link" href="/platform/instellingen/">Instellingen</a><a class="sidebar-link" href="#">Help</a></nav><div class="sidebar-user"><div class="user-avatar">BD</div><div class="user-info"><div class="user-name">Bob Demo</div><div class="user-role">Beheerder</div></div></div></aside>
+<main class="main"><button class="mobile-sidebar-toggle" id="sidebarToggle">☰ Menu</button><div class="top-bar"><div class="top-bar-left"><h1>Inbox</h1><p>Beheer al je klantgesprekken op één plaats.</p></div><div class="top-bar-right"><div class="top-search"><svg fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" fill-rule="evenodd"></path></svg><input id="inboxSearch" placeholder="Zoek klanten, berichten..." type="text"/></div><button class="notification-btn" id="notificationBtn" onclick="toggleNotificationsPanel()" title="Meldingen">🔔<span class="notification-badge" id="notificationBadge">0</span></button></div></div>
+<div class="stats-grid"><div class="stat-card"><div class="stat-icon purple">💬</div><div class="stat-info"><div class="stat-label">Open gesprekken</div><div class="stat-value" id="statOpen">0</div><div class="stat-change">Live uit inbox</div></div></div><div class="stat-card"><div class="stat-icon orange">✉</div><div class="stat-info"><div class="stat-label">Ongelezen</div><div class="stat-value" id="statUnread">0</div><div class="stat-change">Te verwerken</div></div></div><div class="stat-card"><div class="stat-icon green">✓</div><div class="stat-info"><div class="stat-label">% afgehandeld deze week</div><div class="stat-value" id="statHandled">0%</div><div class="stat-change">Op basis van status</div></div></div></div>
+<div class="inbox-layout"><div class="inbox-panel conv-panel"><div class="conv-tabs"><button class="conv-tab active" data-channel="all">Alles</button><button class="conv-tab" data-channel="sms">SMS</button><button class="conv-tab" data-channel="email">E-mail</button><button class="conv-tab" data-folder="spam">Spam</button></div><div style="padding:.7rem 1rem;border-bottom:1px solid var(--gray-100);display:flex;gap:.5rem"><button class="btn-small btn-purple" style="width:100%" onclick="openNewConversation()">＋ Nieuw gesprek</button></div><div class="conv-list" id="conversationList"></div><div class="conv-footer"><a href="/platform/klantenlijst/">Contactpersonen beheren</a></div></div><div class="inbox-panel chat-panel"><div class="chat-header" id="chatHeader"></div><div class="chat-messages" id="chatMessages"></div><div class="chat-compose"><div class="chat-compose-top"><select class="chat-channel-select" id="chatChannel" aria-label="Communicatiekanaal"><option value="sms">SMS</option><option value="email">E-mail</option></select><input class="chat-subject-input" id="chatSubject" placeholder="Onderwerp van de e-mail" type="text"/><span class="email-sync-state" id="emailSyncState"></span></div><div class="chat-compose-bottom"><textarea id="chatInput" placeholder="Typ een bericht..." rows="2"></textarea><button class="chat-send-btn" onclick="sendMessage()">➤</button></div></div></div><div class="inbox-panel profile-panel"><div class="profile-header-section"><h2>Profiel</h2></div><div id="profilePanelContent"></div></div></div></main>
+<div class="notification-panel" id="notificationPanel">
+<div class="notification-panel-header"><h3>Meldingen</h3><button class="btn-small" onclick="markAllNotificationsRead()" type="button">Markeer gelezen</button></div>
+<div class="notification-list" id="notificationList"></div>
+</div>
+<div class="modal-overlay" id="rfClientModal">
+<div class="modal">
+<div class="modal-header"><h2>Nieuwe contactpersoon</h2><button class="modal-close" onclick="RFUI.closeClientModal()" type="button">×</button></div>
+<form id="rfClientForm">
+<div class="modal-body">
+<div class="form-group"><label>Naam</label><input id="rfClientName" placeholder="Naam klant" required=""/></div>
+<div class="form-group"><label>E-mail</label><input id="rfClientEmail" placeholder="klant@email.be" type="email"/></div>
+<div class="form-group"><label>Telefoon</label><input id="rfClientPhone" placeholder="+32 ..." type="tel"/></div>
+<div class="form-group"><label>Voorkeurskanaal</label><select id="rfClientChannel"><option value="sms">SMS</option><option value="email">E-mail</option></select></div><div class="form-group"><label>Notitie</label><textarea id="rfClientNote" placeholder="Korte notitie" rows="3"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn-cancel" onclick="RFUI.closeClientModal()" type="button">Annuleren</button><button class="btn-save" type="submit">Opslaan</button></div>
+</form>
 </div>
 </div>
+<div class="modal-overlay" id="rfAppointmentModal">
+<div class="modal wide">
+<div class="modal-header"><h2>Afspraak maken met klant</h2><button class="modal-close" onclick="RFUI.closeAppointmentModal()" type="button">×</button></div>
+<form id="rfAppointmentForm">
+<div class="modal-body">
+<div class="empty-state hidden" id="rfAppointmentAlert"></div>
+<input id="rfApptClient" type="hidden"/>
+<div class="form-grid">
+<div class="form-field full"><label>Geselecteerde klant</label><input id="rfApptClientDisplay" readonly="" type="text"/><div class="form-help">Deze klant komt uit het geselecteerde inboxgesprek.</div></div>
+<div class="form-field"><label>Afspraaktype</label><select id="rfApptEventType" required=""><option value="">Cal.com afspraaktypes laden...</option></select><div class="form-help">Dit zijn dezelfde afspraaktypes als op de agenda-pagina.</div></div>
+<div class="form-field"><label>Startdatum en tijd</label><input id="rfApptStart" required="" type="datetime-local"/></div>
+<div class="form-field"><label>E-mail klant</label><input id="rfApptEmail" placeholder="klant@email.be" type="email"/><div class="form-help">Cal.com heeft een e-mailadres nodig.</div></div>
+<div class="form-field"><label>Telefoon klant</label><input id="rfApptPhone" placeholder="+32 ..." type="tel"/></div>
+<div class="form-field"><label>Plaats</label><select id="rfApptLocationType"><option value="cal_video">Cal.com video</option><option value="zoom">Zoom / online link</option><option value="phone">Telefonisch</option><option value="address">Adres op locatie</option><option value="custom">Andere plaats</option></select></div>
+<div class="form-field"><label>Plaats detail</label><input id="rfApptLocationValue" placeholder="Link, telefoonnummer of adres"/><div class="form-help">Bij Cal.com video mag dit leeg blijven.</div></div>
+<div class="form-field"><label>Duur</label><input id="rfApptLength" min="5" placeholder="Automatisch" step="5" type="number"/></div>
+<div class="form-field full"><label>Opmerking</label><textarea id="rfApptNotes" placeholder="Bijv. afspraak ingepland vanuit inbox" rows="3"></textarea></div>
+<label class="form-field full" style="display:flex;flex-direction:row;align-items:center;gap:.5rem;"><input id="rfApptForce" style="width:auto;" type="checkbox"/> Forceer afspraak buiten beschikbaarheid of bij conflict</label>
 </div>
-<div class="analytics-body">
-<div class="chart-legend" id="chartLegend"></div>
-<div class="chart-wrap" id="chartWrap"></div>
-<div class="chart-summary" id="chartSummary"></div>
 </div>
-</section>
-</main>
-<script>
-(function(){
-  if(window.ReactifyGlobalNotificationsLoaded) return;
-  window.ReactifyGlobalNotificationsLoaded=true;
-  const NOTIFICATION_KEY='reactify.notifications';
-  const SEEN_MSG_KEY='reactify.globalSeenMessages';
-  const SEEN_APPT_KEY='reactify.globalSeenAppointments';
-  const INIT_KEY='reactify.globalNotificationsInitialized';
-  const uid=(p='note')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
-  const read=(k,f=[])=>{try{const raw=localStorage.getItem(k);return raw?JSON.parse(raw):f}catch(e){return f}};
-  const write=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));window.dispatchEvent(new CustomEvent('reactify:datachange',{detail:{key:k}}));};
-  const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  const fmt=iso=>{try{return new Date(iso).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'})}catch(e){return ''}};
-  const pathForType=t=>t==='appointment'?'/platform/agenda/':'/platform/inbox/';
-  function showTopToast(note){
-    let el=document.getElementById('rfTopToast');
-    if(!el){el=document.createElement('div');el.id='rfTopToast';el.className='rf-top-toast';document.body.appendChild(el);}
-    const target=note.link||pathForType(note.type);
-    el.innerHTML=`<div class="rf-top-toast-icon">${note.type==='appointment'?'📅':'💬'}</div><div style="min-width:0;flex:1"><div class="rf-top-toast-title">${esc(note.title||'Reactify melding')}</div><div class="rf-top-toast-body">${esc(note.body||note.message||'Nieuwe melding in Reactify')}</div></div>`;
-    el.onclick=()=>{ saveNotes(notes().map(n=>n.id===note.id?{...n,read:true}:n)); location.href=target; };
-    el.classList.add('show');
-    clearTimeout(window.__rfTopToastTimer);
-    window.__rfTopToastTimer=setTimeout(()=>el.classList.remove('show'),5000);
-  }
-  function notes(){return read(NOTIFICATION_KEY,[])}
-  function saveNotes(items){write(NOTIFICATION_KEY,items.slice(0,120));renderBadges();}
-  function pushNote(note){
-    const items=notes();
-    const dedupe=note.dedupeKey||`${note.type}:${note.title}:${note.body}`;
-    if(items.some(n=>n.dedupeKey===dedupe)) return;
-    const item={id:uid(),type:note.type||'message',title:note.title||'Reactify melding',body:note.body||'',contactName:note.contactName||'',message:note.message||'',appointmentType:note.appointmentType||'',appointmentMoment:note.appointmentMoment||'',link:note.link||pathForType(note.type),dedupeKey:dedupe,createdAt:new Date().toISOString(),read:false};
-    items.unshift(item);saveNotes(items);showTopToast(item);
-    if('Notification' in window && Notification.permission==='granted'){try{new Notification(item.title,{body:item.body||'Nieuwe melding in Reactify'});}catch(e){}}
-  }
-  window.ReactifyPushNotification=pushNote;
-  function unread(type){return notes().filter(n=>!n.read && (!type || n.type===type)).length;}
-  function markTypeRead(type){const items=notes().map(n=>n.type===type?{...n,read:true}:n);saveNotes(items);}
-  window.ReactifyMarkNotificationsReadByType=markTypeRead;
-  function renderBadges(){
-    const total=unread();
-    const btn=document.getElementById('rfGlobalBell')||document.getElementById('notificationBtn');
-    const badge=document.getElementById('rfGlobalCount')||document.getElementById('notificationBadge');
-    if(btn) btn.classList.toggle('has-items',total>0), btn.classList.toggle('has-notifications',total>0);
-    if(badge) badge.textContent=total>99?'99+':String(total);
-    document.querySelectorAll('a.sidebar-link').forEach(a=>{
-      const href=a.getAttribute('href')||'';
-      const type=href.includes('/agenda')?'appointment':href.includes('/inbox')?'message':'';
-      if(!type) return;
-      let b=a.querySelector('.rf-sidebar-badge'); if(!b){b=document.createElement('span');b.className='rf-sidebar-badge';a.appendChild(b);}
-      const c=unread(type); b.textContent=c>99?'99+':String(c); a.classList.toggle('has-rf-badge',c>0);
-      if(!a.dataset.rfReadHook){a.dataset.rfReadHook='1';a.addEventListener('click',()=>markTypeRead(type));}
-    });
-  }
-  function ensureWidget(){
-    if(document.getElementById('rfGlobalNotifications')) return;
-    if(document.getElementById('notificationBtn')) return; // inbox has its own top-right button
-    const box=document.createElement('div');box.id='rfGlobalNotifications';box.className='rf-global-notification';
-    box.innerHTML=`<button class="rf-global-bell" id="rfGlobalBell" type="button" title="Meldingen">🔔<span class="rf-global-count" id="rfGlobalCount">0</span></button><div class="rf-global-panel" id="rfGlobalPanel"><div class="rf-global-head"><strong>Meldingen</strong><button type="button" id="rfGlobalReadAll">Alles gelezen</button></div><div class="rf-global-list" id="rfGlobalList"></div></div>`;
-    document.body.appendChild(box);
-    document.getElementById('rfGlobalBell')?.addEventListener('click',()=>{renderPanel();document.getElementById('rfGlobalPanel')?.classList.toggle('open');});
-    document.getElementById('rfGlobalReadAll')?.addEventListener('click',e=>{e.stopPropagation();saveNotes(notes().map(n=>({...n,read:true})));renderPanel();});
-  }
-  function renderPanel(){
-    const list=document.getElementById('rfGlobalList')||document.getElementById('notificationList'); if(!list) return;
-    const items=notes();
-    list.innerHTML=items.length?items.map(n=>`<button class="rf-global-item notification-item ${n.read?'':'unread'}" data-id="${esc(n.id)}"><div class="rf-global-title notification-title">${esc(n.title)}</div><div class="rf-global-body notification-body">${esc(n.body||n.message||'')}</div>${n.contactName?`<div class="rf-global-meta notification-meta">Contact: ${esc(n.contactName)}</div>`:''}${n.appointmentType?`<div class="rf-global-meta notification-meta">Afspraak: ${esc(n.appointmentType)} · ${esc(n.appointmentMoment||'')}</div>`:''}<div class="rf-global-meta notification-meta">${fmt(n.createdAt)}</div></button>`).join(''):'<div class="rf-global-empty notification-empty">Nog geen meldingen.</div>';
-    list.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('click',()=>{const id=el.dataset.id;let target='/platform/inbox/';saveNotes(notes().map(n=>{if(n.id===id){target=n.link||pathForType(n.type);return {...n,read:true};}return n;}));location.href=target;}));
-  }
-  window.toggleNotificationsPanel=function(){ensureWidget();renderPanel();(document.getElementById('rfGlobalPanel')||document.getElementById('notificationPanel'))?.classList.toggle('open');};
-  window.markAllNotificationsRead=function(){saveNotes(notes().map(n=>({...n,read:true})));renderPanel();};
-  async function pollConversations(){
-    try{
-      const payload=await fetch('/.netlify/functions/conversations').then(r=>r.json());
-      const rows=Array.isArray(payload?.data)?payload.data:[];
-      const seen=read(SEEN_MSG_KEY,{}), next={...seen};
-      const initialized=localStorage.getItem(INIT_KEY)==='1';
-      rows.forEach(r=>{
-        const id=r.id||r.conversation_id; if(!id) return;
-        const key=`${r.last_message_at||r.updated_at||''}:${r.last_message||''}`;
-        const direction=String(r.last_message_direction||'').toLowerCase();
-        if(!key.trim()) return;
-        if(seen[id] && seen[id]!==key && direction!=='outgoing'){
-          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
-        } else if(!seen[id] && initialized && direction!=='outgoing') {
-          pushNote({type:'message',title:`Nieuw bericht van ${r.contact_name||r.contact_phone||'Onbekende klant'}`,body:r.last_message||'Nieuw klantbericht',contactName:r.contact_name||'',message:r.last_message||'',link:`/platform/inbox/?conversation=${encodeURIComponent(id)}`,dedupeKey:`msg:${id}:${key}`});
-        }
-        next[id]=key;
-      });
-      write(SEEN_MSG_KEY,next);
-    }catch(e){}
-  }
-  async function pollBookings(){
-    try{
-      const payload=await fetch('/.netlify/functions/cal-bookings').then(r=>r.json());
-      const rows=Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.bookings)?payload.bookings:[];
-      const seen=read(SEEN_APPT_KEY,{}), next={...seen};
-      const initialized=localStorage.getItem(INIT_KEY)==='1';
-      rows.forEach((b,i)=>{
-        const attendee=Array.isArray(b.attendees)?b.attendees[0]:(b.attendee||{});
-        const id=String(b.uid||b.id||`${b.start}_${attendee?.email||i}`);
-        const start=b.start||b.startTime||'';
-        const title=b.eventType?.title||b.title||b.bookingFieldsResponses?.title||'Afspraak';
-        const contact=attendee?.name||b.bookingFieldsResponses?.name||'Klant';
-        const key=`${start}:${title}:${contact}`;
-        if(seen[id] && seen[id]!==key || (!seen[id] && initialized)){
-          pushNote({type:'appointment',title:`Nieuwe afspraak: ${contact}`,body:`${title} staat ingepland op ${fmt(start)}.`,contactName:contact,appointmentType:title,appointmentMoment:fmt(start),link:'/platform/agenda/',dedupeKey:`appt:${id}:${key}`});
-        }
-        next[id]=key;
-      });
-      write(SEEN_APPT_KEY,next);
-    }catch(e){}
-  }
-  function boot(){
-    ensureWidget();renderBadges();renderPanel();
-    if('Notification' in window && Notification.permission==='default') Notification.requestPermission().catch(()=>{});
-    pollConversations();pollBookings();
-    setTimeout(()=>localStorage.setItem(INIT_KEY,'1'),1500);
-    setInterval(()=>{pollConversations();pollBookings();renderBadges();},12000);
-  }
-  window.addEventListener('storage',e=>{if(e.key===NOTIFICATION_KEY) renderBadges();});
-  window.addEventListener('reactify:datachange',renderBadges);
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
-})();
-</script>
-<script>
-(function(){
+<div class="modal-footer"><button class="btn-cancel" onclick="RFUI.closeAppointmentModal()" type="button">Annuleren</button><button class="btn-save" type="submit">Afspraak aanmaken</button></div>
+</form>
+</div>
+</div>
+<div class="modal-overlay" id="newConversationModal"><div class="modal"><div class="modal-header"><h2>Nieuw gesprek starten</h2><button class="modal-close" onclick="closeNewConversation()">×</button></div><div class="modal-body"><div class="form-group"><label>Contactpersoon</label><select id="newConversationContact"></select></div><div class="form-group"><label>Kanaal</label><select id="newConversationChannel"><option value="sms">SMS</option><option value="email">E-mail</option></select></div><div class="form-group" id="newConversationSubjectWrap" style="display:none"><label>Onderwerp</label><input id="newConversationSubject" placeholder="Onderwerp van de e-mail"></div><div class="form-help">Contact ontbreekt? Voeg hem eerst toe via Klanten.</div></div><div class="modal-footer"><button class="btn-cancel" onclick="closeNewConversation()">Annuleren</button><button class="btn-save" onclick="createNewConversation()">Gesprek starten</button></div></div></div><div class="toast" id="rfToast"></div><div class="client-drawer-overlay" id="clientDrawerOverlay" onclick="closeClientDrawer()"></div><aside class="client-drawer" id="clientDrawer"><div class="client-drawer-header"><h2>Contactprofiel</h2><button class="client-drawer-close" onclick="closeClientDrawer()">×</button></div><div class="client-drawer-body"><input id="drawerClientId" type="hidden"><div class="drawer-photo"><div class="drawer-avatar" id="drawerAvatar">?</div><button class="drawer-photo-btn" type="button" onclick="document.getElementById('drawerPhotoInput').click()">Foto wijzigen</button><input id="drawerPhotoInput" type="file" accept="image/*" hidden></div><div class="drawer-row"><div class="drawer-input"><label>Naam</label><input id="drawerName"></div><div class="drawer-input"><label>Type</label><select id="drawerType" disabled><option>Lead</option><option>Klant</option></select><div class="form-help">Wordt automatisch bepaald op basis van het gesprek.</div></div></div><div class="drawer-row"><div class="drawer-input"><label>E-mail</label><input id="drawerEmail" type="email"></div><div class="drawer-input"><label>Telefoon</label><input id="drawerPhone"></div></div><div class="drawer-input"><label>Adres</label><input id="drawerAddress"></div><div class="drawer-input"><label>Sentiment</label><select id="drawerStatus" disabled><option value="neutraal">Neutraal</option><option value="positief">Positief</option><option value="negatief">Negatief</option></select><div class="form-help">Wordt automatisch bepaald en kan niet handmatig worden aangepast.</div></div><div class="drawer-input"><label>Contactpersoonbeschrijving</label><textarea id="drawerDescription" rows="4"></textarea><div class="form-help">Beschrijvende samenvatting van wie deze persoon is, kenmerken, voorkeuren, achtergrond en gebruikelijke communicatie.</div></div><div class="drawer-input"><label>Notities</label><textarea id="drawerNote" rows="4"></textarea></div></div><div class="client-drawer-footer"><button class="btn-cancel" onclick="closeClientDrawer()">Annuleren</button><button class="btn-save" onclick="saveClientDrawer()">Opslaan</button></div></aside><script>
+(() => {
+  'use strict';
   const STORE='reactify_platform_data_v3';
-  const API={bookings:'/.netlify/functions/cal-bookings',schedules:'/.netlify/functions/cal-schedules',conversations:'/.netlify/functions/conversations'};
-  const colors=['var(--purple)','var(--orange)','#16a34a','#2563eb'];
-  const chartColors={positive:'#16a34a',neutral:'#9CA3AF',negative:'#DC2626',ai:'#5B2E91',manual:'#F5A623',completed:'#16a34a',open:'#F5A623',sms:'#5B2E91',email:'#2563EB',chat:'#F5A623',other:'#9CA3AF'};
+  const DELETED='reactify.deletedClients.v3';
+  const START='reactify.inboxStartedAt.emailCleanV7';
+  const NOTIFY_SEEN='reactify.inboxNotificationSeen.v1';
+  const API={conversations:'/.netlify/functions/conversations',messages:'/.netlify/functions/conversation-messages',send:'/.netlify/functions/send-message',emailSync:'/.netlify/functions/email-sync',classify:'/.netlify/functions/classify-conversation',eventTypes:'/.netlify/functions/cal-event-types',booking:'/.netlify/functions/conversation-booking'};
+  const $=id=>document.getElementById(id);
+  const now=()=>new Date().toISOString();
+  const uid=(p='id')=>`${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
   const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  const read=()=>{try{const d=JSON.parse(localStorage.getItem(STORE)||'{}');return {clients:Array.isArray(d.clients)?d.clients:[],conversations:Array.isArray(d.conversations)?d.conversations:[],appointments:Array.isArray(d.appointments)?d.appointments:[]}}catch(e){return{clients:[],conversations:[],appointments:[]}}};
-  const initials=n=>String(n||'Klant').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'KL';
-  const fmtTime=d=>new Date(d).toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Brussels'});
-  const dayLabel=iso=>{const d=new Date(iso),n=new Date();n.setHours(0,0,0,0);const x=new Date(d);x.setHours(0,0,0,0);const diff=Math.round((x-n)/86400000);if(diff===0)return'Vandaag';if(diff===1)return'Morgen';if(diff===2)return'Overmorgen';return d.toLocaleDateString('nl-BE',{weekday:'long',day:'numeric',month:'short',timeZone:'Europe/Brussels'});};
-  const clientFor=(d,c)=>d.clients.find(x=>x.id===(c.clientId||c.contactId))||{};
-  const latestConversationFor=(d,client)=>[...d.conversations].filter(c=>c.clientId===client?.id).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0))[0]||null;
-  const stateInfo=status=>{const x=String(status||'ai-active').toLowerCase().replaceAll('_','-');if(x.includes('afgesloten')||x.includes('closed')||x.includes('completed')||x.includes('inactive'))return{key:'completed',label:'Afgerond'};if(x.includes('overname')||x.includes('manual')||x.includes('human'))return{key:'manual',label:'Overname nodig'};return{key:'ai-active',label:'AI actief'}};
-  const typeBadge=c=>`<span class="contact-type ${c?.type==='Klant'?'customer':'lead'}">${esc(c?.type||'Lead')}</span>`;
-  const stateBadge=status=>{const st=stateInfo(status);return `<span class="conversation-state ${st.key}"><span class="state-dot"></span>${st.label}</span>`};
-  const statusKey=s=>stateInfo(s).key;
-  const sentimentOf=(d,c)=>{const cl=clientFor(d,c);const raw=String(c.sentiment||c.customerSentiment||cl.sentiment||cl.status||'').toLowerCase();if(raw.includes('posit'))return'positive';if(raw.includes('negat'))return'negative';const txt=String(c.summary||c.lastMessage||'').toLowerCase();if(/bedankt|prima|perfect|tevreden|opgelost|geholpen/.test(txt))return'positive';if(/klacht|boos|ontevreden|probleem|fout|slecht/.test(txt))return'negative';return'neutral'};
-  let remoteBookings=[],schedules=[],remoteConversations=[],rendering=false;
-  let chartMetric=localStorage.getItem('reactify.dashboardChartMetric')||'handling';
-  let chartPeriod=localStorage.getItem('reactify.dashboardChartPeriod')||'month';
-  let chartView=localStorage.getItem('reactify.dashboardChartView')||'line';
-  let occupancyPeriod=localStorage.getItem('reactify.dashboardOccupancyPeriod')||'month';
-  if(!['handling','completed','channel'].includes(chartMetric))chartMetric='handling';
-  if(!['day','week','month'].includes(chartPeriod))chartPeriod='month';
-  if(!['line','bar'].includes(chartView))chartView='line';
-  if(!['day','week','month','year'].includes(occupancyPeriod))occupancyPeriod='month';
-
-  async function fetchJSON(url){const sep=url.includes('?')?'&':'?';const r=await fetch(`${url}${sep}_fresh=${Date.now()}`,{headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},cache:'no-store'});const j=await r.json();if(!r.ok||j.status==='error')throw new Error(j.error||'Data laden mislukt');return j}
-  function normPhone(v){let x=String(v||'').trim().replace(/[^0-9+]/g,'');if(!x)return'';if(x.startsWith('00'))x='+'+x.slice(2);const d=x.replace(/\D/g,'');if(d.startsWith('32'))return'+32'+d.slice(2);if(d.startsWith('0'))return'+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return'+32'+d;return x.startsWith('+')?'+'+d:d}
-  function normEmail(v){return String(v||'').trim().toLowerCase()}
-  function mergeLiveConversations(rows){
-    const d=read();
-    const seen=new Set();
-    for(const row of rows){
-      const backendId=String(row.id||row.conversation_id||'');if(!backendId)continue;seen.add(backendId);
-      const phone=normPhone(row.contact_phone||row.phone),email=normEmail(row.contact_email||row.email);
-      let client=d.clients.find(c=>(phone&&normPhone(c.phone)===phone)||(email&&normEmail(c.email)===email));
-      if(!client){client={id:'client_'+backendId,name:row.contact_name||phone||email||'Nieuwe lead',phone,email,type:'Lead',sentiment:'neutraal',createdAt:row.created_at||new Date().toISOString(),updatedAt:row.updated_at||new Date().toISOString()};d.clients.unshift(client)}
-      if(row.contact_name&&!/^(nieuwe lead|nieuwe klant|onbekend)$/i.test(String(row.contact_name)))client.name=row.contact_name;
-      if(phone)client.phone=phone;if(email)client.email=email;client.updatedAt=row.updated_at||row.last_message_at||client.updatedAt;
-      let conv=d.conversations.find(c=>String(c.backendId||c.id)===backendId);
-      if(!conv){conv={id:backendId,backendId,clientId:client.id,createdAt:row.created_at||new Date().toISOString()};d.conversations.unshift(conv)}
-      Object.assign(conv,{backendId,clientId:client.id,channel:String(row.channel||'sms').toLowerCase(),folder:String(row.folder||'inbox'),status:row.status||conv.status||'inactive',summary:row.summary||'',lastMessage:row.last_message||conv.lastMessage||'',sentiment:row.sentiment||conv.sentiment||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||new Date().toISOString()});
-      client.sentiment=sentimentOf({clients:d.clients},conv);client.status=client.sentiment;
-    }
-    localStorage.setItem(STORE,JSON.stringify({...JSON.parse(localStorage.getItem(STORE)||'{}'),clients:d.clients,conversations:d.conversations}));
-    window.dispatchEvent(new CustomEvent('reactify:data',{detail:d}));
-  }
-  async function fetchLiveData(){
-    document.querySelectorAll('.stat-card,.dashboard-card').forEach(el=>el.classList.add('rf-updating'));
-    const [bookingResult,scheduleResult,conversationResult]=await Promise.allSettled([fetchJSON(API.bookings),fetchJSON(API.schedules),fetchJSON(`${API.conversations}?limit=500&folder=all`)]);
-    if(bookingResult.status==='fulfilled'){const j=bookingResult.value;remoteBookings=Array.isArray(j.data)?j.data:Array.isArray(j.bookings)?j.bookings:[];localStorage.setItem('reactify.calBookingsCache',JSON.stringify(remoteBookings));localStorage.setItem('reactify.calBookingsCacheUpdatedAt',new Date().toISOString())}else remoteBookings=window.ReactifyCalSync?.getCached?.()||[];
-    if(scheduleResult.status==='fulfilled'){const j=scheduleResult.value;schedules=Array.isArray(j.data)?j.data:Array.isArray(j.data?.schedules)?j.data.schedules:Array.isArray(j.schedules)?j.schedules:[];}
-    if(conversationResult.status==='fulfilled'){const j=conversationResult.value;remoteConversations=Array.isArray(j.data)?j.data:[];mergeLiveConversations(remoteConversations)}
-    document.querySelectorAll('.stat-card,.dashboard-card').forEach(el=>{el.classList.remove('rf-updating');el.classList.remove('rf-updated');void el.offsetWidth;el.classList.add('rf-updated')});
-  }
-  function normalizedAppointments(){
-    const now=Date.now();
-    const cal=remoteBookings.filter(b=>['accepted','pending'].includes(String(b.status||'accepted').toLowerCase())).map((b,i)=>{const a=Array.isArray(b.attendees)?b.attendees[0]||{}:(b.attendee||{});return{id:'cal_'+(b.uid||b.id||i),title:b.title||b.eventType?.title||b.eventType?.slug||b.bookingFieldsResponses?.title||'Afspraak',start:b.start,end:b.end,customer:a.name||b.bookingFieldsResponses?.name||'Klant'};});
-    const seen=new Set();return cal.filter(a=>a&&a.start&&new Date(a.start).getTime()>=now).filter(a=>{const k=String(a.id||a.start);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>new Date(a.start)-new Date(b.start));
-  }
-  function hmMinutes(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?Number(m[1])*60+Number(m[2]):0}
-  function activeSchedule(){return schedules.find(s=>s.isDefault===true||s.is_default===true)||schedules[0]||null}
-  function scheduleRows(schedule){
-    const direct=Array.isArray(schedule?.availability)?schedule.availability:Array.isArray(schedule?.availabilities)?schedule.availabilities:[];
-    if(direct.length)return direct;
-    const nested=schedule?.availability||schedule?.availabilities||{};const rows=[];
-    if(nested&&typeof nested==='object'&&!Array.isArray(nested)){for(const [day,blocks] of Object.entries(nested)){for(const b of (Array.isArray(blocks)?blocks:[blocks]))if(b)rows.push({...b,days:b.days||[day]})}}
-    return rows;
-  }
-  function scheduleBlocks(){const s=activeSchedule();return scheduleRows(s).map(r=>({days:Array.isArray(r.days)?r.days:[r.day||r.weekday].filter(Boolean),start:hmMinutes(r.startTime||r.start||r.start_time),end:hmMinutes(r.endTime||r.end||r.end_time)})).filter(r=>r.days.length&&r.end>r.start)}
-  function dayMatches(days,date){const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const short=['SU','MO','TU','WE','TH','FR','SA'];const i=date.getDay();return days.some(d=>{if(typeof d==='number')return d===i||d===((i+6)%7);const v=String(d).trim().toLowerCase();return v===names[i].toLowerCase()||v===short[i].toLowerCase()||v===String(i)||v===String((i+6)%7)})}
-  function occupancyRange(){const n=new Date();let start,end;if(occupancyPeriod==='day'){start=new Date(n);start.setHours(0,0,0,0);end=new Date(start);end.setDate(end.getDate()+1)}else if(occupancyPeriod==='week'){start=startOfWeek(n);end=new Date(start);end.setDate(end.getDate()+7)}else if(occupancyPeriod==='year'){start=new Date(n.getFullYear(),0,1);end=new Date(n.getFullYear()+1,0,1)}else{start=new Date(n.getFullYear(),n.getMonth(),1);end=new Date(n.getFullYear(),n.getMonth()+1,1)}return{start,end}}
-  function availableMinutes(start,end){let total=0;const blocks=scheduleBlocks();for(let d=new Date(start);d<end;d.setDate(d.getDate()+1)){for(const b of blocks){if(dayMatches(b.days,d))total+=Math.max(0,b.end-b.start)}}return total}
-  function bookedMinutes(start,end){return remoteBookings.reduce((t,b)=>{if(!['accepted','pending'].includes(String(b.status||'accepted').toLowerCase()))return t;const bs=new Date(b.start),be=new Date(b.end||b.start);if(!Number.isFinite(bs.getTime()))return t;let dur=(be-bs)/60000;if(!(dur>0))dur=Number(b.duration||b.lengthInMinutes||0)||30;const os=Math.max(bs.getTime(),start.getTime()),oe=Math.min(bs.getTime()+dur*60000,end.getTime());return t+Math.max(0,(oe-os)/60000)},0)}
-  function setHTML(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html}
-  function startOfWeek(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
-  function inCurrentWeek(date){const s=startOfWeek(new Date()),e=new Date(s);e.setDate(e.getDate()+7);const x=new Date(date);return x>=s&&x<e}
-  function isCompleted(c){return statusKey(c.status)==='completed'}
-
-  function chartBuckets(period){
-    const now=new Date();const out=[];
-    if(period==='day'){
-      const s=new Date(now);s.setHours(0,0,0,0);
-      for(let h=0;h<24;h+=4){const a=new Date(s);a.setHours(h);const b=new Date(s);b.setHours(h+4);out.push({label:`${String(h).padStart(2,'0')}u`,start:a,end:b})}
-    }else if(period==='week'){
-      const s=startOfWeek(now);for(let i=0;i<7;i++){const a=new Date(s);a.setDate(s.getDate()+i);const b=new Date(a);b.setDate(a.getDate()+1);out.push({label:a.toLocaleDateString('nl-BE',{weekday:'short'}),start:a,end:b})}
-    }else{
-      const s=new Date(now.getFullYear(),now.getMonth(),1);const days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
-      for(let i=0;i<days;i+=5){const a=new Date(s);a.setDate(1+i);const b=new Date(s);b.setDate(Math.min(days+1,1+i+5));out.push({label:`${a.getDate()}-${Math.min(days,b.getDate()-1)}`,start:a,end:b})}
-    }
-    return out;
-  }
-  function renderChart(d){
-    document.querySelectorAll('[data-metric]').forEach(b=>b.classList.toggle('active',b.dataset.metric===chartMetric));
-    document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===chartPeriod));
-    document.querySelectorAll('[data-chart-view]').forEach(b=>b.classList.toggle('active',b.dataset.chartView===chartView));
-    const buckets=chartBuckets(chartPeriod);
-    const series=chartMetric==='sentiment'
-      ?[['positive','Positief',chartColors.positive],['neutral','Neutraal',chartColors.neutral],['negative','Negatief',chartColors.negative]]
-      :chartMetric==='handling'
-        ?[['ai','AI opgevolgd',chartColors.ai],['manual','Manueel opgevolgd',chartColors.manual]]
-        :chartMetric==='completed'
-          ?[['completed','Afgehandeld',chartColors.completed],['open','Open gesprekken',chartColors.open]]
-          :[['sms','SMS',chartColors.sms],['email','E-mail',chartColors.email],['chat','Chat',chartColors.chat],['other','Overig',chartColors.other]];
-    const rows=buckets.map(bucket=>{
-      const convs=d.conversations.filter(c=>{const x=new Date(c.updatedAt||c.createdAt||0);return x>=bucket.start&&x<bucket.end});
-      const values={positive:0,neutral:0,negative:0,ai:0,manual:0,completed:0,open:0,sms:0,email:0,chat:0,other:0};
-      convs.forEach(c=>{
-        values[sentimentOf(d,c)]++;
-        const state=statusKey(c.status);
-        if(state==='manual') values.manual++; else values.ai++;
-        if(state==='completed') values.completed++; else values.open++;
-        const channel=String(c.channel||c.communicationChannel||'').toLowerCase();
-        if(channel.includes('sms'))values.sms++;else if(channel.includes('mail'))values.email++;else if(channel.includes('chat')||channel.includes('web'))values.chat++;else values.other++;
-      });
-      return{...bucket,values,total:convs.length};
-    });
-    const maxRaw=Math.max(1,...rows.flatMap(r=>series.map(s=>r.values[s[0]])));
-    const max=Math.max(4,Math.ceil(maxRaw/4)*4);
-    const heading=chartMetric==='handling'?'AI chat':chartMetric==='completed'?'Afgehandelde gesprekken':'Kanaalvergelijking';
-    const subtitle=chartPeriod==='day'?'Vandaag per vier uur':chartPeriod==='week'?'Deze week per dag':'Deze maand per vijf dagen';
-    document.getElementById('analyticsHeading').textContent=heading;
-    document.getElementById('analyticsSubtitle').textContent=`${subtitle} · live uit de huidige Reactify-data.`;
-    document.getElementById('chartLegend').innerHTML=series.map(s=>`<span class="legend-item"><span class="legend-dot" style="background:${s[2]}"></span>${s[1]}</span>`).join('');
-
-    const wrap=document.getElementById('chartWrap');
-    const W=Math.max(900,Math.round(wrap.clientWidth||1200)),H=420,L=48,R=14,T=24,B=50,plotW=W-L-R,plotH=H-T-B;
-    const xAt=i=>L+(rows.length<=1?plotW/2:(i/(rows.length-1))*plotW);
-    const yAt=v=>T+plotH-(v/max)*plotH;
-    const ticks=[0,max*.25,max*.5,max*.75,max].map(v=>Math.round(v));
-    const grid=ticks.map(v=>`<line class="line-grid" x1="${L}" y1="${yAt(v)}" x2="${W-R}" y2="${yAt(v)}"></line><text class="line-y-label" x="${L-12}" y="${yAt(v)+4}" text-anchor="end">${v}</text>`).join('');
-    const xLabels=rows.map((r,i)=>`<text class="line-label" x="${xAt(i)}" y="${H-16}" text-anchor="middle">${esc(r.label)}</text>`).join('');
-    let marks='';
-    if(chartView==='bar'){
-      const groupW=rows.length?plotW/rows.length:plotW;
-      const innerW=Math.min(groupW*.72,90);
-      const barW=Math.max(3,innerW/Math.max(1,series.length));
-      marks=rows.map((r,i)=>series.map((s,si)=>{const v=r.values[s[0]],h=(v/max)*plotH,x=L+i*groupW+(groupW-innerW)/2+si*barW,y=T+plotH-h;return `<rect class="chart-bar" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(2,barW-2).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="3" fill="${s[2]}"><title>${s[1]} · ${r.label}: ${v}</title></rect>`}).join('')).join('');
-    }else{
-      marks=series.map((s)=>{const pts=rows.map((r,i)=>[xAt(i),yAt(r.values[s[0]]),r.values[s[0]]]);const path=pts.map((p,i)=>`${i?'L':'M'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');const area=`${path} L ${xAt(rows.length-1).toFixed(1)} ${(T+plotH).toFixed(1)} L ${xAt(0).toFixed(1)} ${(T+plotH).toFixed(1)} Z`;const circles=pts.map((p,i)=>`<circle class="line-point" cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${s[2]}"><title>${s[1]} · ${rows[i].label}: ${p[2]}</title></circle>`).join('');return `<path class="line-area" d="${area}" fill="${s[2]}"></path><path class="line-path" d="${path}" stroke="${s[2]}"></path>${circles}`}).join('');
-    }
-    wrap.innerHTML=`<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(heading)}"><line class="line-axis" x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}"></line><line class="line-axis" x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}"></line>${grid}${xLabels}${marks}</svg>`;
-
-    const totals=series.map(s=>[s[1],rows.reduce((n,r)=>n+r.values[s[0]],0)]);
-    document.getElementById('chartSummary').innerHTML=`<span><strong>${rows.reduce((n,r)=>n+r.total,0)}</strong> gesprekken in deze periode</span>${totals.map(t=>`<span><strong>${t[1]}</strong> ${esc(t[0].toLowerCase())}</span>`).join('')}`;
-  }
-
-  function render(){
-    if(rendering)return;rendering=true;
+  const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?';
+  const normPhone=v=>{let s=String(v||'').trim().replace(/[^0-9+]/g,'');if(!s)return '';if(s.startsWith('00'))s='+'+s.slice(2);let d=s.replace(/\D/g,'');if(d.startsWith('32'))return '+32'+d.slice(2);if(d.startsWith('0'))return '+32'+d.slice(1);if(d.length===9&&d.startsWith('4'))return '+32'+d;return s.startsWith('+')?'+'+d:d};
+  const normEmail=v=>String(v||'').trim().toLowerCase();
+  const read=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch{return f}};
+  const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const blank=()=>({clients:[],conversations:[],appointments:[],settings:{ownerName:'Bob Demo'}});
+  const load=()=>{const d=read(STORE,blank());d.clients||=[];d.conversations||=[];d.appointments||=[];d.settings||={};return d};
+  const save=d=>{write(STORE,d);window.dispatchEvent(new CustomEvent('reactify:data',{detail:d}));};
+  const fmt=d=>{try{return new Date(d).toLocaleString('nl-BE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch{return ''}};
+  const colors=['#5B2E91','#F5A623','#16a34a','#2563eb','#7B52AB','#dc2626'];
+  const toast=msg=>{const t=$('rfToast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2600)};
+  const headers=()=>{const h={'Content-Type':'application/json'};const tenantId=(localStorage.getItem('reactify.tenantId')||'').trim();if(tenantId)h['X-Tenant-Id']=tenantId;return h;};
+  async function api(url,opts={}){
+    const timeoutMs=Number(opts.timeoutMs||18000);
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),timeoutMs);
+    const fetchOpts={...opts,signal:opts.signal||controller.signal,headers:{...headers(),...(opts.headers||{})}};
+    delete fetchOpts.timeoutMs;
     try{
-      const d=read(),appts=normalizedAppointments();
-      const open=d.conversations.filter(c=>!isCompleted(c));
-      document.getElementById('statClients').textContent=d.clients.filter(c=>String(c.type||'Lead').toLowerCase()==='klant').length;
-      document.getElementById('statLeads').textContent=d.clients.filter(c=>String(c.type||'Lead').toLowerCase()!=='klant').length;
-      document.getElementById('statConversations').textContent=open.length;
-      document.querySelectorAll('[data-occupancy-period]').forEach(b=>b.classList.toggle('active',b.dataset.occupancyPeriod===occupancyPeriod));
-      const mr=occupancyRange(),available=availableMinutes(mr.start,mr.end),booked=bookedMinutes(mr.start,mr.end),occupancy=available>0?Math.min(100,Math.round(booked/available*100)):0;
-      document.getElementById('statOccupancy').textContent=`${occupancy}%`;
-      document.getElementById('occupancyBar').style.width=`${occupancy}%`;
-      document.getElementById('occupancyMeta').textContent=`${(booked/60).toFixed(booked%60?1:0)} van ${(available/60).toFixed(available%60?1:0)} uur geboekt`;
-      const weekConvs=d.conversations.filter(c=>inCurrentWeek(c.updatedAt||c.createdAt));const completed=weekConvs.filter(isCompleted).length;const completedPct=weekConvs.length?Math.round(completed/weekConvs.length*100):0;
-      document.getElementById('statCompletedWeek').textContent=completed;
-      document.getElementById('completedBar').style.width=`${completedPct}%`;
-      document.getElementById('completedMeta').textContent=`${completedPct}% van ${weekConvs.length} gesprekken`;
-      const clients=[...d.clients].sort((a,b)=>new Date(b.updatedAt||b.lastActivity||b.createdAt||0)-new Date(a.updatedAt||a.lastActivity||a.createdAt||0));
-      setHTML(document.getElementById('recentClients'),clients.length?clients.map((c,i)=>{const cv=latestConversationFor(d,c);return `<div class="client-item" onclick="location.href='/platform/klantenlijst/?client=${encodeURIComponent(c.id||'')}'"><div class="client-avatar" style="background:${c.color||colors[i%colors.length]}">${initials(c.name)}</div><div class="client-info"><div class="name-with-badges"><span class="client-name">${esc(c.name||'Klant')}</span>${typeBadge(c)}${cv?stateBadge(cv.status):''}</div><div class="client-phone">${esc(c.phone||c.email||'Geen contactgegevens')}</div></div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Nog geen recente contactpersonen.</div>`);
-      const convs=[...d.conversations].sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
-      setHTML(document.getElementById('recentConversations'),convs.length?convs.map((c,i)=>{const cl=clientFor(d,c);return`<div class="inbox-item" onclick="location.href='/platform/inbox/?conversation=${encodeURIComponent(c.id||'')}'"><div class="inbox-avatar" style="background:${cl.color||colors[i%colors.length]}">${initials(cl.name||c.contactName)}</div><div class="inbox-content"><div class="name-with-badges"><span class="inbox-sender">${esc(cl.name||c.contactName||'Klant')}</span>${typeBadge(cl)}${stateBadge(c.status)}</div><div class="inbox-preview">${esc(c.lastMessage||c.messages?.at?.(-1)?.text||'Nog geen berichten')}</div></div><div class="inbox-time">${c.updatedAt?fmtTime(c.updatedAt):''}</div></div>`}).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Nog geen recente gesprekken.</div>`);
-      setHTML(document.getElementById('upcomingAppointments'),appts.length?appts.map((a,i)=>`<div class="agenda-item" onclick="location.href='/platform/agenda/'"><div class="agenda-time"><div>${fmtTime(a.start)}</div><div style="font-size:.66rem;color:var(--gray-600);font-weight:700;line-height:1.2;margin-top:.15rem">${esc(dayLabel(a.start))}</div></div><div class="agenda-dot ${['purple','orange','green'][i%3]}"></div><div class="agenda-info"><div class="agenda-title">${esc(a.title||'Afspraak')}</div><div class="agenda-sub">${esc(a.customer||'Klant')}</div></div></div>`).join(''):`<div style="padding:1.25rem;text-align:center;color:var(--gray-600);font-size:.85rem;">Geen komende afspraken.</div>`);
-      renderChart(d);
-    }finally{rendering=false}
+      const r=await fetch(url,fetchOpts);
+      const raw=await r.text();
+      let j={};try{j=raw?JSON.parse(raw):{}}catch{j={raw}}
+      if(!r.ok||j.status==='error'){
+        const platformTimeout=/Inactivity Timeout|Too much time has passed|timed? out/i.test(raw||'');
+        const detail=typeof j.details==='string'?j.details:(!platformTimeout&&j.raw?j.raw:'');
+        const base=platformTimeout?'De backend reageerde te traag. De aanvraag is veilig gestopt.':(j.error||j.message||`Request mislukt (HTTP ${r.status})`);
+        const err=new Error([base,detail].filter(Boolean).join(' — '));err.status=r.status;err.payload=j;throw err;
+      }
+      return j;
+    }catch(error){
+      if(error?.name==='AbortError'){const err=new Error('De backend reageerde niet binnen de verwachte tijd. Probeer opnieuw.');err.status=504;throw err}
+      throw error;
+    }finally{clearTimeout(timer)}
   }
-  document.querySelectorAll('[data-metric]').forEach(btn=>btn.addEventListener('click',()=>{chartMetric=btn.dataset.metric;localStorage.setItem('reactify.dashboardChartMetric',chartMetric);render()}));
-  document.querySelectorAll('[data-period]').forEach(btn=>btn.addEventListener('click',()=>{chartPeriod=btn.dataset.period;localStorage.setItem('reactify.dashboardChartPeriod',chartPeriod);render()}));
-  document.querySelectorAll('[data-chart-view]').forEach(btn=>btn.addEventListener('click',()=>{chartView=btn.dataset.chartView;localStorage.setItem('reactify.dashboardChartView',chartView);render()}));
-  document.querySelectorAll('[data-occupancy-period]').forEach(btn=>btn.addEventListener('click',()=>{occupancyPeriod=btn.dataset.occupancyPeriod;localStorage.setItem('reactify.dashboardOccupancyPeriod',occupancyPeriod);render()}));
-  const toggle=document.getElementById('sidebarToggle'),sidebar=document.getElementById('sidebar');if(toggle&&sidebar)toggle.addEventListener('click',()=>sidebar.classList.toggle('open'));
-  let refreshBusy=false;async function refresh(){if(refreshBusy)return;refreshBusy=true;try{await fetchLiveData();render()}catch(e){console.warn('Dashboard live update mislukt',e)}finally{refreshBusy=false}}
-  refresh();setInterval(refresh,8000);
-  window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
-  window.addEventListener('storage',e=>{if(!e.key||e.key===STORE)render()});window.addEventListener('reactify:data',render);window.addEventListener('reactify:datachange',render);window.addEventListener('online',refresh);window.addEventListener('reactify:cal-sync',refresh);
+  const isNotFoundError=e=>Number(e?.status)===404||/HTTP 404|niet gevonden|not found/i.test(String(e?.message||''));
+  async function callBackendAction(action,payload={}){
+    const primary=action==='send-message'?API.send:API.emailSync;
+    try{return await api(primary,{method:'POST',body:JSON.stringify(payload)})}
+    catch(primaryError){
+      if(!isNotFoundError(primaryError))throw primaryError;
+      return api(API.conversations,{method:'POST',body:JSON.stringify({_reactifyAction:action,...payload})});
+    }
+  }
+
+  // One-time clean start: only contacts active after this deployment are imported.
+  if(!localStorage.getItem(START)){
+    localStorage.setItem(START,now());
+    const d=load(); d.clients=[]; d.conversations=[]; save(d);
+  }
+  const startedAt=()=>new Date(localStorage.getItem(START)||0).getTime();
+  const tombstones=()=>read(DELETED,[]);
+  function isDeleted(obj){const p=normPhone(obj?.phone||obj?.contact_phone),e=normEmail(obj?.email||obj?.contact_email),id=String(obj?.id||obj?.backendId||'');return tombstones().some(x=>(id&&(x.id===id||x.backendId===id))||(p&&x.phone===p)||(e&&x.email===e));}
+  function markDeleted(client,conv){const list=tombstones();const item={id:String(client?.id||''),backendId:String(conv?.backendId||conv?.id||''),phone:normPhone(client?.phone),email:normEmail(client?.email),deletedAt:now()};if(!list.some(x=>(item.backendId&&x.backendId===item.backendId)||(item.phone&&x.phone===item.phone)||(item.email&&x.email===item.email)))list.unshift(item);write(DELETED,list.slice(0,2000));}
+  function unmarkDeleted(client){const p=normPhone(client.phone),e=normEmail(client.email);write(DELETED,tombstones().filter(x=>!((p&&x.phone===p)||(e&&x.email===e))))}
+  function determineType(text,current='Lead'){
+    const t=String(text||'').toLowerCase().trim();
+    if(/\b(geen|nog geen|niet) klant\b|\bik ben geen klant\b|\b(nee|neen),? ik ben geen klant\b|\bnieuwe klant\b|\beerste keer\b/.test(t)) return 'Lead';
+    if(/\bik ben( al)? klant\b|\bik ben een bestaande klant\b|\breeds klant\b|\bja,? ik ben( al)? klant\b/.test(t)) return 'Klant';
+    return current||'Lead';
+  }
+  function determineTypeFromMessages(messages,current='Lead'){
+    const items=(messages||[]).filter(m=>m&&String(m.text||'').trim());
+    let type=current||'Lead';
+    for(let i=0;i<items.length;i++){
+      const m=items[i];
+      if((m.type||'incoming')!=='incoming') continue;
+      const text=String(m.text||'').toLowerCase().trim().replace(/[.!?]+$/,'');
+      const previousOutgoing=items.slice(0,i).reverse().find(x=>(x.type||'incoming')==='outgoing');
+      const askedCustomer=/ben je( al)? klant|bent u( al)? klant|ben jij( al)? klant|bestaande klant/.test(String(previousOutgoing?.text||'').toLowerCase());
+      if(/\bgeen klant\b|\bik ben geen klant\b|\bnog geen klant\b|\beerste keer\b/.test(text) || (askedCustomer && /^(nee|neen|nope|nog niet)\b/.test(text))){type='Lead';continue;}
+      if(/\bik ben( al)? klant\b|\bik ben een bestaande klant\b|\breeds klant\b/.test(text) || (askedCustomer && /^(ja|jazeker|zeker|inderdaad|klopt|yes)\b/.test(text))){type='Klant';continue;}
+    }
+    return type;
+  }
+  function sentiment(text,status=''){
+    const t=(String(text||'')+' '+String(status||'')).toLowerCase();
+    const negative=(t.match(/klacht|boos|ontevreden|niet tevreden|probleem|fout|slecht|teleurgesteld|annuleer|geen reactie|niet geholpen|dringend|spoed/g)||[]).length;
+    const positive=(t.match(/bedankt|dank u|merci|opgelost|geholpen|bevestigd|prima|perfect|tevreden|top|fijn|goed geholpen|in orde/g)||[]).length;
+    if(negative>positive)return 'negatief';
+    if(positive>negative)return 'positief';
+    return 'neutraal';
+  }
+  function isGreetingOnly(text){const t=String(text||'').toLowerCase().trim().replace(/[.!?,;:]+/g,'').replace(/\s+/g,' ');return /^(hoi|hallo|hey|heey|goeiedag|goedendag|goedenavond|goedemorgen|dag|yo|hi)( daar)?$/.test(t)}
+  function description(client,conversations){
+    const list=Array.isArray(conversations)?conversations:[];
+    const messages=list.flatMap(conv=>(conv?.messages||[]).filter(m=>String(m.text||'').trim()).map(m=>({text:String(m.text||'').trim(),incoming:(m.type||'incoming')==='incoming',channel:String(m.channel||conv.channel||'sms').toLowerCase()})));
+    const incoming=messages.filter(m=>m.incoming).map(m=>m.text);
+    const allText=messages.map(m=>m.text).join(' ').toLowerCase();
+    const channelCounts=messages.reduce((acc,m)=>{acc[m.channel]=(acc[m.channel]||0)+1;return acc;},{});
+    const preferred=Object.entries(channelCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||String(list[0]?.channel||'sms').toLowerCase();
+    const channelLabel=preferred==='email'?'e-mail':'SMS';
+    const parts=[];
+    const name=client.name||'Deze persoon';
+
+    if(/bouw|aannemer|renovatie|werf|metsel|dakwerk|elektricien|loodgieter/.test(allText))parts.push('is actief in of heeft een duidelijke link met de bouwsector');
+    else if(/kapper|kapsalon|haar|kleuren|knippen/.test(allText))parts.push('heeft interesse in haarverzorging of kappersdiensten');
+    else if(/coach|consultant|advies|onderneming|bedrijf|zaakvoerder/.test(allText))parts.push('heeft een professionele of ondernemende achtergrond');
+
+    if(/dringend|spoed|asap|meteen|zo snel mogelijk/.test(allText))parts.push('verwacht snelle en concrete opvolging');
+    if(/prijs|kost|tarief|offerte|euro/.test(allText))parts.push('is prijsbewust en vraagt graag duidelijke kosteninformatie');
+    if(/afspraak|boeken|inplannen|reservatie|beschikbaar/.test(allText))parts.push('is gericht op praktische planning en afspraken');
+    if(/klacht|ontevreden|probleem|fout|slecht|teleurgesteld/.test(allText))parts.push('communiceert kritisch wanneer iets niet naar wens verloopt');
+    else if(/bedankt|dank u|merci|prima|perfect|top|fijn/.test(allText))parts.push('communiceert doorgaans vriendelijk en waarderend');
+    if(incoming.length>2 && incoming.reduce((n,x)=>n+x.length,0)/incoming.length<55)parts.push('communiceert kort en direct');
+    else if(incoming.length && incoming.reduce((n,x)=>n+x.length,0)/incoming.length>180)parts.push('geeft meestal uitgebreide context in berichten');
+
+    const unique=[...new Set(parts)].slice(0,3);
+    const core=unique.length?`${name} ${unique.join(', ')}.`:`${name} heeft nog een beperkt opgebouwd profiel; nieuwe gesprekken zullen de beschrijving verder verfijnen.`;
+    return `${core} Gebruikt meestal ${channelLabel} voor communicatie.`;
+  }
+
+  function updateStableDescription(client, conversations){
+    if(!client)return;
+    const related=Array.isArray(conversations)?conversations:[];
+    const messageCount=related.reduce((total,conv)=>total+(Array.isArray(conv?.messages)?conv.messages.filter(m=>String(m?.text||'').trim()).length:0),0);
+    const previousCount=Number(client.descriptionMessageCount||0);
+    const candidate=description(client,related);
+    client.autoDescription=client.autoDescription||candidate;
+    // Alleen wijzigen wanneer er daadwerkelijk nieuwe gespreksinhoud is.
+    // Zo wisselt de beschrijving niet bij live syncs waarin berichten tijdelijk nog niet geladen zijn.
+    if(!client.descriptionManual&&(!client.description||messageCount>previousCount)){
+      client.autoDescription=candidate;
+      client.description=candidate;
+      client.descriptionMessageCount=messageCount;
+    }
+  }
+
+
+  function localConversationAnalysis(conv){const text=(conv?.messages||[]).map(m=>m.text||'').join(' ').toLowerCase();const human=/medewerker|persoon spreken|mens spreken|iemand spreken|klantendienst|manager|zaakvoerder/.test(text);const negative=/klacht|ontevreden|niet tevreden|probleem|fout|slecht|teleurgesteld|annuleren/.test(text);const urgent=/dringend|spoed|asap|meteen|onmiddellijk|zo snel mogelijk/.test(text);const booking=/afspraak|boeken|inplannen|reservatie|beschikbaar|welke dag|welk uur/.test(text);if(human)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt expliciet om een medewerker of menselijke opvolging.',action:'Neem het gesprek over en reageer persoonlijk.'};if(negative)return{requiresHuman:true,urgency:'hoog',summary:'De klant meldt een klacht of probleem en heeft menselijke opvolging nodig.',action:'Neem het gesprek over, erken het probleem en stel een concrete oplossing voor.'};if(urgent)return{requiresHuman:true,urgency:'hoog',summary:'De klant vraagt dringende opvolging.',action:'Neem het gesprek over en reageer zo snel mogelijk.'};if(booking)return{requiresHuman:false,urgency:'normaal',summary:'De klant wil een afspraak maken of een beschikbaar moment vinden.',action:'Laat AI twee concrete momenten voorstellen of plan de afspraak in.'};return{requiresHuman:false,urgency:'normaal',summary:'De klant heeft een vraag en verwacht verdere opvolging.',action:'Laat AI antwoorden en volg op wanneer het gesprek niet verdergaat.'};}
+  function statusInfo(status){const x=String(status||'inactive').toLowerCase().replaceAll('-','_').replaceAll(' ','_');if(['manual_overname','manual_takeover','overgenomen','taken_over'].includes(x))return{key:'taken-over',label:'Overgenomen'};if(['menselijke_overname','human_required','human_needed','overname_nodig'].includes(x))return{key:'needs-takeover',label:'Overname nodig'};if(['afgesloten','closed','completed'].includes(x))return{key:'completed',label:'Afgerond'};if(['ai_active','ai_actief'].includes(x))return{key:'ai-active',label:'AI actief'};return{key:'inactive',label:'Inactief'};}
+  function stateBadge(status){const m=statusInfo(status);return `<span class="conversation-state ${m.key}"><span class="state-dot"></span>${m.label}</span>`;}
+  function clientMatch(d,row){const p=normPhone(row.contact_phone||row.phone),e=normEmail(row.contact_email||row.email);return d.clients.find(c=>(p&&normPhone(c.phone)===p)||(e&&normEmail(c.email)===e));}
+  function phoneLikeName(value){const raw=String(value||'').trim();if(!raw)return true;const digits=raw.replace(/\D/g,'');return digits.length>=9&&normPhone(raw)!=='';}
+  function betterContactName(current,incoming,phone){const cur=String(current||'').trim(),inc=String(incoming||'').trim();if(!inc||phoneLikeName(inc)||normPhone(inc)===normPhone(phone))return cur||phone||'Nieuwe lead';if(!cur||phoneLikeName(cur)||/^(nieuwe lead|onbekende klant|onbekend)$/i.test(cur))return inc;return cur;}
+  function validBackendRow(row){if(!row)return false;const id=String(row.id||row.conversation_id||'');/* Alleen exact verwijderde gesprekken verbergen. Een nieuwe oproep van hetzelfde nummer moet opnieuw zichtbaar worden. */if(id&&tombstones().some(x=>String(x.backendId||'')===id))return false;return true;}
+  function mergeBackend(rows){
+    const d=load(); const seen=new Set(); const claimedConversations=new Set();
+    for(const row of rows.filter(validBackendRow)){
+      const backendId=String(row.id||row.conversation_id||''); if(!backendId)continue;
+      let c=clientMatch(d,row);
+      const combined=[row.last_message,row.summary,row.contact_name].filter(Boolean).join(' ');
+      if(!c){c={id:uid('client'),name:betterContactName('',row.contact_name,row.contact_phone),email:row.contact_email||'',phone:normPhone(row.contact_phone||''),type:'Lead',status:'neutraal',sentiment:'neutraal',description:'',source:String(row.channel||'sms').toLowerCase()==='email'?'Nieuw e-mailgesprek':'Nieuw SMS-gesprek',createdAt:row.created_at||now(),updatedAt:row.updated_at||now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(c)}
+      c.name=betterContactName(c.name,row.contact_name,row.contact_phone);
+      c.email=row.contact_email||c.email;
+      c.phone=normPhone(row.contact_phone||c.phone);
+      c.updatedAt=row.updated_at||c.updatedAt;
+      c.type=c.type||'Lead';unmarkDeleted(c);
+
+      // Eén zichtbaar gesprek per contact én kanaal. SMS en e-mail blijven apart.
+      const rowChannel=String(row.channel||'sms').toLowerCase();
+      const rowFolder=String(row.folder||'inbox');const conversationKey=`${c.id}:${rowChannel}:${rowFolder}`;
+      let conv=d.conversations.find(x=>x.backendId===backendId||x.id===backendId);
+      if(!conv) conv=d.conversations.find(x=>x.clientId===c.id&&String(x.channel||'sms').toLowerCase()===rowChannel&&String(x.folder||'inbox')===rowFolder&&!x.backendId);
+      if(!conv&&!claimedConversations.has(conversationKey)) conv=d.conversations.find(x=>x.clientId===c.id&&String(x.channel||'sms').toLowerCase()===rowChannel&&String(x.folder||'inbox')===rowFolder);
+      if(claimedConversations.has(conversationKey)&&(!conv||String(conv.backendId)!==backendId)){seen.add(backendId);continue}
+      if(!conv){conv={id:backendId,backendId,clientId:c.id,channel:'sms',subject:'',messages:[],createdAt:row.created_at||now()};d.conversations.unshift(conv)}
+      if(!conv.backendId){conv.backendId=backendId;conv.id=backendId}
+      claimedConversations.add(conversationKey);
+      const completedByContent=/afspraak.*succesvol.*ingepland|gesprek.*afgerond/i.test(`${row.summary||''} ${row.recommended_action||''}`);
+      const takeoverByContent=/neem (het )?gesprek over|menselijke opvolging|medewerker|persoonlijk opvolgen/i.test(`${row.summary||''} ${row.recommended_action||''}`);
+      // Een bewuste manuele overname heeft altijd voorrang op de AI-analyse.
+      // Anders zet requires_human/recommended_action de status bij elke live sync
+      // opnieuw terug van 'Overgenomen' naar 'Overname nodig'.
+      const storedState=statusInfo(row.status||conv.status||'inactive').key;
+      const backendStatus=storedState==='completed'
+        ? 'afgesloten'
+        : (storedState==='taken-over'
+            ? 'manual_overname'
+            : (completedByContent
+                ? 'afgesloten'
+                : ((row.requires_human||takeoverByContent)
+                    ? 'menselijke_overname'
+                    : (row.status||conv.status||'inactive'))));
+      Object.assign(conv,{clientId:c.id,channel:rowChannel,folder:String(row.folder||'inbox'),subject:String(row.subject||conv.subject||''),status:backendStatus,summary:row.summary||conv.summary||'',lastMessage:row.last_message||conv.lastMessage||'',updatedAt:row.updated_at||row.last_message_at||conv.updatedAt||now(),ai:{intent:row.intent||'onbekend',urgency:row.urgency||'normaal',requiresHuman:completedByContent?false:!!(row.requires_human||takeoverByContent),summary:row.summary||'',recommendedAction:row.recommended_action||'',suggestedReply:row.suggested_reply||''}});
+      if(completedByContent&&row.status!=='afgesloten'){fetch('/.netlify/functions/conversations',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversationId:backendId,status:'afgesloten',aiEnabled:false})}).catch(()=>{});}
+      c.sentiment=sentiment([conv.summary,conv.lastMessage].join(' '),conv.status);c.status=c.sentiment;seen.add(backendId);
+    }
+    // Verwijder alleen duplicaten voor dezelfde contactpersoon én hetzelfde kanaal.
+    const byClient=new Map();
+    d.conversations=d.conversations.filter(cv=>{
+      if(cv.backendId&&!seen.has(String(cv.backendId)))return false;
+      const key=`${cv.clientId}:${String(cv.channel||'sms').toLowerCase()}:${String(cv.folder||'inbox')}`;const prev=byClient.get(key);
+      if(!prev){byClient.set(key,cv);return true}
+      const keepCurrent=!!cv.backendId&&!prev.backendId;
+      if(keepCurrent){const idx=d.conversations.indexOf(prev);if(idx>=0)d.conversations.splice(idx,1);byClient.set(key,cv);return true}
+      return false;
+    });
+    // Contactpersonen bestaan onafhankelijk van gesprekken.
+    // Een verwijderd gesprek mag het gekoppelde contactprofiel nooit verwijderen.
+    for(const client of d.clients){
+      const related=d.conversations.filter(conv=>conv.clientId===client.id);
+      updateStableDescription(client,related);
+    }
+    save(d);
+  }
+
+
+  let selectedId=null,search='',activeChannel='all',activeFolder='inbox';
+  function ensureSelection(){const d=load();const q=new URLSearchParams(location.search).get('client');if(q){let cv=d.conversations.find(x=>x.clientId===q&&String(x.folder||'inbox')==='inbox');if(!cv){cv={id:uid('conv'),clientId:q,channel:'sms',folder:'inbox',subject:'',status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(cv);save(d)}selectedId=cv.id;activeFolder='inbox';history.replaceState(null,'','/platform/inbox/')}const visible=d.conversations.filter(x=>String(x.folder||'inbox')===activeFolder&&(activeChannel==='all'||String(x.channel||'sms').toLowerCase()===activeChannel));if(!selectedId||!visible.some(x=>x.id===selectedId))selectedId=visible[0]?.id||null}
+  function current(){const d=load(),conv=d.conversations.find(x=>x.id===selectedId),client=conv?d.clients.find(c=>c.id===conv.clientId):null;return{d,conv,client}}
+  function applyLifecycle(d){
+    const cutoff=Date.now()-30*60*1000;
+    let changed=false;
+    for(const cv of d.conversations){
+      const state=statusInfo(cv.status).key;
+      const messages=Array.isArray(cv.messages)?cv.messages:[];
+      const lastTime=new Date(messages.at(-1)?.time||cv.updatedAt||cv.createdAt||0).getTime();
+
+      // Handmatige overname, overname nodig en afgeronde gesprekken mogen nooit
+      // door de lokale 30-minutenlogica opnieuw naar AI actief worden gezet.
+      if(['taken-over','needs-takeover','completed'].includes(state)){
+        if(lastTime&&lastTime<cutoff&&state!=='taken-over'){
+          if(cv.status!=='inactive'){cv.status='inactive';changed=true;}
+        }
+        continue;
+      }
+
+      const next=messages.length===0?'inactive':(lastTime&&lastTime<cutoff?'inactive':'ai-active');
+      if(String(cv.status)!==next){cv.status=next;changed=true;}
+    }
+    if(changed)save(d);
+  }
+  function render(){ensureSelection();const d=load();applyLifecycle(d);const unavailable=activeChannel==='chat';const list=unavailable?[]:d.conversations.filter(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};const channel=String(cv.channel||'sms').toLowerCase();const channelOk=activeChannel==='all'||channel===activeChannel;const folder=String(cv.folder||'inbox');const folderOk=folder===activeFolder;return folderOk&&channelOk&&[c.name,c.phone,c.email,cv.lastMessage,cv.summary].join(' ').toLowerCase().includes(search)}).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
+    $('statOpen').textContent=d.conversations.filter(x=>String(x.folder||'inbox')==='inbox'&&!String(x.status).includes('afgesloten')).length;$('statUnread').textContent=d.conversations.reduce((n,x)=>n+Number(x.unread||0),0);$('statHandled').textContent=d.conversations.length?Math.round(100*d.conversations.filter(x=>String(x.status).includes('afgesloten')).length/d.conversations.length)+'%':'0%';
+    $('conversationList').innerHTML=unavailable
+      ? `<div class="empty-state"><strong>Chat nog niet beschikbaar</strong>Dit kanaal wordt later aan Reactify toegevoegd.</div>`
+      : (list.map(cv=>{const c=d.clients.find(x=>x.id===cv.clientId)||{};return `<div class="conv-item ${cv.id===selectedId?'active':''}" onclick="selectConversation('${cv.id}')"><div class="conv-avatar" style="background:${c.color||'#5B2E91'}">${initials(c.name)}</div><div class="conv-content"><div class="conv-header"><div class="conv-name">${esc(c.name||'Onbekend')} <span class="contact-type ${c.type==='Klant'?'customer':'lead'}">${esc(c.type||'Lead')}</span>${stateBadge(cv.status)}</div></div><div class="conv-preview">${esc(cv.lastMessage||cv.summary||'Nog geen berichten')}</div></div></div>`}).join('')||'<div class="empty-state"><strong>Geen gesprekken</strong>Nieuwe SMS- en e-mailgesprekken verschijnen hier automatisch.</div>');
+    renderSelected();
+  }
+  async function loadMessages(conv){if(!conv?.backendId)return;try{const j=await api(`${API.messages}?conversationId=${encodeURIComponent(conv.backendId)}`);const rows=Array.isArray(j.data)?j.data:[];const d=load(),x=d.conversations.find(v=>v.id===conv.id);if(!x)return;x.messages=rows.map(m=>({id:m.id||uid('msg'),type:(m.direction==='outgoing'?'outgoing':'incoming'),text:m.body||'',subject:m.subject||'',channel:String(m.channel||x.channel||'sms').toLowerCase(),time:m.created_at||now(),sender:m.sender_type||m.senderType||(m.direction==='incoming'?'customer':'unknown')}));x.lastMessage=x.messages.at(-1)?.text||x.lastMessage;x.updatedAt=x.messages.at(-1)?.time||x.updatedAt;const c=d.clients.find(v=>v.id===x.clientId);if(c){c.type=determineTypeFromMessages(x.messages,c.type||'Lead');c.sentiment=sentiment(x.messages.map(m=>m.text).join(' '),x.status);c.status=c.sentiment;c.description=description(c,x)}save(d);render()}catch(e){console.warn(e)}}
+  function cleanDisplayedEmail(value){
+    let text=String(value||'').replace(/\r\n?/g,'\n');
+    text=text.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<script[\s\S]*?<\/script>/gi,'');
+    text=text.replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/gi,'$1');
+    text=text.replace(/<https?:\/\/[^>]+>/gi,'');
+    text=text.replace(/https?:\/\/\S+/gi,link=>link.length>55?'':link);
+    text=text.replace(/\{[\s\S]{0,500}?\}/g,'');
+    const markers=[/^\s*On .+ wrote:\s*$/im,/^\s*Op .+ schreef .+:\s*$/im,/^\s*(From|Van):\s+.+$/im,/^\s*-{2,}\s*(Original Message|Oorspronkelijk bericht)\s*-{2,}\s*$/im];
+    let cut=text.length;markers.forEach(rx=>{const m=rx.exec(text);if(m)cut=Math.min(cut,m.index)});text=text.slice(0,cut);
+    const footer=/^\s*(unsubscribe|uitschrijven|manage (your )?email preferences|privacy notice|bekijk in browser|view (this )?email in (your )?browser|this email was sent|you are receiving this email)\b.*$/im.exec(text);
+    if(footer)text=text.slice(0,footer.index);
+    return text.split('\n').filter(line=>{
+      const l=line.trim();
+      if(/^>/.test(l))return false;
+      if(/^(message-id|references|in-reply-to|content-type|mime-version|list-id|list-unsubscribe|x-[a-z-]+):/i.test(l))return false;
+      if(/^(https?:\/\/|[{}[\]<>]{2,}|--[a-z0-9_-]{10,})/i.test(l))return false;
+      if(/^(var|const|let|function|select|insert|update|delete)\b/i.test(l))return false;
+      if(/powered by ai|generated (by|using) (an )?ai|privacy policy|cookie policy|terms (of use|and conditions)|manage (your )?(email )?preferences|unsubscribe/i.test(l))return false;
+      return true;
+    }).join('\n').replace(/```[\s\S]*?```/g,'').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+  }
+  function renderSelected(){const {conv,client}=current();if(!conv||!client){$('chatHeader').innerHTML='<div class="chat-header-info"><div class="chat-header-name">Geen gesprek geselecteerd</div></div>';$('chatMessages').innerHTML='<div class="empty-state">Selecteer een gesprek.</div>';$('profilePanelContent').innerHTML='<div class="empty-state">Geen profiel geselecteerd.</div>';return}
+    const statusMeta=statusInfo(conv.status);const isManual=statusMeta.key==='taken-over';
+    const currentState=statusInfo(conv.status).key;
+    const needsTakeover=currentState==='needs-takeover';
+    const restrictedFolder=String(conv.folder||'inbox')==='spam';
+    const switchOff=restrictedFolder||isManual||needsTakeover;
+    const switchLabel=restrictedFolder?'AI uit':(needsTakeover?'Overnemen':(isManual?'AI uit':'AI aan'));
+    const switchTitle=restrictedFolder?'AI is uitgeschakeld in Spam en Prullenbak':(needsTakeover?'Markeer het gesprek als overgenomen':(isManual?'AI opnieuw inschakelen':'Gesprek zelf overnemen'));
+    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span class="channel-pill">${String(conv.channel||'sms').toLowerCase()==='email'?'✉ E-mail':'💬 SMS'}</span>${stateBadge(conv.status)}</div></div><div class="chat-header-actions"><button class="finish-chat-btn" onclick="completeConversation()" title="Zet dit gesprek op afgerond" ${currentState==='completed'?'disabled':''}>✓ Afronden</button><button class="ai-header-switch ${switchOff?'off':'on'}" onclick="toggleTakeover()" title="${switchTitle}" aria-label="AI aan of uit" ${restrictedFolder?'disabled':''}><span class="ai-header-switch-track"></span><span>${switchLabel}</span></button><button class="btn-small" onclick="markAsSpam()" title="Spam/inbox">${String(conv.folder||'inbox')==='spam'?'↩ Inbox':'⚠ Spam'}</button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
+    $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=!outgoing?'Klant':origin==='ai'?'AI':origin==='manual'?'Manueel':origin==='system'?'Systeem':'Manueel';const isEmail=String(m.channel||conv.channel||'sms').toLowerCase()==='email';const body=isEmail?cleanDisplayedEmail(m.text):String(m.text||'');return `<div class="chat-msg ${m.type||'incoming'} ${isEmail?'email-message':''}">${m.subject?`<div class="chat-msg-subject">${esc(m.subject)}</div>`:''}<div class="email-message-body">${esc(body).replace(/\n/g,'<br>')}</div><div class="chat-msg-meta"><span class="message-origin ${origin==='ai'?'ai':origin==='manual'?'manual':'customer'}">${label}</span></div></div>`}).join('')||`<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste ${String(conv.channel||'sms').toLowerCase()==='email'?'e-mailbericht':'SMS-bericht'}.</div>`;
+    const fallbackAI=localConversationAnalysis(conv);const backendSummary=String(conv.ai?.summary||conv.summary||'').trim();const aiSummary=(!backendSummary||/nieuw gesprek aangemaakt/i.test(backendSummary))?fallbackAI.summary:backendSummary;const recommended=String(conv.ai?.recommendedAction||'').trim()||fallbackAI.action;const urgency=String((conv.ai?.urgency&&conv.ai.urgency!=='normaal')?conv.ai.urgency:fallbackAI.urgency).toLowerCase();const left=urgency.includes('hoog')?'88%':urgency.includes('medium')?'55%':'25%';
+    $('profilePanelContent').innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="profile-name-row"><div class="profile-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="profile-phone">${esc(client.phone||'Geen telefoon')}</div><div class="profile-email">${esc(client.email||'Geen e-mail')}</div><div class="profile-description-label">Contactpersoonbeschrijving</div><div class="profile-description">${esc(client.description||description(client,conv)||'Nog geen contactpersoonbeschrijving.')}</div><button class="btn-small" onclick="openProfile('${client.id}')">Profiel bekijken</button></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="intent-pill">${esc(conv.ai?.intent||'Onbekend')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Sentiment</span><span class="sentiment-pill ${esc(client.sentiment||client.status||'neutraal')}">${esc((client.sentiment||client.status||'neutraal').charAt(0).toUpperCase()+(client.sentiment||client.status||'neutraal').slice(1))}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Urgentie</span><span>${esc(conv.ai?.urgency||'Normaal')}</span></div><div class="urgency-meter"><span class="urgency-knob" style="left:${left}"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div><div class="profile-detail-row"><span class="profile-detail-label">Status</span>${stateBadge(conv.status)}</div></div><div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${esc(aiSummary)}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${esc(recommended)}</div><button class="profile-appointment-btn" type="button" onclick="RFUI.openAppointmentModal()">＋ Afspraak maken</button></div>`;
+    $('chatChannel').value=String(conv.channel||'sms').toLowerCase()==='email'?'email':'sms';const subjectInput=$('chatSubject');if(document.activeElement!==subjectInput)subjectInput.value=conv.subjectDraft??conv.subject??'';subjectInput.style.display=$('chatChannel').value==='email'?'block':'none';$('chatInput').placeholder=$('chatChannel').value==='email'?'Schrijf de e-mailtekst...':'Typ een SMS-bericht...';$('chatMessages').scrollTop=$('chatMessages').scrollHeight;
+  }
+  window.selectConversation=id=>{selectedId=id;render();const {conv}=current();loadMessages(conv)};
+  async function refreshConversationAnalysis(conv,{preserveStatus=true}={}){
+    if(!conv?.backendId)return null;
+    try{
+      const j=await api(API.classify,{method:'POST',body:JSON.stringify({conversationId:conv.backendId})});
+      const a=j.data||j;
+      conv.ai=conv.ai||{};
+      conv.ai.intent=a.intent||conv.ai.intent||'onbekend';
+      conv.ai.urgency=a.urgency||conv.ai.urgency||'normaal';
+      conv.ai.requiresHuman=!!a.requiresHuman;
+      conv.ai.summary=a.summary||conv.ai.summary||'';
+      conv.ai.recommendedAction=a.recommendedAction||conv.ai.recommendedAction||'';
+      conv.ai.suggestedReply=a.suggestedReply||conv.ai.suggestedReply||'';
+      conv.summary=conv.ai.summary;
+      const d=load();const stored=d.conversations.find(x=>x.id===conv.id);if(stored){stored.ai=conv.ai;stored.summary=conv.summary;if(preserveStatus)stored.status=conv.status;const c=d.clients.find(x=>x.id===stored.clientId);if(c){c.sentiment=sentiment((stored.messages||[]).map(m=>m.text).join(' '),stored.status);c.status=c.sentiment;updateStableDescription(c,d.conversations.filter(x=>x.clientId===c.id));}save(d);}
+      return a;
+    }catch(e){console.warn('Analyse bijwerken mislukt:',e);return null;}
+  }
+  window.sendMessage=async()=>{
+    const input=$('chatInput'),text=input.value.trim();
+    if(!text)return;
+    const {d,conv,client}=current();
+    if(!conv||!client)return;
+    const channel=$('chatChannel').value==='email'?'email':'sms';
+    const subject=$('chatSubject').value.trim();
+    if(channel==='sms'&&!client.phone){toast('Voeg eerst een telefoonnummer toe.');return}
+    if(channel==='email'&&!client.email){toast('Voeg eerst een e-mailadres toe.');return}
+    if(channel==='email'&&!subject){toast('Vul een onderwerp in voor de e-mail.');return}
+
+    input.disabled=true;$('chatChannel').disabled=true;$('chatSubject').disabled=true;
+    try{
+      client.phone=normPhone(client.phone);
+      client.email=normEmail(client.email);
+      conv.channel=channel;
+      conv.subject=channel==='email'?subject:'';
+      conv.subjectDraft=conv.subject;
+
+      const createConversation=async()=>{
+        const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel,subject})});
+        const created=j.data||j;
+        const id=created.id||created.conversationId||created.conversation_id;
+        if(!id)throw new Error('Gesprek kon niet worden aangemaakt.');
+        conv.backendId=id;
+        save(d);
+        return id;
+      };
+
+      let backendId=conv.backendId||await createConversation();
+      const makePayload=()=>({conversationId:backendId,channel,subject,message:text,name:client.name,phone:client.phone,email:client.email});
+      let sent;
+      try{
+        sent=await callBackendAction('send-message',makePayload());
+      }catch(firstError){
+        // Een lokaal gesprek kan nog naar een oud/verwijderd backend-ID wijzen.
+        // Maak het gesprek opnieuw aan en probeer exact één keer opnieuw.
+        if(!isNotFoundError(firstError))throw firstError;
+        conv.backendId='';
+        backendId=await createConversation();
+        sent=await callBackendAction('send-message',makePayload());
+      }
+
+      const result=sent.data||sent;
+      if(result.conversationId){conv.backendId=result.conversationId;backendId=result.conversationId}
+      conv.messages=conv.messages||[];
+      conv.messages.push({id:result.id||uid('msg'),type:'outgoing',text,subject:channel==='email'?subject:'',channel,time:now(),sender:'manual'});
+      conv.lastMessage=text;
+      conv.updatedAt=now();
+      conv.status='manual_overname';
+      client.sentiment=sentiment((conv.messages||[]).map(m=>m.text).join(' '),conv.status);
+      client.status=client.sentiment;
+      updateStableDescription(client,d.conversations.filter(x=>x.clientId===client.id));
+      save(d);
+      input.value='';
+      render();
+      await refreshConversationAnalysis(conv,{preserveStatus:true});
+      render();
+      toast(channel==='email'?'E-mail verzonden.':'SMS verzonden.');
+      setTimeout(()=>sync({notify:false,forceMessages:true}),350);
+    }catch(e){
+      toast(e.message||'Bericht verzenden mislukt.');
+    }finally{
+      input.disabled=false;$('chatChannel').disabled=false;$('chatSubject').disabled=false;input.focus();
+    }
+  };
+  window.completeConversation=async()=>{const {d,conv,client}=current();if(!conv)return;conv.status='afgesloten';conv.ai=conv.ai||{};conv.ai.requiresHuman=false;conv.ai.urgency='normaal';conv.ai.summary='De contactpersoon is geholpen en het gesprek is afgerond.';conv.ai.recommendedAction='Geen verdere actie nodig. Het gesprek is afgerond.';conv.summary=conv.ai.summary;conv.updatedAt=now();if(client){client.sentiment=sentiment((conv.messages||[]).map(m=>m.text).join(' '),'afgesloten');client.status=client.sentiment;}save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:'afgesloten',aiEnabled:false,channel:conv.channel||'sms',subject:conv.subject||'',summary:conv.ai.summary,recommendedAction:conv.ai.recommendedAction,urgency:'normaal',requiresHuman:false})});toast('Gesprek is afgerond.');setTimeout(()=>sync({notify:false,forceMessages:true}),500);}catch(e){toast('Gesprek lokaal afgerond, maar backend-update mislukte.');}};
+  window.toggleTakeover=async()=>{const {d,conv}=current();if(!conv)return;if(String(conv.folder||'inbox')==='spam'){toast('AI is uitgeschakeld in Spam.');return;}const state=statusInfo(conv.status).key;const activateAI=state!=='ai-active';const next=activateAI?'ai-active':'manual_overname';conv.status=next;conv.ai=conv.ai||{};conv.ai.requiresHuman=!activateAI;save(d);render();try{if(conv.backendId)await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,status:next,aiEnabled:activateAI,channel:conv.channel||'sms',subject:conv.subject||''})});toast(activateAI?'AI is opnieuw actief.':'Je hebt het gesprek overgenomen.');setTimeout(()=>sync({notify:false,forceMessages:true}),250);}catch(e){toast('Status lokaal aangepast, maar backend-update mislukte.');}};
+  async function moveConversation(conv,folder){if(!conv?.backendId)return;await api(API.conversations,{method:'PATCH',body:JSON.stringify({conversationId:conv.backendId,folder,channel:conv.channel||'sms',subject:conv.subject||''})});}
+  window.deleteCurrent=async()=>{const {d,conv,client}=current();if(!conv)return;if(!confirm('Dit gesprek definitief verwijderen? De contactpersoon blijft bewaard.'))return;try{if(conv.backendId){await api(API.conversations,{method:'DELETE',body:JSON.stringify({conversationId:conv.backendId,action:'permanent'})});markDeleted(null,conv);}d.conversations=d.conversations.filter(x=>x.id!==conv.id);if(client){client.updatedAt=now();}save(d);selectedId=null;render();toast('Gesprek definitief verwijderd. Contactpersoon blijft bewaard.');}catch(e){toast(e.message||'Verwijderen mislukt.')}};
+  window.markAsSpam=async()=>{const {d,conv}=current();if(!conv)return;const folder=String(conv.folder||'inbox')==='spam'?'inbox':'spam';try{await moveConversation(conv,folder);conv.folder=folder;if(folder==='spam'){conv.status='inactive';conv.ai=conv.ai||{};conv.ai.requiresHuman=false;}save(d);selectedId=null;render();toast(folder==='spam'?'Naar spam verplaatst.':'Teruggezet naar inbox.');}catch(e){toast(e.message||'Verplaatsen mislukt.')}};
+
+  // Shared profile drawer
+  let editPhoto='';
+  window.openProfile=id=>{const d=load(),c=d.clients.find(x=>x.id===id);if(!c)return;$('drawerClientId').value=c.id;$('drawerName').value=c.name||'';$('drawerEmail').value=c.email||'';$('drawerPhone').value=c.phone||'';$('drawerAddress').value=c.address||'';$('drawerType').value=c.type||'Lead';$('drawerStatus').value=c.status||'neutraal';$('drawerDescription').value=c.description||'';$('drawerNote').value=c.note||'';editPhoto=c.photo||'';$('drawerAvatar').innerHTML=editPhoto?`<img src="${editPhoto}">`:initials(c.name);$('drawerAvatar').style.background=c.color||'#5B2E91';$('clientDrawerOverlay').classList.add('open');$('clientDrawer').classList.add('open')};
+  window.closeClientDrawer=()=>{$('clientDrawerOverlay').classList.remove('open');$('clientDrawer').classList.remove('open')};
+  window.saveClientDrawer=()=>{const d=load(),c=d.clients.find(x=>x.id===$('drawerClientId').value);if(!c)return;const manualDescription=$('drawerDescription').value.trim();Object.assign(c,{name:$('drawerName').value.trim(),email:normEmail($('drawerEmail').value),phone:normPhone($('drawerPhone').value),address:$('drawerAddress').value.trim(),description:manualDescription||c.autoDescription||'',descriptionManual:Boolean(manualDescription&&manualDescription!==c.autoDescription),note:$('drawerNote').value.trim(),photo:editPhoto,updatedAt:now()});unmarkDeleted(c);save(d);closeClientDrawer();render();toast('Profiel opgeslagen.')};
+  $('drawerPhotoInput')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{editPhoto=String(r.result);$('drawerAvatar').innerHTML=`<img src="${editPhoto}">`};r.readAsDataURL(f)});
+
+  let syncBusy=false;
+  async function sync({notify=false,forceMessages=false}={}){
+    if(syncBusy)return;
+    syncBusy=true;
+    try{
+      const beforeData=load();
+      const before=beforeData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
+      const j=await api(`${API.conversations}?limit=500&folder=all&_=${Date.now()}`);
+      mergeBackend(Array.isArray(j.data)?j.data:[]);
+      const afterData=load();
+      const after=afterData.conversations.map(x=>x.id+':'+x.updatedAt+':'+(x.lastMessage||'')).join('|');
+      render();
+
+      const {conv}=current();
+      if(conv?.backendId && (forceMessages || before!==after || document.visibilityState==='visible')){
+        await loadMessages(conv);
+      }
+
+      if(notify){
+        const rows=Array.isArray(j.data)?j.data:[];
+        const signatures=rows.filter(validBackendRow).map(row=>{
+          const id=String(row.id||row.conversation_id||'');
+          const stamp=String(row.last_message_at||row.updated_at||'');
+          const body=String(row.last_message||'').trim();
+          return id&&body?`${id}|${stamp}|${body}`:'';
+        }).filter(Boolean);
+        const seen=new Set(read(NOTIFY_SEEN,[]));
+        const fresh=signatures.filter(sig=>!seen.has(sig));
+        if(!localStorage.getItem(NOTIFY_SEEN)){
+          write(NOTIFY_SEEN,signatures.slice(0,300));
+        }else if(fresh.length){
+          write(NOTIFY_SEEN,[...fresh,...seen].slice(0,300));
+          showTopToast();
+        }
+      }
+    }catch(e){
+      console.warn('Inbox sync:',e.message);
+      render();
+    }finally{
+      syncBusy=false;
+    }
+  }
+  let emailSyncBusy=false;
+  async function syncEmail(){
+    if(emailSyncBusy)return;
+    emailSyncBusy=true;
+    const state=$('emailSyncState');
+    try{
+      const j=await callBackendAction('email-sync',{});
+      const result=j.data||j;
+      if(state){
+        if(!result.enabled)state.textContent='';
+        else if(result.queued)state.textContent='E-mailsync gestart';
+        else if(result.busy)state.textContent='E-mail wordt gesynchroniseerd';
+        else if(result.processed)state.textContent=`${result.processed} nieuwe e-mail(s)`;
+        else state.textContent='E-mail gesynchroniseerd';
+        state.title='';
+      }
+      // De backend importeert in de achtergrond. Haal kort daarna de nieuwe gesprekken op.
+      setTimeout(()=>sync({notify:true,forceMessages:true}),result.queued?1800:250);
+      if(result.queued)setTimeout(()=>sync({notify:true,forceMessages:true}),5000);
+    }catch(e){
+      if(state){state.textContent='E-mailsync wordt opnieuw geprobeerd';state.title=e.message||''}
+      console.warn('E-mailsync:',e.message);
+    }finally{
+      emailSyncBusy=false;
+    }
+  }
+  function showTopToast(){let t=document.querySelector('.rf-top-toast');if(!t){t=document.createElement('div');t.className='rf-top-toast';t.innerHTML='<div class="rf-top-toast-icon">💬</div><div><div class="rf-top-toast-title">Nieuw bericht</div><div class="rf-top-toast-body">Open de inbox om het SMS- of e-mailgesprek te bekijken.</div></div>';t.onclick=()=>location.href='/platform/inbox/';document.body.appendChild(t)}t.classList.add('show');setTimeout(()=>t.classList.remove('show'),5000)}
+  const tabsScroller=document.querySelector('.conv-tabs');
+  tabsScroller?.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();tabsScroller.scrollLeft+=e.deltaY;}},{passive:false});
+
+  document.querySelectorAll('.conv-tab').forEach(tab=>tab.addEventListener('click',()=>{
+    activeFolder=tab.dataset.folder||'inbox';
+    activeChannel=tab.dataset.channel||'all';
+    document.querySelectorAll('.conv-tab').forEach(x=>x.classList.toggle('active',x===tab));
+    selectedId=null;render();
+  }));
+  window.addEventListener('reactify:calbookings',()=>{render();});
+  $('inboxSearch')?.addEventListener('input',e=>{search=e.target.value.toLowerCase();render()});$('chatSubject')?.addEventListener('input',e=>{const {d,conv}=current();if(!conv)return;conv.subjectDraft=e.target.value;save(d)});$('chatChannel')?.addEventListener('change',e=>{const {d,conv,client}=current();if(!conv||!client)return;const channel=e.target.value;let target=d.conversations.find(x=>x.clientId===client.id&&String(x.channel||'sms').toLowerCase()===channel);if(!target){target={id:uid('conv'),clientId:client.id,channel,folder:'inbox',subject:'',status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(target);save(d)}selectedId=target.id;render();if(target.backendId)loadMessages(target)});$('chatInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});$('sidebarToggle')?.addEventListener('click',()=>$('sidebar')?.classList.toggle('open'));
+  window.openNewConversation=()=>{const d=load(),sel=$('newConversationContact');sel.innerHTML=d.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}${c.email?' — '+esc(c.email):c.phone?' — '+esc(c.phone):''}</option>`).join('');if(!d.clients.length){toast('Voeg eerst een contactpersoon toe via Klanten.');return}$('newConversationModal').classList.add('open');$('newConversationChannel').dispatchEvent(new Event('change'));};
+  window.closeNewConversation=()=>$('newConversationModal').classList.remove('open');
+  $('newConversationChannel')?.addEventListener('change',e=>$('newConversationSubjectWrap').style.display=e.target.value==='email'?'block':'none');
+  window.createNewConversation=async()=>{const d=load(),client=d.clients.find(c=>c.id===$('newConversationContact').value);if(!client)return;const channel=$('newConversationChannel').value==='email'?'email':'sms',subject=$('newConversationSubject').value.trim();if(channel==='sms'&&!client.phone){toast('Dit contact heeft geen telefoonnummer.');return}if(channel==='email'&&!client.email){toast('Dit contact heeft geen e-mailadres.');return}if(channel==='email'&&!subject){toast('Vul een onderwerp in.');return}let conv=d.conversations.find(c=>c.clientId===client.id&&String(c.channel||'sms')===channel&&String(c.folder||'inbox')==='inbox');if(!conv){conv={id:uid('conv'),clientId:client.id,channel,folder:'inbox',subject,status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(conv)}try{const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel,subject})});conv.backendId=(j.data||j).id||conv.backendId;conv.folder='inbox';save(d);selectedId=conv.id;activeFolder='inbox';activeChannel=channel;closeNewConversation();render();$('chatInput').focus();toast('Nieuw gesprek gestart.');}catch(e){toast(e.message||'Gesprek starten mislukt.')}};
+
+  window.RFUI={
+    openClientModal(){ $('rfClientModal')?.classList.add('open'); },
+    closeClientModal(){ $('rfClientModal')?.classList.remove('open'); },
+    async openAppointmentModal(){
+      const {client}=current();if(!client){toast('Selecteer eerst een gesprek.');return;}
+      $('rfApptClient').value=client.id;$('rfApptClientDisplay').value=client.name||'Contactpersoon';$('rfApptEmail').value=client.email||'';$('rfApptPhone').value=client.phone||'';$('rfAppointmentAlert').classList.add('hidden');$('rfAppointmentModal').classList.add('open');
+      const start=new Date(Date.now()+60*60*1000);start.setMinutes(Math.ceil(start.getMinutes()/15)*15,0,0);$('rfApptStart').value=new Date(start.getTime()-start.getTimezoneOffset()*60000).toISOString().slice(0,16);
+      try{const j=await api(API.eventTypes);const rows=Array.isArray(j.data)?j.data:(Array.isArray(j.data?.data)?j.data.data:[]);$('rfApptEventType').innerHTML=rows.map(x=>`<option value="${esc(x.id)}" data-length="${esc(x.lengthInMinutes||x.length||30)}">${esc(x.title||x.name||'Afspraak')} — ${esc(x.lengthInMinutes||x.length||30)} min</option>`).join('')||'<option value="">Geen afspraaktypes gevonden</option>';const opt=$('rfApptEventType').selectedOptions[0];if(opt)$('rfApptLength').value=opt.dataset.length||'';}catch(e){$('rfApptEventType').innerHTML='<option value="">Afspraaktypes laden mislukt</option>';toast(e.message||'Afspraaktypes laden mislukt.');}
+    },
+    closeAppointmentModal(){ $('rfAppointmentModal')?.classList.remove('open'); }
+  };
+  $('rfApptEventType')?.addEventListener('change',e=>{const opt=e.target.selectedOptions[0];if(opt&&opt.dataset.length)$('rfApptLength').value=opt.dataset.length;});
+  $('rfAppointmentForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();const {client}=current();if(!client)return;
+    const eventTypeId=$('rfApptEventType').value,start=$('rfApptStart').value,email=normEmail($('rfApptEmail').value),phone=normPhone($('rfApptPhone').value);
+    if(!eventTypeId||!start||!email){toast('Kies een afspraaktype, startmoment en e-mailadres.');return;}
+    const selected=$('rfApptEventType').selectedOptions[0];const payload={eventTypeId:Number(eventTypeId),start:new Date(start).toISOString(),name:client.name||'Contactpersoon',email,phone,attendee:{name:client.name||'Contactpersoon',email,phoneNumber:phone,timeZone:'Europe/Brussels',language:'nl'},title:selected?.textContent?.split(' — ')[0]||'Reactify afspraak',notes:$('rfApptNotes').value.trim(),locationType:$('rfApptLocationType').value,locationValue:$('rfApptLocationValue').value.trim(),lengthInMinutes:Number($('rfApptLength').value||selected?.dataset.length||30),allowConflicts:$('rfApptForce').checked,allowBookingOutOfBounds:$('rfApptForce').checked};
+    try{await api(API.booking,{method:'POST',body:JSON.stringify(payload)});client.email=email;client.phone=phone;const d=load();const c=d.clients.find(x=>x.id===client.id);if(c){c.email=email;c.phone=phone;c.updatedAt=now();}save(d);RFUI.closeAppointmentModal();toast('Afspraak is aangemaakt.');window.dispatchEvent(new CustomEvent('reactify:calbookings'));}catch(err){toast(err.message||'Afspraak aanmaken mislukt.');}
+  });
+  $('rfClientForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=$('rfClientName')?.value.trim()||'',phone=normPhone($('rfClientPhone')?.value||''),email=normEmail($('rfClientEmail')?.value||''),note=$('rfClientNote')?.value.trim()||'';
+    if(!name){toast('Vul een naam in.');return}
+    const channel=$('rfClientChannel')?.value==='email'?'email':'sms';if(channel==='sms'&&!phone){toast('Vul een telefoonnummer in om een SMS te kunnen sturen.');return}if(channel==='email'&&!email){toast('Vul een e-mailadres in om een e-mail te kunnen sturen.');return}
+    const d=load();
+    let client=d.clients.find(c=>normPhone(c.phone)===phone||(email&&normEmail(c.email)===email));
+    if(client){Object.assign(client,{name,phone,email:email||client.email,note,updatedAt:now()});}
+    else{client={id:uid('client'),name,phone,email,type:'Lead',status:'neutraal',sentiment:'neutraal',description:'',note,source:'Manueel',createdAt:now(),updatedAt:now(),color:colors[d.clients.length%colors.length]};d.clients.unshift(client)}
+    unmarkDeleted(client);
+    let conv=d.conversations.find(c=>c.clientId===client.id);
+    if(!conv){conv={id:uid('conv'),clientId:client.id,channel,folder:'inbox',subject:'',status:'ai-active',messages:[],createdAt:now(),updatedAt:now()};d.conversations.unshift(conv)}
+    try{
+      const j=await api(API.conversations,{method:'POST',body:JSON.stringify({name:client.name,email:client.email,phone:client.phone,channel,subject:''})});
+      conv.backendId=(j.data||j).id||conv.backendId;
+    }catch(err){console.warn('Backendgesprek wordt bij eerste verzending opnieuw geprobeerd:',err.message)}
+    save(d);selectedId=conv.id;e.target.reset();RFUI.closeClientModal();render();toast(`Contactpersoon aangemaakt. Je kunt nu via ${channel==='email'?'e-mail':'SMS'} sturen.`);
+  });
+  syncEmail();sync({forceMessages:true});
+  const emailPoll=setInterval(syncEmail,30000);
+  const livePoll=setInterval(()=>sync({notify:true,forceMessages:true}),5000);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible')sync({notify:false,forceMessages:true});
+  });
+  window.addEventListener('focus',()=>sync({notify:false,forceMessages:true}));
 })();
 </script>
 <script src="/platform/assets/cal-sync.js"></script>
 <script src="/platform-ui.js"></script>
-</body>
-</html>
+</body></html>
