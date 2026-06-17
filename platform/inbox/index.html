@@ -1490,7 +1490,7 @@
     const switchOff=restrictedFolder||isManual||needsTakeover||isFinished;
     const switchLabel=restrictedFolder?'AI uit':(needsTakeover?'Overnemen':(isManual?'Overgenomen':(isFinished?'Afgerond':'AI beantwoordt')));
     const switchTitle=restrictedFolder?'AI is uitgeschakeld in Spam':(needsTakeover?'Neem het gesprek persoonlijk over':(isManual?'AI opnieuw inschakelen':'Reactify beantwoordt automatisch'));
-    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span class="channel-pill">${String(conv.channel||'sms').toLowerCase()==='email'?'✉ E-mail':'💬 SMS'}</span>${stateBadge(conv.status)}</div><div class="chat-status-strip ${statusMeta.key}"><strong>${esc(statusMeta.label)}</strong><span>${esc(statusMeta.desc)}</span></div></div><div class="chat-header-actions"><button class="finish-chat-btn" onclick="completeConversation()" title="Zet dit gesprek op afgerond" ${currentState==='completed'||currentState==='inactive'?'disabled':''}>✓ Afronden</button><button class="ai-header-switch ${switchOff?'off':'on'} ${isFinished?'completed':''}" onclick="toggleTakeover()" title="${switchTitle}" aria-label="AI-status aanpassen" ${restrictedFolder||isFinished?'disabled':''}><span class="ai-header-switch-track"></span><span>${switchLabel}</span></button><button class="btn-small" onclick="markAsSpam()" title="Spam/inbox">${String(conv.folder||'inbox')==='spam'?'↩ Inbox':'⚠ Spam'}</button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div>`;
+    $('chatHeader').innerHTML=`<div class="chat-header-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="chat-header-info"><div class="chat-header-name-row"><div class="chat-header-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="chat-header-details"><span class="channel-pill">${String(conv.channel||'sms').toLowerCase()==='email'?'✉ E-mail':'💬 SMS'}</span></div></div><div class="chat-header-actions"><button class="finish-chat-btn" onclick="completeConversation()" title="Zet dit gesprek op afgerond" ${currentState==='completed'||currentState==='inactive'?'disabled':''}>✓ Afronden</button><button class="ai-header-switch ${switchOff?'off':'on'} ${isFinished?'completed':''}" onclick="toggleTakeover()" title="${switchTitle}" aria-label="AI-status aanpassen" ${restrictedFolder||isFinished?'disabled':''}><span class="ai-header-switch-track"></span><span>${switchLabel}</span></button><button class="btn-small" onclick="markAsSpam()" title="Spam/inbox">${String(conv.folder||'inbox')==='spam'?'↩ Inbox':'⚠ Spam'}</button><button class="icon-danger-btn" onclick="deleteCurrent()" title="Verwijderen" aria-label="Gesprek verwijderen">🗑️</button></div><div class="chat-status-strip ${statusMeta.key}"><strong>${esc(statusMeta.label)}</strong><span>${esc(statusMeta.desc)}</span></div>`;
     $('chatMessages').innerHTML=(conv.messages||[]).map(m=>{const outgoing=(m.type||'incoming')==='outgoing';const origin=String(m.sender||'').toLowerCase();const label=!outgoing?'Klant':origin==='ai'?'AI':origin==='manual'?'Manueel':origin==='system'?'Systeem':'Manueel';const isEmail=String(m.channel||conv.channel||'sms').toLowerCase()==='email';const body=isEmail?cleanDisplayedEmail(m.text):String(m.text||'');return `<div class="chat-msg ${m.type||'incoming'} ${isEmail?'email-message':''}">${m.subject?`<div class="chat-msg-subject">${esc(m.subject)}</div>`:''}<div class="email-message-body">${esc(body).replace(/\n/g,'<br>')}</div><div class="chat-msg-meta"><span class="message-origin ${origin==='ai'?'ai':origin==='manual'?'manual':'customer'}">${label}</span></div></div>`}).join('')||`<div class="empty-state"><strong>Nog geen berichten</strong>Stuur hieronder het eerste ${String(conv.channel||'sms').toLowerCase()==='email'?'e-mailbericht':'SMS-bericht'}.</div>`;
     const fallbackAI=localConversationAnalysis(conv);const backendSummary=String(conv.ai?.summary||conv.summary||'').trim();const aiSummary=(!backendSummary||/nieuw gesprek aangemaakt/i.test(backendSummary))?fallbackAI.summary:backendSummary;const recommended=String(conv.ai?.recommendedAction||'').trim()||fallbackAI.action;const urgency=String((conv.ai?.urgency&&conv.ai.urgency!=='normaal')?conv.ai.urgency:fallbackAI.urgency).toLowerCase();const left=urgency.includes('hoog')?'88%':urgency.includes('medium')?'55%':'25%';
     $('profilePanelContent').innerHTML=`<div class="profile-card"><div class="profile-avatar" style="background:${client.color||'#5B2E91'}">${initials(client.name)}</div><div class="profile-name-row"><div class="profile-name">${esc(client.name)}</div><span class="contact-type ${client.type==='Klant'?'customer':'lead'}">${esc(client.type||'Lead')}</span></div><div class="profile-phone">${esc(client.phone||'Geen telefoon')}</div><div class="profile-email">${esc(client.email||'Geen e-mail')}</div><div class="profile-description-label">Contactpersoonbeschrijving</div><div class="profile-description">${esc(client.description||description(client,conv)||'Nog geen contactpersoonbeschrijving.')}</div><button class="btn-small" onclick="openProfile('${client.id}')">Profiel bekijken</button></div><div class="profile-details"><div class="profile-detail-row"><span class="profile-detail-label">Intentie</span><span class="intent-pill">${esc(conv.ai?.intent||'Onbekend')}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Sentiment</span><span class="sentiment-pill ${esc(client.sentiment||client.status||'neutraal')}">${esc((client.sentiment||client.status||'neutraal').charAt(0).toUpperCase()+(client.sentiment||client.status||'neutraal').slice(1))}</span></div><div class="profile-detail-row"><span class="profile-detail-label">Urgentie</span><span>${esc(conv.ai?.urgency||'Normaal')}</span></div><div class="urgency-meter"><span class="urgency-knob" style="left:${left}"></span></div><div class="urgency-caption"><span>Laag</span><span>Hoog</span></div><div class="profile-status-card ${statusMeta.key}"><span class="profile-status-dot"></span><div><strong>${esc(statusMeta.label)}</strong><span>${esc(statusMeta.desc)}</span></div></div></div><div class="conv-summary"><div class="conv-summary-title">AI-samenvatting</div><div class="conv-summary-text">${esc(aiSummary)}</div></div><div class="conv-summary"><div class="conv-summary-title">Aanbevolen actie</div><div class="conv-summary-text">${esc(recommended)}</div><button class="profile-appointment-btn" type="button" onclick="RFUI.openAppointmentModal()">＋ Afspraak maken</button></div>`;
@@ -1732,11 +1732,9 @@
   function fixHeader(){
     const header=document.getElementById('chatHeader');
     if(!header) return;
-    const strip=header.querySelector('.chat-status-strip');
     const actions=header.querySelector('.chat-header-actions');
-    if(strip && actions && window.innerWidth>=1260 && window.innerWidth<=1520){
-      actions.style.gridColumn='1 / -1';
-    }
+    // Nieuwe statuslayout: acties blijven rechtsboven, statuskaart loopt eronder tot rechts.
+    if(actions) actions.style.gridColumn='';
   }
   const mo=new MutationObserver(fixHeader);
   document.addEventListener('DOMContentLoaded',function(){
@@ -1748,4 +1746,46 @@
 })();
 </script>
 
+
+
+<style id="reactify-status-strip-under-actions-fix">
+/* Status met beschrijving vervangt de kleine statusknop onder de naam.
+   De statuskaart loopt onder de naam én actieknoppen door tot rechts. */
+@media (min-width:1260px){
+  .chat-header{
+    display:grid!important;
+    grid-template-columns:48px minmax(0,1fr) auto!important;
+    grid-template-areas:
+      "avatar info actions"
+      "avatar status status"!important;
+    align-items:start!important;
+    column-gap:.8rem!important;
+    row-gap:.48rem!important;
+  }
+  .chat-header-info{grid-area:info!important;min-width:0!important;}
+  .chat-header-actions{grid-area:actions!important;align-self:start!important;justify-self:end!important;}
+  .chat-header .chat-status-strip{
+    grid-area:status!important;
+    width:100%!important;
+    max-width:none!important;
+    margin-top:0!important;
+    padding:.62rem .82rem!important;
+  }
+  .chat-header-details .conversation-state{display:none!important;}
+}
+@media (min-width:1260px) and (max-width:1520px){
+  .chat-header{
+    grid-template-columns:44px minmax(0,1fr) auto!important;
+    grid-template-areas:
+      "avatar info actions"
+      "avatar status status"!important;
+  }
+  .chat-header-actions{grid-column:auto!important;justify-content:flex-end!important;flex-wrap:wrap!important;max-width:100%!important;}
+  .chat-header .chat-status-strip{max-width:none!important;}
+}
+@media (max-width:1259px){
+  .chat-header .chat-status-strip{width:100%!important;max-width:none!important;}
+  .chat-header-details .conversation-state{display:none!important;}
+}
+</style>
 </body></html>
